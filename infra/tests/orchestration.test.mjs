@@ -63,6 +63,19 @@ test("dotenv precedence preserves explicit empty values and resolves custom data
   assert.equal(env.CANDOR_LLM_PROVIDER, "codex");
 });
 
+test("blank .env placeholders are filled by seeded values", async () => {
+  const directory = await fixture();
+  await mkdir(resolve(directory, "data/demo"), { recursive: true });
+  await writeFile(resolve(directory, ".env"), "CANDOR_ENCLAVE_SK=\nKEPT=file\n");
+  await writeFile(
+    resolve(directory, "data/demo/.env.local"),
+    "CANDOR_ENCLAVE_SK=seeded\nKEPT=generated\n",
+  );
+  const env = loadEnvironment({}, directory);
+  assert.equal(env.CANDOR_ENCLAVE_SK, "seeded");
+  assert.equal(env.KEPT, "file");
+});
+
 test("dotenv files are optional and explicit provider wins", async () => {
   const directory = await fixture();
   const env = loadEnvironment({ CANDOR_LLM_PROVIDER: "replay" }, directory);

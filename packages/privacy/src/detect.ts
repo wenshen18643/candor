@@ -7,26 +7,36 @@ export const escapePattern = (text: string): string => text.replace(/[.*+?^${}()
 export const normalized = (text: string): string =>
   text.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
 
-export function termPattern(term: string): RegExp {
-  return new RegExp(`(?<![\\p{L}\\p{N}_])${escapePattern(term)}(?![\\p{L}\\p{N}_])`, "giu");
+export function termPattern(term: string, caseSensitive = false): RegExp {
+  return new RegExp(
+    `(?<![\\p{L}\\p{N}_])${escapePattern(term)}(?![\\p{L}\\p{N}_])`,
+    caseSensitive ? "gu" : "giu",
+  );
 }
 
-export function selfVariants(terms: string[]): string[] {
-  return [
-    ...new Set(
-      terms
-        .flatMap((term) => {
-          const variants = [term.trim()];
-          if (term.includes("@")) variants.push(term.split("@")[0]!);
-          else if (/^[\d\s()+.-]+$/.test(term) && term.replace(/\D/g, "").length >= 7)
-            variants.push(term.replace(/\D/g, ""));
-          else if (!/\d/.test(term))
-            variants.push(...term.split(/[^\p{L}]+/u).filter((token) => token.length >= 3));
-          return variants;
-        })
-        .filter(Boolean),
-    ),
-  ];
+export interface SelfVariant {
+  term: string;
+  caseSensitive: boolean;
+}
+
+export function selfVariants(terms: string[]): SelfVariant[] {
+  const variants = new Map<string, SelfVariant>();
+  const add = (term: string, caseSensitive = false) => {
+    if (term) variants.set(`${caseSensitive}:${term}`, { term, caseSensitive });
+  };
+  for (const raw of terms) {
+    const term = raw.trim();
+    add(term);
+    if (term.includes("@")) add(term.split("@")[0]!);
+    else if (/^[\d\s()+.-]+$/.test(term) && term.replace(/\D/g, "").length >= 7)
+      add(term.replace(/\D/g, ""));
+    else if (!/\d/.test(term))
+      for (const token of term.split(/[^\p{L}]+/u).filter((part) => part.length >= 3)) {
+        add(token[0]!.toUpperCase() + token.slice(1).toLowerCase(), true);
+        add(token.toUpperCase(), true);
+      }
+  }
+  return [...variants.values()];
 }
 
 function luhn(text: string): boolean {
@@ -223,10 +233,10 @@ export function detectPii(
       if (term.trim())
         for (const match of doc.text.matchAll(termPattern(term.trim())))
           add("other", match.index, match.index + match[0].length, "custom", 1);
-    for (const term of selfVariants(options.selfTerms)) {
+    for (const { term, caseSensitive } of selfVariants(options.selfTerms)) {
       const pattern = /^\d{7,}$/.test(term)
         ? new RegExp(`(?<!\\d)${term.split("").join("[\\s()+.-]*")}(?!\\d)`, "g")
-        : termPattern(term);
+        : termPattern(term, caseSensitive);
       for (const match of doc.text.matchAll(pattern))
         add("person", match.index, match.index + match[0].length, "self", 1);
     }

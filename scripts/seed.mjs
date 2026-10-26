@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import {
@@ -28,6 +28,12 @@ export async function requireStoppedApi(env) {
     );
     throw new Error("Stop the API before resetting demo data.");
   }
+}
+
+export async function resetIdentity(env, directory = root) {
+  const dataDir = resolve(directory, env.CANDOR_DATA_DIR || "./data");
+  for (const suffix of ["", "-shm", "-wal", "-journal"])
+    await rm(resolve(dataDir, `identity.db${suffix}`), { force: true });
 }
 
 export async function ensureBackends(processes, env) {
@@ -76,6 +82,7 @@ export async function seed({
   const removeSignals = handleSignals(processes);
   try {
     await preflight(env);
+    await resetIdentity(env, directory);
     const reset = await processes.start(
       "seed",
       "uv",

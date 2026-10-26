@@ -104,10 +104,32 @@ function SignIn() {
 export function ConsoleShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { identity, setIdentity, client, hydrated } = useConsole();
+  const [restored, setRestored] = useState(false);
 
   useEffect(() => {
     void useConsole.persist.rehydrate();
   }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const remembered = useConsole.getState().identity;
+    if (!remembered) {
+      setRestored(true);
+      return;
+    }
+    let cancelled = false;
+    client
+      .signIn(remembered)
+      .catch(() => {
+        if (!cancelled) setIdentity(null);
+      })
+      .finally(() => {
+        if (!cancelled) setRestored(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, client, setIdentity]);
 
   return (
     <TooltipProvider>
@@ -175,7 +197,9 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
             <ThemeToggle className="lg:self-start" />
           </div>
         </aside>
-        <main className="min-w-0">{!hydrated ? null : identity ? children : <SignIn />}</main>
+        <main className="min-w-0">
+          {!hydrated || !restored ? null : identity ? children : <SignIn />}
+        </main>
       </div>
     </TooltipProvider>
   );

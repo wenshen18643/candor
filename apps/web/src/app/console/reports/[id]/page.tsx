@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Brief } from "@/components/console/brief";
 import { ClaimSheet } from "@/components/console/claim-sheet";
@@ -38,15 +38,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConsole, usePseudonymMap } from "@/lib/console/store";
 import type { PaymentRequirements, ReportDetail, ReportStatus } from "@/lib/console/types";
 import { formatDateTime } from "@/lib/format";
-import type { AnalysisResult } from "@/lib/types";
+import type { AnalysisResult, StageEvent } from "@/lib/types";
 
 const statuses: ReportStatus[] = ["received", "triage", "investigating", "closed"];
 
-function EmptyAnalysis({ onRun, price }: { onRun: () => void; price: number }) {
+function EmptyAnalysis({
+  onRun,
+  price,
+  failure,
+}: {
+  onRun: () => void;
+  price: number;
+  failure: string | null;
+}) {
   return (
     <div className="flex flex-col items-start gap-4 rounded-lg border border-dashed border-line-strong p-6">
       <div>
-        <h2 className="text-lg font-semibold">No analysis yet</h2>
+        <h2 className="text-lg font-semibold">
+          {failure ? "The last analysis stopped" : "No analysis yet"}
+        </h2>
+        {failure ? (
+          <p role="alert" className="mt-1 max-w-[64ch] text-base text-contradicted">
+            {failure}
+          </p>
+        ) : null}
         <p className="mt-1 max-w-[64ch] text-base text-ink-2">
           Running the analysis sends only the redacted, pseudonymised view of this report to the
           analysis worker, which decrypts it in memory, runs the twelve-stage pipeline on Meta Muse,
@@ -55,7 +70,7 @@ function EmptyAnalysis({ onRun, price }: { onRun: () => void; price: number }) {
       </div>
       <Button variant="primary" onClick={onRun}>
         <CircleDollarSign aria-hidden="true" />
-        Run analysis · {price.toFixed(2)} USDC
+        {failure ? "Run again" : "Run analysis"} · {price.toFixed(2)} USDC
       </Button>
     </div>
   );
@@ -75,6 +90,7 @@ export default function ReportPage() {
   const [requirements, setRequirements] = useState<PaymentRequirements | null>(null);
   const [liveStages, setLiveStages] = useState<Record<string, StageState> | null>(null);
   const [running, setRunning] = useState(false);
+  const watching = useRef<string | null>(null);
 
   const load = useCallback(() => {
     client
@@ -103,32 +119,58 @@ export default function ReportPage() {
     setRequirements(await client.quoteAnalysis(reportId));
   }
 
+  const onStage = useCallback((event: StageEvent) => {
+    setLiveStages((current) => ({
+      ...(current ?? {}),
+      [event.stage]: {
+        ...(current?.[event.stage] ?? {}),
+        status: event.status === "progress" ? "started" : event.status,
+        detail: event.detail,
+        model: event.model,
+      },
+    }));
+  }, []);
+
+  const follow = useCallback(
+    (done: Promise<AnalysisResult>) => {
+      setRunning(true);
+      done
+        .then((result) => {
+          setLiveStages(stageStatesFromRuns(result.stages));
+          setRunning(false);
+          load();
+        })
+        .catch((cause) => {
+          setRunning(false);
+          setError(cause instanceof Error ? cause.message : "Analysis failed");
+          load();
+        });
+    },
+    [load],
+  );
+
+  useEffect(() => {
+    const state = detail?.summary.analysis;
+    if (!state || (state.status !== "queued" && state.status !== "running")) return;
+    if (watching.current === state.jobId) return;
+    watching.current = state.jobId;
+    setLiveStages({});
+    follow(client.watchAnalysis(reportId, state.jobId, onStage));
+  }, [detail, client, reportId, follow, onStage]);
+
   async function pay() {
     if (!requirements) throw new Error("No payment quote");
     setLiveStages({});
     setRunning(true);
+    setError(null);
     setTab("pipeline");
-    const { receipt, done } = await client.payAndRunAnalysis(reportId, requirements, (event) => {
-      setLiveStages((current) => ({
-        ...(current ?? {}),
-        [event.stage]: {
-          ...(current?.[event.stage] ?? {}),
-          status: event.status === "progress" ? "started" : event.status,
-          detail: event.detail,
-          model: event.model,
-        },
-      }));
-    });
-    done
-      .then((result) => {
-        setLiveStages(stageStatesFromRuns(result.stages));
-        setRunning(false);
-        load();
-      })
-      .catch((cause) => {
-        setRunning(false);
-        setError(cause instanceof Error ? cause.message : "Analysis failed");
-      });
+    const { receipt, jobId, done } = await client.payAndRunAnalysis(
+      reportId,
+      requirements,
+      onStage,
+    );
+    watching.current = jobId;
+    follow(done);
     return receipt;
   }
 
@@ -154,6 +196,10 @@ export default function ReportPage() {
 
   const stageStates = liveStages ?? (analysis ? stageStatesFromRuns(analysis.stages) : {});
   const hasAnalysis = Boolean(analysis) && !running;
+  const lastRun = detail.summary.analysis;
+  const failure =
+    error ?? (lastRun.status === "failed" || lastRun.status === "dead" ? lastRun.error : null);
+  const empty = <EmptyAnalysis onRun={openPay} price={detail.priceUsd} failure={failure} />;
 
   return (
     <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-8">
@@ -269,7 +315,7 @@ export default function ReportPage() {
                 The analysis is running. Follow it on the Pipeline tab.
               </p>
             ) : (
-              <EmptyAnalysis onRun={openPay} price={detail.priceUsd} />
+              empty
             )}
           </TabsContent>
           {analysis ? (
@@ -302,18 +348,27 @@ export default function ReportPage() {
               <div className="flex flex-col gap-6">
                 <div>
                   <h2 className="text-lg font-semibold">
-                    {running ? "Analysis running" : "Last analysis run"}
+                    {!running
+                      ? "Last analysis run"
+                      : Object.keys(stageStates).length > 0
+                        ? "Analysis running"
+                        : "Paid and queued, waiting for a worker"}
                   </h2>
                   <p className="mt-1 max-w-[68ch] text-base text-ink-2">
                     The worker pulls the job, unseals the analysis key with its enclave key, and
                     streams each stage&apos;s progress here over server-sent events. Plaintext
                     exists only in the worker&apos;s memory.
                   </p>
+                  {failure && !running ? (
+                    <p role="alert" className="mt-2 max-w-[68ch] text-base text-contradicted">
+                      {failure}
+                    </p>
+                  ) : null}
                 </div>
                 <PipelineDag states={stageStates} />
               </div>
             ) : (
-              <EmptyAnalysis onRun={openPay} price={detail.priceUsd} />
+              empty
             )}
           </TabsContent>
         </div>

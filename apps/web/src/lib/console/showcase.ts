@@ -366,6 +366,11 @@ export const showcaseClient: ConsoleClient = {
     });
     return { receipt, jobId, done };
   },
+  async watchAnalysis(reportId) {
+    const finished = state.analyses[reportId];
+    if (!finished) throw new Error("No analysis is running for this report");
+    return finished;
+  },
   async requestAccess(reportId, reason) {
     await wait(300);
     const requester = signedIn ?? identities[0];

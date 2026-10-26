@@ -218,6 +218,18 @@ describe("PII precision and self precedence", () => {
     expect(result.pseudonymMap).toEqual([]);
     expect(result.documents[0]!.text).toContain("[REDACTED]");
   });
+  it("self term fragments only match as proper nouns", () => {
+    const docs = [
+      {
+        docKey: "S",
+        text: "Spare Parts Reconciliation approved the spare parts order. Parts were late. SPARE stock ran out.",
+      },
+    ];
+    const text = scrub(docs, detectPii(docs, { selfTerms: ["spare parts reconciliation"] }))
+      .documents[0]!.text;
+    expect(text).toContain("the spare parts order");
+    expect(text).not.toMatch(/Spare Parts Reconciliation|\bParts were|SPARE/);
+  });
   it("custom terms are literal, Unicode-safe, and deterministic", () => {
     const docs = [
       { docKey: "S", text: "Project (Orchid) and René Martin. Project (Orchid) again." },

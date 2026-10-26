@@ -125,6 +125,11 @@ export interface ConsoleClient {
     requirements: PaymentRequirements,
     onEvent: StageEventHandler,
   ): Promise<{ receipt: PaymentReceipt; jobId: string; done: Promise<AnalysisResult> }>;
+  watchAnalysis(
+    reportId: string,
+    jobId: string,
+    onEvent: StageEventHandler,
+  ): Promise<AnalysisResult>;
   requestAccess(reportId: string, reason: string): Promise<AccessRequest>;
   approveAccess(request: AccessRequest, approver: ReviewerIdentity): Promise<AccessRequest>;
   unlockEvidence(reportId: string, request: AccessRequest): Promise<UnlockedEvidence>;

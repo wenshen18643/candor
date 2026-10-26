@@ -578,6 +578,9 @@ export function createLiveClient(): ConsoleClient {
         done,
       };
     },
+    async watchAnalysis(reportId, jobId, onEvent) {
+      return finishAnalysis(current(), reportId, jobId, onEvent);
+    },
     async requestAccess(reportId, reason) {
       const active = current();
       const report = await active.sdk.getReport(reportId);

@@ -14,10 +14,14 @@ export function isMain(url) {
 
 export function loadEnvironment(base = process.env, directory = root) {
   const env = { ...base };
+  const blankFromFile = new Set();
   const load = (path) => {
     if (!existsSync(path)) return;
     for (const [key, value] of Object.entries(parseEnv(readFileSync(path, "utf8")))) {
-      if (env[key] === undefined) env[key] = value;
+      if (env[key] !== undefined && !blankFromFile.has(key)) continue;
+      env[key] = value;
+      if (value === "") blankFromFile.add(key);
+      else blankFromFile.delete(key);
     }
   };
   load(resolve(directory, ".env"));

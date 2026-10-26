@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/field";
 import { useConsole } from "@/lib/console/store";
 import type { ReportSummary } from "@/lib/console/types";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, pluralize } from "@/lib/format";
 
 const statusTone = {
   received: "info",
@@ -39,6 +39,14 @@ function AnalysisCell({ report }: { report: ReportSummary }) {
       Not analysed
     </span>
   );
+}
+
+function pendingHeadline({ analysis }: ReportSummary) {
+  if (analysis.status === "queued" || analysis.status === "running")
+    return "Sealed evidence. The brief appears here when analysis finishes.";
+  if (analysis.status === "failed" || analysis.status === "dead")
+    return "Sealed evidence. Analysis stopped before a brief was ready.";
+  return "Sealed evidence, not yet analysed.";
 }
 
 export default function ReportsPage() {
@@ -120,16 +128,17 @@ export default function ReportsPage() {
                           <span className="text-sm text-ink-2">{report.campaignTitle}</span>
                         </span>
                         <span className="mt-1 block max-w-[60ch] text-base text-ink">
-                          {report.headline ??
-                            `${report.fileCount} files, ${report.sizeBucket}. Not yet analysed.`}
+                          {report.headline ?? pendingHeadline(report)}
                         </span>
                       </Link>
                       <span className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-ink-3">
-                        <span>{report.fileCount} files</span>
+                        <span>
+                          {pluralize(report.fileCount, "file")}, {report.sizeBucket}
+                        </span>
                         {report.unreadReplies > 0 ? (
                           <span className="inline-flex items-center gap-1 text-seal-ink">
                             <MessageSquareText className="size-3.5" aria-hidden="true" />
-                            {report.unreadReplies} reply
+                            {pluralize(report.unreadReplies, "reply", "replies")}
                           </span>
                         ) : null}
                         <span className="sm:hidden">
