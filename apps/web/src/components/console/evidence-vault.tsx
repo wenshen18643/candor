@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, FileText, KeyRound, LockKeyhole, LockKeyholeOpen, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Hash } from "@/components/ui/hash";
 import { cn } from "@/lib/cn";
 import { useConsole } from "@/lib/console/store";
 import type { AccessRequest, ReportDetail, ReviewerIdentity } from "@/lib/console/types";
-import { formatBytes, pluralize } from "@/lib/format";
+import { formatBytes, metadataLabel, pluralize, revealingFirst } from "@/lib/format";
 
 function ShareSlots({
   detail,
@@ -82,8 +82,22 @@ export function EvidenceVault({
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [request, setRequest] = useState<AccessRequest | null>(detail.accessRequest);
+  const [demoIdentities, setDemoIdentities] = useState<ReviewerIdentity[]>([]);
   const reportId = detail.summary.reportId;
   const evidence = unlocked[reportId];
+
+  useEffect(() => {
+    let cancelled = false;
+    client
+      .listIdentities()
+      .then((values) => {
+        if (!cancelled) setDemoIdentities(values);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [client]);
 
   async function run(label: string, action: () => Promise<void>) {
     setBusy(label);
@@ -97,11 +111,22 @@ export function EvidenceVault({
     }
   }
 
-  const otherReviewers = detail.reviewers.filter(
+  const pendingApprover = (reviewerId: string) =>
+    reviewerId !== request?.requesterId &&
+    !request?.approvals.some((item) => item.approverId === reviewerId);
+  const canApprove = Boolean(identity && pendingApprover(identity.reviewerId));
+  const demoApprovers = demoIdentities.filter(
     (reviewer) =>
-      reviewer.reviewerId !== request?.requesterId &&
-      !request?.approvals.some((item) => item.approverId === reviewer.reviewerId),
+      reviewer.reviewerId !== identity?.reviewerId && pendingApprover(reviewer.reviewerId),
   );
+
+  function approve(approver: ReviewerIdentity) {
+    if (!request) return;
+    void run("approve", async () => {
+      setRequest(await client.approveAccess(request, approver));
+      onChanged();
+    });
+  }
 
   if (evidence) {
     return (
@@ -158,14 +183,29 @@ export function EvidenceVault({
                     </Badge>
                   </td>
                   <td className="px-3 py-3">
-                    <ul className="flex flex-col gap-0.5 text-sm">
-                      {file.metadataRemoved.map((field) => (
-                        <li key={field.field} className="flex gap-2">
-                          <span className="text-ink-2">{field.field}</span>
-                          <span className="font-mono text-xs text-ink-3">{field.preview}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {file.metadataRemoved.length === 0 ? (
+                      <span className="text-sm text-ink-3">Nothing hidden was found</span>
+                    ) : (
+                      <ul className="flex flex-col gap-0.5 text-sm">
+                        {revealingFirst(file.metadataRemoved)
+                          .slice(0, 5)
+                          .map((field) => (
+                            <li key={field.field} className="flex gap-2">
+                              <span className="text-ink-2 first-letter:uppercase">
+                                {metadataLabel(field.field)}
+                              </span>
+                              {/[^*\s]/.test(field.preview) ? (
+                                <span className="font-mono text-xs text-ink-3">
+                                  {field.preview}
+                                </span>
+                              ) : null}
+                            </li>
+                          ))}
+                        {file.metadataRemoved.length > 5 ? (
+                          <li className="text-ink-3">and {file.metadataRemoved.length - 5} more</li>
+                        ) : null}
+                      </ul>
+                    )}
                   </td>
                   <td className="px-3 py-3">
                     <Hash value={file.sha256} label="file hash" />
@@ -194,7 +234,8 @@ export function EvidenceVault({
           <p className="mt-1 max-w-[68ch] text-base text-ink-2">
             The reporter&apos;s browser split this report&apos;s key into {detail.reviewers.length}{" "}
             Shamir shares and sealed one to each reviewer. Any {detail.threshold} can reconstruct
-            it; nobody can alone, including the server. The analysis above was produced without it.
+            it; nobody can alone, including the server. The analysis never needs it: it runs on the
+            redacted view only.
           </p>
         </div>
       </div>
@@ -240,37 +281,52 @@ export function EvidenceVault({
         </form>
       ) : request.status === "pending" ? (
         <div className="flex flex-col gap-3">
-          <p className="text-base text-ink-2">
-            Requested by {request.requesterName}: “{request.reason}”. Waiting for{" "}
-            {Math.max(0, request.threshold - 1 - request.approvals.length)} more approval.
+          <p className="text-base text-ink-2">Requested by {request.requesterName}:</p>
+          <p className="max-w-[68ch] rounded-md bg-surface px-3 py-2 text-base text-ink">
+            “{request.reason}”
           </p>
-          {client.mode === "showcase" ? (
+          <p className="text-base text-ink-2">
+            Waiting for{" "}
+            {pluralize(
+              Math.max(0, request.threshold - 1 - request.approvals.length),
+              "more approval",
+            )}
+            .
+          </p>
+          {canApprove && identity ? (
+            <div>
+              <Button
+                variant="primary"
+                loading={busy === "approve"}
+                onClick={() => approve(identity)}
+              >
+                <KeyRound aria-hidden="true" />
+                Approve and re-seal my share
+              </Button>
+            </div>
+          ) : demoApprovers.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {otherReviewers.slice(0, 1).map((reviewer) => (
+              {demoApprovers.slice(0, 1).map((reviewer) => (
                 <Button
                   key={reviewer.reviewerId}
                   variant="secondary"
                   loading={busy === "approve"}
-                  onClick={() =>
-                    void run("approve", async () => {
-                      const approver = (await client.listIdentities()).find(
-                        (item) => item.reviewerId === reviewer.reviewerId,
-                      );
-                      if (!approver) throw new Error("Reviewer not found");
-                      setRequest(await client.approveAccess(request, approver));
-                      onChanged();
-                    })
-                  }
+                  onClick={() => approve(reviewer)}
                 >
                   Approve as {reviewer.displayName}
                 </Button>
               ))}
               <span className="self-center text-sm text-ink-3">
-                In production this happens in the other reviewer&apos;s console, with their own key.
+                Demo shortcut. In production this happens in the other reviewer&apos;s console, with
+                their own key.
               </span>
             </div>
           ) : null}
         </div>
+      ) : request.status === "granted" && request.requesterId !== identity?.reviewerId ? (
+        <p className="text-base text-ink-2">
+          Quorum reached. Only {request.requesterName} can combine the shares, in their own browser.
+        </p>
       ) : request.status === "granted" ? (
         <div className="flex flex-col gap-3">
           <p className="text-base text-ink">

@@ -7,6 +7,7 @@ import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { metadataLabel, revealingFirst } from "@/lib/format";
 import { applyRedactions, documentKey, hasText, statementKey } from "@/lib/reporter/engine";
 import { type Action, useReporter } from "@/lib/reporter/store";
 
@@ -46,15 +47,6 @@ const actionCopy: Record<Action, string> = {
   redact: "removed",
   keep: "kept as written",
 };
-
-function prettyField(field: string) {
-  const last = field.split("/").pop() ?? field;
-  const bare = last.replace(/^[a-z0-9]+:/i, "");
-  return bare
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/[-_]/g, " ")
-    .toLowerCase();
-}
 
 function uniqueQuasi(report: LeakageReport) {
   const seen = new Set<string>();
@@ -227,9 +219,9 @@ function FileCard({
           {file.metadataRemoved.length ? (
             <p className="mt-0.5 text-sm text-ink-2">
               Removed hidden details:{" "}
-              {file.metadataRemoved
+              {revealingFirst(file.metadataRemoved)
                 .slice(0, 4)
-                .map((field) => prettyField(field.field))
+                .map((field) => metadataLabel(field.field))
                 .join(", ")}
               {file.metadataRemoved.length > 4
                 ? ` and ${file.metadataRemoved.length - 4} more`

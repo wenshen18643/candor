@@ -61,3 +61,22 @@ export function percent(value: number, digits = 0) {
 export function pluralize(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
 }
+
+export function metadataLabel(field: string) {
+  const last = field.split("/").pop() ?? field;
+  const bare = last.replace(/^[a-z0-9]+:/i, "");
+  return bare
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_]/g, " ")
+    .toLowerCase()
+    .replace(/\b(ip|id|mime|gps|xmp|dkim)\b/g, (word) => word.toUpperCase());
+}
+
+const revealing =
+  /creator|author|modified|company|manager|owner|originating|received|gps|location|user|revision|from/i;
+
+export function revealingFirst<T extends { field: string }>(fields: T[]) {
+  return [...fields].sort(
+    (a, b) => Number(revealing.test(b.field)) - Number(revealing.test(a.field)),
+  );
+}
