@@ -5,11 +5,30 @@ import {
   handleSignals,
   isMain,
   loadEnvironment,
+  localUrl,
   Processes,
   root,
   servicePlan,
   waitForHealth,
 } from "./dev.mjs";
+
+export async function requireStoppedApi(env) {
+  const url = new URL("/v1/health", localUrl(env.CANDOR_API_URL, "http://localhost:8000"));
+  let running = false;
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(1000) });
+    await response.body?.cancel();
+    running = true;
+  } catch {
+    running = false;
+  }
+  if (running) {
+    console.error(
+      "[seed] Stop the local API before pnpm seed. Resetting a running API invalidates its in-memory audit keys.",
+    );
+    throw new Error("Stop the API before resetting demo data.");
+  }
+}
 
 export async function ensureBackends(processes, env) {
   for (const service of servicePlan(env, ["--no-worker", "--no-web"])) {
@@ -47,6 +66,7 @@ export async function seed({
   runner,
   prepare = ensureBackends,
   base = process.env,
+  preflight = requireStoppedApi,
 } = {}) {
   const processes =
     runner ||
@@ -55,6 +75,7 @@ export async function seed({
     });
   const removeSignals = handleSignals(processes);
   try {
+    await preflight(env);
     const reset = await processes.start(
       "seed",
       "uv",

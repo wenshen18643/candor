@@ -34,3 +34,5 @@ test-results/
 Thumbs.db
 .pnpm-store/
 .vercel
+infra/.artifacts/
+packages/sdk/.e2e/

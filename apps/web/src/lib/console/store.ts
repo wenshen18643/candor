@@ -30,10 +30,12 @@ export const useConsole = create<ConsoleState>()(
             get: (_target, property: keyof ConsoleClient) =>
               property === "mode"
                 ? "live"
-                : (...args: unknown[]) =>
-                    import("./live").then(({ liveClient }) =>
-                      Reflect.apply(liveClient[property], liveClient, args),
-                    ),
+                : typeof _target[property] === "function"
+                  ? (...args: unknown[]) =>
+                      import("./live").then(({ liveClient }) =>
+                        Reflect.apply(liveClient[property], liveClient, args),
+                      )
+                  : undefined,
           }),
       identity: null,
       unlocked: {},

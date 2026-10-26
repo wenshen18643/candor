@@ -27,7 +27,7 @@ def executable_command() -> list[str]:
 
 class CodexCLIProvider:
     def __init__(
-        self, model: str = "gpt-6.1-sol", concurrency: int = 4, timeout: float = 180
+        self, model: str = "gpt-6.1-sol", concurrency: int = 2, timeout: float = 600
     ) -> None:
         self.model = model
         self.timeout = timeout

@@ -17,14 +17,14 @@ Use the Tailwind names, never raw values: `bg`, `surface`, `surface-2`, `surface
 
 Evidence semantics (always paired with an icon and a word, never colour alone):
 
-| Token | Meaning |
-| --- | --- |
+| Token                    | Meaning                                                  |
+| ------------------------ | -------------------------------------------------------- |
 | `documented` (+ `-soft`) | supported by document(s); corroborated uses the same hue |
-| `info` | single source, inference, neutral information |
-| `allegation` | reporter allegation, unverifiable |
-| `contradicted` | conflicts with other evidence; genuine errors |
-| `unsupported` | not supported, greyed slate |
-| `quarantine` | prompt-injection quarantine |
+| `info`                   | single source, inference, neutral information            |
+| `allegation`             | reporter allegation, unverifiable                        |
+| `contradicted`           | conflicts with other evidence; genuine errors            |
+| `unsupported`            | not supported, greyed slate                              |
+| `quarantine`             | prompt-injection quarantine                              |
 
 Dark mode is `[data-theme="dark"]` on `<html>` (system default, toggle persists in localStorage).
 Use `dark:` only when a token cannot express the difference.

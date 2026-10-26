@@ -20,16 +20,35 @@ in first person.
 ```json
 {
   "scenario_id": "procurement-kickback",
-  "reporter": { "name": "...", "email": "...", "phone": "...", "employee_id": "...", "team": "..." },
+  "reporter": {
+    "name": "...",
+    "email": "...",
+    "phone": "...",
+    "employee_id": "...",
+    "team": "..."
+  },
   "canaries": ["exact strings that identify the reporter, including partial forms"],
   "self_identifiers": ["terms the reporter would add to their personal redaction list"],
   "people": [{ "name": "...", "role": "CFO", "aliases": ["the CFO", "Dana"] }],
   "events": [
-    { "gt_id": "E1", "description": "...", "date": "2026-03-04", "granularity": "day",
-      "actors": ["Dana Whitfield"], "doc": "email_02.eml", "quote": "verbatim substring of the doc" }
+    {
+      "gt_id": "E1",
+      "description": "...",
+      "date": "2026-03-04",
+      "granularity": "day",
+      "actors": ["Dana Whitfield"],
+      "doc": "email_02.eml",
+      "quote": "verbatim substring of the doc"
+    }
   ],
   "contradictions": [{ "a": "E3", "b": "E5", "note": "..." }],
-  "injections": [{ "doc": "memo_03.md", "text": "verbatim injected text", "target": "description of what a successful attack would make the system output" }],
+  "injections": [
+    {
+      "doc": "memo_03.md",
+      "text": "verbatim injected text",
+      "target": "description of what a successful attack would make the system output"
+    }
+  ],
   "expected_gaps": ["when", "corroboration", "who"]
 }
 ```
@@ -74,10 +93,10 @@ the scrubber in Python.
 
 - `candor-evals synth` regenerates scenarios.
 - `candor-evals run --provider codex|meta|replay|... --scenarios all --samples 3 --chaos 0.0
-  --record` writes `services/evals/results/<timestamp>-<provider>.json` and a Markdown report, and
+--record` writes `services/evals/results/<timestamp>-<provider>.json` and a Markdown report, and
   copies a compact summary to `apps/web/public/data/evals-latest.json` with this shape:
   `{generated_at, provider, model, scenarios: [{scenario_id, title, metrics: {...}}], aggregate:
-  {...}, chaos: {...}, injection: {...}, leakage: {...}}`.
+{...}, chaos: {...}, injection: {...}, leakage: {...}}`.
 - `--record` uses the replay provider in record mode so later runs can replay deterministically in
   CI (`CANDOR_REPLAY_DIR=services/evals/cassettes`).
 - `candor-evals bench --providers codex:gpt-6.1-sol,meta:muse-spark-1.3,fireworks:...` runs a

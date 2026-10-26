@@ -7,14 +7,14 @@ spec wins unless the spec is updated in the same change.
 
 ## Trust domains and services
 
-| Service | Path | Lang | Port | Holds | Never holds |
-| --- | --- | --- | --- | --- | --- |
-| Web app | `apps/web` | Next.js 15, TS | 3000 | nothing server-side; all crypto runs in the browser | plaintext evidence on any server |
-| Identity service | `services/identity` | Node 22+, Hono, TS | 8787 | per-campaign RSA blind-signing keys, scoped nullifier tags, short-lived verification sessions | reports, evidence, payment data, raw proofs |
-| Report API | `services/api` | Python 3.12+, FastAPI | 8000 | ciphertext, sealed key shares, job queue, transparency log, payments ledger (separate DB) | any plaintext evidence or keys able to open it |
-| Analysis worker | `services/pipeline` | Python 3.12+ | none (pulls jobs) | enclave X25519 private key, in-memory plaintext of the redacted analysis view only | original evidence, pseudonym map, identity data |
-| Evals | `services/evals` | Python 3.12+ | none | synthetic scenarios, metrics, benchmark harness | real data |
-| Client libraries | `packages/crypto`, `packages/privacy`, `packages/sdk` | TS | none | used by the browser, the demo seeder and the eval scrubber CLI | |
+| Service          | Path                                                  | Lang                  | Port              | Holds                                                                                         | Never holds                                     |
+| ---------------- | ----------------------------------------------------- | --------------------- | ----------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Web app          | `apps/web`                                            | Next.js 15, TS        | 3000              | nothing server-side; all crypto runs in the browser                                           | plaintext evidence on any server                |
+| Identity service | `services/identity`                                   | Node 22+, Hono, TS    | 8787              | per-campaign RSA blind-signing keys, scoped nullifier tags, short-lived verification sessions | reports, evidence, payment data, raw proofs     |
+| Report API       | `services/api`                                        | Python 3.12+, FastAPI | 8000              | ciphertext, sealed key shares, job queue, transparency log, payments ledger (separate DB)     | any plaintext evidence or keys able to open it  |
+| Analysis worker  | `services/pipeline`                                   | Python 3.12+          | none (pulls jobs) | enclave X25519 private key, in-memory plaintext of the redacted analysis view only            | original evidence, pseudonym map, identity data |
+| Evals            | `services/evals`                                      | Python 3.12+          | none              | synthetic scenarios, metrics, benchmark harness                                               | real data                                       |
+| Client libraries | `packages/crypto`, `packages/privacy`, `packages/sdk` | TS                    | none              | used by the browser, the demo seeder and the eval scrubber CLI                                |                                                 |
 
 Separation guarantees (talking points, must stay true in code):
 
@@ -57,7 +57,7 @@ Separation guarantees (talking points, must stay true in code):
   `eslint.config.mjs`). Tests with Vitest.
 - Python: 3.12+, managed by `uv`, each service its own uv project with its own `pyproject.toml`,
   lockfile and `.venv`. Lint and format with Ruff using the root `ruff.toml` (run `uvx ruff@0.14.2
-  check` and `uvx ruff@0.14.2 format`). Tests with pytest. Type hints everywhere, Pydantic v2 for
+check` and `uvx ruff@0.14.2 format`). Tests with pytest. Type hints everywhere, Pydantic v2 for
   all boundary models.
 - Never commit secrets. All config through env vars listed in `.env.example`.
 - Every external integration (Meta Model API, Codex CLI, Fireworks, Baseten, Self, x402 facilitator,

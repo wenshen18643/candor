@@ -277,3 +277,11 @@ async def test_extract_survives_lost_sample() -> None:
 async def test_extract_fails_when_every_sample_is_lost() -> None:
     with pytest.raises(PipelineError):
         await DAGRunner(FakeProvider(fail={"extract"})).run(payload())
+
+
+async def test_verifier_outage_degrades_to_unverifiable() -> None:
+    result = await DAGRunner(FakeProvider(fail={"verify"})).run(payload())
+    verify_run = next(stage for stage in result.stages if stage.stage == "verify")
+    assert verify_run.status == "degraded"
+    assert "verifier_batches_unavailable:1" in verify_run.notes
+    assert all(claim.verification.verdict == "unverifiable" for claim in result.claims)

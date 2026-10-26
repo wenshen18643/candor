@@ -47,12 +47,12 @@ candor_pipeline/
 from a price table), `latency_ms`, `provider`, `model`.
 
 - `openai_compat`: Chat Completions with `response_format={"type": "json_schema", "json_schema":
-  {"name", "schema", "strict": true}}`. Base URLs: Meta `https://api.meta.ai/v1` (key
+{"name", "schema", "strict": true}}`. Base URLs: Meta `https://api.meta.ai/v1` (key
   `MODEL_API_KEY`), Fireworks and Baseten per `docs/research/fireworks-baseten.md`. Retries with
   exponential backoff and jitter on 429/5xx (max 4), honour `Retry-After`. Read
   `docs/research/meta-model-api.md` for exact request details and adapt if the docs differ.
 - `codex_cli`: runs `codex exec -m <CANDOR_CODEX_MODEL> --output-schema <tmp schema> -o <tmp out>
-  --ephemeral --skip-git-repo-check --ignore-user-config -s read-only -C <empty tmp dir> -` with the
+--ephemeral --skip-git-repo-check --ignore-user-config -s read-only -C <empty tmp dir> -` with the
   prompt on stdin. The prompt must instruct the model to answer directly with JSON and not run any
   commands. Concurrency limited by a semaphore (default 4). Timeout 240 s. Read
   `docs/research/codex-cli-provider.md` for the verified command line and schema restrictions (for
@@ -93,20 +93,20 @@ from a price table), `latency_ms`, `provider`, `model`.
 
 ## Stages (DAG)
 
-| # | Stage | Kind | Depends on | Output |
-| --- | --- | --- | --- | --- |
-| 1 | `segment` | deterministic | — | passages with stable IDs |
-| 2 | `injection_scan` | heuristic + 1 LLM call | segment | `InjectionFinding[]`, passage risks |
-| 3 | `extract` | LLM x K samples (default K=3) | segment, injection_scan | raw claims per sample |
-| 4 | `consolidate` | deterministic | extract | canonical claims, `sample_agreement` |
-| 5 | `ground` | deterministic | consolidate | `quote_verified` + offsets per citation |
-| 6 | `verify` | LLM (batched, 20 claims per call) | ground | `Verification` per claim |
-| 7 | `temporal` | deterministic + STN | consolidate | timeline, conflicts |
-| 8 | `entities` | 1 LLM call + union-find | consolidate | entities, aliases, relations |
-| 9 | `contradictions` | blocking + 1 LLM call | verify, temporal | contradictions |
-| 10 | `calibrate` | deterministic | verify, contradictions, temporal | confidence, evidence_class |
-| 11 | `gaps` | 1 LLM call | calibrate, entities, temporal | follow-up questions |
-| 12 | `brief` | 1 LLM call + deterministic assembly | all | summary, metrics |
+| #   | Stage            | Kind                                | Depends on                       | Output                                  |
+| --- | ---------------- | ----------------------------------- | -------------------------------- | --------------------------------------- |
+| 1   | `segment`        | deterministic                       | —                                | passages with stable IDs                |
+| 2   | `injection_scan` | heuristic + 1 LLM call              | segment                          | `InjectionFinding[]`, passage risks     |
+| 3   | `extract`        | LLM x K samples (default K=3)       | segment, injection_scan          | raw claims per sample                   |
+| 4   | `consolidate`    | deterministic                       | extract                          | canonical claims, `sample_agreement`    |
+| 5   | `ground`         | deterministic                       | consolidate                      | `quote_verified` + offsets per citation |
+| 6   | `verify`         | LLM (batched, 20 claims per call)   | ground                           | `Verification` per claim                |
+| 7   | `temporal`       | deterministic + STN                 | consolidate                      | timeline, conflicts                     |
+| 8   | `entities`       | 1 LLM call + union-find             | consolidate                      | entities, aliases, relations            |
+| 9   | `contradictions` | blocking + 1 LLM call               | verify, temporal                 | contradictions                          |
+| 10  | `calibrate`      | deterministic                       | verify, contradictions, temporal | confidence, evidence_class              |
+| 11  | `gaps`           | 1 LLM call                          | calibrate, entities, temporal    | follow-up questions                     |
+| 12  | `brief`          | 1 LLM call + deterministic assembly | all                              | summary, metrics                        |
 
 Independent stages run concurrently (asyncio). Each stage emits `StageEvent`s (`started`, optional
 `progress`, then `succeeded`/`degraded`/`failed`) through an async callback. A failed non-critical
@@ -114,11 +114,13 @@ stage (entities, contradictions, gaps, brief) degrades the result instead of fai
 failure of segment or extract fails the job.
 
 ### 1 · segment
+
 Split each document (and the reporter statement as pseudo-document `S`) into passages: paragraph
 boundaries first, then sentence windows so passages are 300-900 characters, never splitting inside
 a sentence. IDs `D{n}.P{ordinal:03d}` and `S.P{ordinal:03d}`. Record char offsets and sha256.
 
 ### 3 · extract
+
 Prompt asks for atomic claims: who did what to whom, when (verbatim time expression), cited
 passages with exact verbatim quotes (<= 40 words each), kind, source_type (statement passages are
 `reporter_statement`), and temporal links to other claims expressed in the text ("after the audit").
@@ -126,12 +128,14 @@ Output IDs are sample-local; consolidation assigns final `C001...` IDs. Use temp
 sample 0 and 0.8 for others where supported.
 
 ### 4 · consolidate
+
 Cluster claims across samples: same-sample claims never merge; similarity = 0.6 * token-set ratio of
 statements + 0.2 * actor overlap (Jaccard) + 0.2 * citation passage overlap; agglomerate at >= 0.72.
 Canonical claim = medoid; union of citations (deduplicated); `sample_agreement` =
 distinct samples in cluster / K. Remap temporal links.
 
 ### 5 · ground
+
 For each citation: normalise whitespace, quotes and dashes on both sides, then exact substring
 search in the cited passage; fallback fuzzy partial ratio >= 95 over a sliding window. Set
 `quote_verified`, `match_start`, `match_end`. A citation to a non-existent passage is dropped and
@@ -139,12 +143,14 @@ the claim gets flag `invalid_citation`. Claims left with no verified citation ge
 `unverified_quote`.
 
 ### 6 · verify
+
 Separate verifier prompt (different system prompt, temperature 0) judges each claim ONLY against
 the text of its cited passages: `supported | partially_supported | not_supported | contradicted |
 unverifiable` with a one-sentence rationale. Claims from the reporter statement are verified
 against document passages if they cite any, otherwise `unverifiable`.
 
 ### 7 · temporal
+
 `normalize.py`: convert each claim's time expression to a `TimeInterval` using the citing document's
 `anchor_date` (email date) as reference: absolute dates, month/quarter/year, "early/mid/late
 <month>", relative expressions ("last Tuesday", "two weeks later", "the following month"),
@@ -161,18 +167,21 @@ then by topological order of links; one `TimelineEvent` per claim of kind `event
 link (merge claims with identical normalised action + overlapping intervals).
 
 ### 8 · entities
+
 Start from `entity_legend` placeholders. One LLM call proposes alias links (for example "the CFO",
 "my manager", "PERSON_3") with the passage that justifies each link and roles per entity. Merge with
 union-find; never merge two distinct placeholders of the same type unless the justification passage
 explicitly equates them. Relations: from claims, actor -> target labelled with the action.
 
 ### 9 · contradictions
+
 Blocking: candidate pairs share an actor or target AND have overlapping intervals or opposite
 polarity keywords; cap 60 pairs. One batched LLM call labels each pair
 `contradiction | compatible | unrelated` with severity and the passages. Temporal conflicts from
 stage 7 are also added as contradictions.
 
 ### 10 · calibrate
+
 `score = sigmoid(-1.6 + 2.2 * agreement + 1.8 * v + 0.45 * min(sources, 3) - 1.2 * contradicted -
 1.5 * injected)` where `v` = 1 supported, 0.6 partially, 0 unverifiable, -0.6 not_supported,
 -1.2 contradicted; `sources` = distinct documents with verified quotes. Labels: high >= 0.8,
@@ -185,12 +194,14 @@ uncertainty sentence, for example "Supported by 2 documents; 3/3 extraction samp
 to within a week."
 
 ### 11 · gaps
+
 One LLM call given claims with low confidence, unknown dates, unresolved actors and unsupported
 allegations. Produces 3-8 neutral, non-leading follow-up questions to the reporter, each tied to
 claims, with gap_type, priority and expected_information_gain. Questions must never ask the reporter
 to reveal their own identity, role or contact details.
 
 ### 12 · brief
+
 One LLM call producing `BriefSummary` from calibrated claims only, where every key point ends with
 claim references like `[C004, C007]`, allegations are worded as allegations, and limitations list
 what the evidence does not show. Deterministically validate that referenced claim IDs exist and that

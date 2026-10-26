@@ -227,12 +227,22 @@ export function localUrl(value, fallback) {
 export function serviceEnvironment(name, env) {
   const filtered = { ...env };
   if (name === "worker") return filtered;
-  for (const key of ["CANDOR_ENCLAVE_SK", "MODEL_API_KEY", "FIREWORKS_API_KEY", "BASETEN_API_KEY"]) {
+  for (const key of [
+    "CANDOR_ENCLAVE_SK",
+    "MODEL_API_KEY",
+    "FIREWORKS_API_KEY",
+    "BASETEN_API_KEY",
+  ]) {
     delete filtered[key];
   }
   if (name === "api") delete filtered.CANDOR_IDENTITY_SECRET;
   if (name === "identity" || name === "web") {
-    for (const key of ["CANDOR_WORKER_TOKEN", "CANDOR_JWT_SECRET", "CANDOR_PAYMENTS_LINK_KEY", "ANCHOR_PRIVATE_KEY"]) {
+    for (const key of [
+      "CANDOR_WORKER_TOKEN",
+      "CANDOR_JWT_SECRET",
+      "CANDOR_PAYMENTS_LINK_KEY",
+      "ANCHOR_PRIVATE_KEY",
+    ]) {
       delete filtered[key];
     }
   }

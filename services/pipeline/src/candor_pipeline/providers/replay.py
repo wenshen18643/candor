@@ -34,7 +34,7 @@ class ReplayProvider:
 
     async def complete_json(self, request: LLMRequest) -> LLMResponse:
         path = self.directory / (cassette_key(request) + ".json")
-        if self.mode != "record" and path.is_file():
+        if path.is_file():
             return LLMResponse.model_validate_json(await asyncio.to_thread(path.read_bytes))
         if self.mode == "replay" or self.inner is None:
             raise ProviderError("cassette_missing")

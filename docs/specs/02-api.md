@@ -18,26 +18,26 @@ decrypt them. All protocol details are in 01-protocols.
 - `orgs(id, slug, name)`
 - `reviewers(id, org_id, display_name, role ['reviewer' | 'admin' | 'auditor'], enc_pk, sig_pk, created_at)`
 - `campaigns(id (slug), org_id, title, description, threshold, issuer_key_id, issuer_spki,
-  analysis_price_usd, status)`. Issuer key material is fetched from the identity service
+analysis_price_usd, status)`. Issuer key material is fetched from the identity service
   (`GET {CANDOR_IDENTITY_URL}/v1/campaigns/{id}/issuer`) and cached; the API only ever has the
   public key.
 - `reports(id, campaign_id, org_id, status ['received' | 'triage' | 'investigating' | 'closed'],
-  received_bucket (hour), evidence_root, manifest_box, analysis_box_ref, analysis_sealed_key,
-  enclave_key_id, inbox_sig_pk, inbox_enc_pk, size_bucket)`
+received_bucket (hour), evidence_root, manifest_box, analysis_box_ref, analysis_sealed_key,
+enclave_key_id, inbox_sig_pk, inbox_enc_pk, size_bucket)`
 - `report_files(report_id, index, blob_ref, size)`
 - `key_shares(report_id, reviewer_id, sealed_share)`
 - `spent_tokens(token_hash PRIMARY KEY, campaign_id, spent_bucket)`
 - `jobs(id, report_id, kind 'analysis', status ['queued' | 'leased' | 'running' | 'succeeded' |
-  'failed' | 'dead'], attempts, max_attempts 3, lease_expires_at, idempotency_key UNIQUE,
-  payment_ref, created_at, updated_at, last_error, summary_json)`
+'failed' | 'dead'], attempts, max_attempts 3, lease_expires_at, idempotency_key UNIQUE,
+payment_ref, created_at, updated_at, last_error, summary_json)`
 - `job_events(id, job_id, seq, stage, status, at, detail, progress, provider, model)`
 - `findings(report_id, job_id, box, findings_sha256, created_at)` and
   `findings_keys(report_id, job_id, reviewer_id, sealed_key)`
 - `access_requests(id, report_id, requester_id, reason, status ['pending' | 'granted' | 'denied' |
-  'expired'], created_at, expires_at)` and `access_approvals(request_id, approver_id,
-  resealed_share, signature, created_at)`
+'expired'], created_at, expires_at)` and `access_approvals(request_id, approver_id,
+resealed_share, signature, created_at)`
 - `messages(id, report_id, direction ['to_reporter' | 'to_reviewers'], sender_reviewer_id, boxes_json,
-  created_at)`; `boxes_json` is one SealBox for `to_reporter` or `[{reviewer_id, box}]` for replies.
+created_at)`; `boxes_json` is one SealBox for `to_reporter` or `[{reviewer_id, box}]` for replies.
 - `challenges(challenge, subject, purpose, expires_at, used)`
 
 ## Transparency log (audit.db)
@@ -66,6 +66,7 @@ job_link)` where `job_link = hex(HMAC-SHA256(CANDOR_PAYMENTS_LINK_KEY, job_id))`
 has its own SQLAlchemy engine and never imports report tables.
 
 `POST /v1/reports/{id}/analysis` is protected by x402 (read `docs/research/x402.md`):
+
 - Without `X-PAYMENT`: respond `402` with the x402 `PaymentRequirements` body (scheme `exact`,
   network `X402_NETWORK` default `base-sepolia`, USDC asset, `maxAmountRequired` from
   `analysis_price_usd`, `payTo` `X402_PAY_TO`, `resource` URL, description, `mimeType`,
@@ -93,28 +94,30 @@ All JSON. Errors: `{"error": {"code": str, "message": str}}` with appropriate st
 up to 40 MB on report submission.
 
 Public and reporter:
+
 - `GET /v1/health`
 - `GET /v1/campaigns/{campaign_id}` -> `{campaign_id, org: {slug, name}, title, description,
-  threshold, analysis_price_usd, identity_url, issuer: {key_id, spki}, enclave: {key_id, enc_pk},
-  reviewers: [{reviewer_id, display_name, enc_pk}]}`
+threshold, analysis_price_usd, identity_url, issuer: {key_id, spki}, enclave: {key_id, enc_pk},
+reviewers: [{reviewer_id, display_name, enc_pk}]}`
 - `POST /v1/reports` (01-protocols submission) -> `201 {report_id, receipt: {evidence_root,
-  log_index, sth}}`. Validate token signature with the campaign issuer key, reject spent tokens
+log_index, sth}}`. Validate token signature with the campaign issuer key, reject spent tokens
   (`409 token_spent`), validate that shares cover exactly the campaign reviewers and the threshold
   matches, enclave key id matches, sizes within limits. Store, append `report.submitted`.
 - `POST /v1/chaff` -> `204`, discards body.
 - `POST /v1/inbox/challenge {sig_pk}` -> `{challenge, expires_at}`
 - `POST /v1/inbox/session {sig_pk, challenge, signature}` -> `{token, expires_at, report_ids}`
 - `GET /v1/inbox/messages` (inbox token) -> `{reports: [{report_id, status, messages: [{id,
-  direction, box | boxes, created_at}]}]}`; replies only include the reporter's own boxes metadata.
+direction, box | boxes, created_at}]}]}`; replies only include the reporter's own boxes metadata.
 - `POST /v1/inbox/messages {report_id, boxes: [{reviewer_id, box}], answers_count}` -> `201`
 
 Reviewer (Bearer JWT):
+
 - `POST /v1/auth/challenge {reviewer_id}`; `POST /v1/auth/token {reviewer_id, challenge, signature}`
 - `GET /v1/me` -> reviewer profile and org
 - `GET /v1/reports?status=` -> list `{report_id, campaign_id, status, received_bucket, file_count,
-  size_bucket, analysis: {status, job_id, updated_at} | null, unread_replies, pending_access}`
+size_bucket, analysis: {status, job_id, updated_at} | null, unread_replies, pending_access}`
 - `GET /v1/reports/{id}` -> `{report, manifest_box, files: [{index, size}], my_sealed_share,
-  findings: {job_id, box, sealed_key (for me), findings_sha256} | null, messages, access_requests}`;
+findings: {job_id, box, sealed_key (for me), findings_sha256} | null, messages, access_requests}`;
   appends `findings.opened` when findings are returned.
 - `GET /v1/reports/{id}/files/{index}` -> `{index, box}`; appends `evidence.fetched`.
 - `PATCH /v1/reports/{id} {status}`
@@ -133,6 +136,7 @@ Reviewer (Bearer JWT):
 - `POST /v1/reports/{id}/messages {box, question_ids}` -> `201`
 
 Transparency log (public):
+
 - `GET /v1/log/key` -> `{key_id, public_key}`; `GET /v1/log/sth`; `GET /v1/log/entries?start=&end=`
   -> `[{index, entry_type, entry, leaf_b64u, created_at}]`;
   `GET /v1/log/proofs/inclusion?index=&tree_size=` -> `{index, tree_size, leaf_hash, audit_path}`;
@@ -143,15 +147,17 @@ Admin (role admin): `GET /v1/admin/jobs?status=dead`, `POST /v1/admin/jobs/{id}/
 `POST /v1/admin/anchor`, `GET /v1/admin/payments` (amounts and statuses only).
 
 Worker (Bearer `CANDOR_WORKER_TOKEN`):
+
 - `POST /internal/jobs/claim` -> `204` if none, else `{job_id, report_id, attempt, analysis:
-  {sealed_key, box, enclave_key_id}, reviewers: [{reviewer_id, enc_pk}]}`
+{sealed_key, box, enclave_key_id}, reviewers: [{reviewer_id, enc_pk}]}`
 - `POST /internal/jobs/{id}/events` (StageEvent) -> `204`
 - `POST /internal/jobs/{id}/complete {findings: FindingsEnvelope, summary: {stages: [{stage,
-  status, duration_ms, llm_calls, cost_usd, provider, model}], metrics: {claims_total,
-  citations_verified, ...}}}` -> `204`; `summary` must contain only counts, timings and model names.
+status, duration_ms, llm_calls, cost_usd, provider, model}], metrics: {claims_total,
+citations_verified, ...}}}` -> `204`; `summary` must contain only counts, timings and model names.
 - `POST /internal/jobs/{id}/fail {error, retryable}` -> `204`
 
 Demo (only when `CANDOR_MODE=demo`):
+
 - `GET /v1/demo/identities` -> seeded reviewers with their private keys (b64u) for one-click demo
   sign-in. Returns 404 in production mode.
 - `GET /v1/enclave` -> `{key_id, enc_pk}`

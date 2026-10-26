@@ -19,7 +19,7 @@ import {
   stopChild,
   waitForHealth,
 } from "../../scripts/dev.mjs";
-import { hasDemoSeed, seed } from "../../scripts/seed.mjs";
+import { hasDemoSeed, requireStoppedApi, seed } from "../../scripts/seed.mjs";
 import { testPython } from "../../scripts/test-py.mjs";
 
 async function fixture() {
@@ -71,7 +71,14 @@ test("dotenv files are optional and explicit provider wins", async () => {
 });
 
 test("service environments isolate worker, identity and browser configuration", () => {
-  const env = { CANDOR_ENCLAVE_SK: "test-worker", MODEL_API_KEY: "test-provider", CANDOR_IDENTITY_SECRET: "test-identity", CANDOR_JWT_SECRET: "test-api", CANDOR_IDENTITY_ADMIN_TOKEN: "test-admin", NEXT_PUBLIC_API_URL: "http://localhost:8000" };
+  const env = {
+    CANDOR_ENCLAVE_SK: "test-worker",
+    MODEL_API_KEY: "test-provider",
+    CANDOR_IDENTITY_SECRET: "test-identity",
+    CANDOR_JWT_SECRET: "test-api",
+    CANDOR_IDENTITY_ADMIN_TOKEN: "test-admin",
+    NEXT_PUBLIC_API_URL: "http://localhost:8000",
+  };
   assert.equal(serviceEnvironment("worker", env).CANDOR_ENCLAVE_SK, "test-worker");
   assert.equal(serviceEnvironment("api", env).CANDOR_ENCLAVE_SK, undefined);
   assert.equal(serviceEnvironment("api", env).CANDOR_IDENTITY_SECRET, undefined);
@@ -189,7 +196,7 @@ test("seeding missing SDK still resets API and gives a successful handoff", asyn
   const directory = await fixture();
   const runner = fakeRunner([0]);
   assert.equal(await hasDemoSeed(directory), false);
-  assert.equal(await seed({ directory, env: {}, runner }), 0);
+  assert.equal(await seed({ directory, env: {}, runner, preflight: async () => {} }), 0);
   assert.equal(runner.calls.length, 1);
   assert.deepEqual(runner.calls[0][2].slice(-3), ["candor-api", "seed", "--reset"]);
   assert.equal(runner.stopped, true);
@@ -197,9 +204,29 @@ test("seeding missing SDK still resets API and gives a successful handoff", asyn
 
 test("seeding fails fast on reset failure", async () => {
   const runner = fakeRunner([7]);
-  assert.equal(await seed({ directory: await fixture(), env: {}, runner }), 7);
+  assert.equal(
+    await seed({ directory: await fixture(), env: {}, runner, preflight: async () => {} }),
+    7,
+  );
   assert.equal(runner.calls.length, 1);
   assert.equal(runner.stopped, true);
+});
+
+test("seeding refuses to reset an active API before starting any command", async () => {
+  const server = createServer((_request, response) => response.writeHead(200).end());
+  server.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  const runner = fakeRunner([]);
+  try {
+    const env = { CANDOR_API_URL: `http://127.0.0.1:${server.address().port}` };
+    await assert.rejects(requireStoppedApi(env), /Stop the API/);
+    await assert.rejects(seed({ directory: await fixture(), env, runner }), /Stop the API/);
+    assert.equal(runner.calls.length, 0);
+    assert.equal(runner.stopped, true);
+  } finally {
+    server.closeAllConnections();
+    await new Promise((done) => server.close(done));
+  }
 });
 
 test("SDK seeding follows reset and refreshes generated configuration without logging output", async () => {
@@ -216,6 +243,7 @@ test("SDK seeding follows reset and refreshes generated configuration without lo
     base: {},
     env: {},
     runner,
+    preflight: async () => {},
     prepare: async () => {
       prepared = true;
     },

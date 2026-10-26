@@ -46,19 +46,21 @@ type Quote = {
   wire: WirePayment;
   display: PaymentRequirements;
   mode: "mock" | "testnet";
-  payment?: string;
+  payment?: Promise<string>;
+  reviewerId: string;
   idempotencyKey: string;
 };
 
 async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   const response = await globalThis.fetch(input, init);
   const unpaid = response.status === 402 && !new Headers(init?.headers).has("X-PAYMENT");
-  if (!response.ok && !unpaid) {
+  if (!response.ok) {
     const value: unknown = await response
       .clone()
       .json()
       .catch(() => null);
     const error = record(record(value).error);
+    if (unpaid && typeof error.message !== "string") return response;
     const failure = new CandorError(response.status, string(error.code, "http_error"));
     failure.message = string(error.message, `API request failed (${response.status})`);
     throw failure;
@@ -84,11 +86,23 @@ function createSdk(receipts?: Map<string, Settlement>): CandorClient {
       const idempotency = new Headers(init?.headers).get("Idempotency-Key");
       if (response.ok && header && idempotency && receipts) {
         let receipt: Record<string, unknown>;
-        try { receipt = record(JSON.parse(atob(header))); }
-        catch { throw new Error("Invalid payment settlement receipt"); }
-        if (receipt.success !== true || !string(receipt.payer) || !string(receipt.transaction) || !string(receipt.network))
+        try {
+          receipt = record(JSON.parse(atob(header)));
+        } catch {
           throw new Error("Invalid payment settlement receipt");
-        receipts.set(idempotency, { payer: string(receipt.payer), transaction: string(receipt.transaction), network: string(receipt.network) });
+        }
+        if (
+          receipt.success !== true ||
+          !string(receipt.payer) ||
+          !string(receipt.transaction) ||
+          !string(receipt.network)
+        )
+          throw new Error("Invalid payment settlement receipt");
+        receipts.set(idempotency, {
+          payer: string(receipt.payer),
+          transaction: string(receipt.transaction),
+          network: string(receipt.network),
+        });
       }
       return response;
     },
@@ -209,6 +223,13 @@ async function browserWallet(): Promise<WalletSigner> {
       return signature;
     },
   };
+}
+
+async function authorizePayment(quote: Quote): Promise<string> {
+  return createPayment(quote.wire, {
+    mode: quote.mode,
+    wallet: quote.mode === "testnet" ? await browserWallet() : undefined,
+  });
 }
 
 export function createLiveClient(): ConsoleClient {
@@ -496,7 +517,8 @@ export function createLiveClient(): ConsoleClient {
       await current().sdk.setStatus(reportId, status);
     },
     async quoteAnalysis(reportId) {
-      const wire = await current().sdk.quoteAnalysis(reportId);
+      const active = current();
+      const wire = await active.sdk.quoteAnalysis(reportId);
       const display: PaymentRequirements = {
         scheme: wire.scheme,
         network: wire.network,
@@ -513,6 +535,7 @@ export function createLiveClient(): ConsoleClient {
         wire,
         display: { ...display },
         mode: await paymentMode(wire),
+        reviewerId: active.identity.reviewerId,
         idempotencyKey: crypto.randomUUID(),
       });
       return display;
@@ -522,6 +545,7 @@ export function createLiveClient(): ConsoleClient {
       const quote = quotes.get(requirements);
       if (
         !quote ||
+        quote.reviewerId !== active.identity.reviewerId ||
         new URL(quote.wire.resource, apiUrl).pathname !==
           `/v1/reports/${encodeURIComponent(reportId)}/analysis` ||
         Object.keys(quote.display).some(
@@ -531,11 +555,12 @@ export function createLiveClient(): ConsoleClient {
         )
       )
         throw new Error("Request a fresh analysis quote before paying");
-      quote.payment ??= await createPayment(quote.wire, {
-        mode: quote.mode,
-        wallet: quote.mode === "testnet" ? await browserWallet() : undefined,
+      quote.payment ??= authorizePayment(quote);
+      const payment = await quote.payment.catch((error: unknown) => {
+        quote.payment = undefined;
+        throw error instanceof Error ? error : new Error("Wallet payment authorization failed");
       });
-      const job = await active.sdk.startAnalysis(reportId, quote.payment, quote.idempotencyKey);
+      const job = await active.sdk.startAnalysis(reportId, payment, quote.idempotencyKey);
       if (job.payment.status !== "settled") throw new Error("Analysis payment was not settled");
       const settlement = active.receipts.get(quote.idempotencyKey);
       if (!settlement) throw new Error("Payment settlement receipt is unavailable");

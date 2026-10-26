@@ -66,16 +66,12 @@
       {
         "index": 0,
         "tree_size": 2,
-        "path": [
-          "b59a1b4f2d202de1fee174de1f3bb459dda81bd302c6fff7e3b04a3ed6448136"
-        ]
+        "path": ["b59a1b4f2d202de1fee174de1f3bb459dda81bd302c6fff7e3b04a3ed6448136"]
       },
       {
         "index": 1,
         "tree_size": 2,
-        "path": [
-          "c5e45480500fc1db1efc025e3293fd283de3f9ce7231e9a86ca7bb95e8d5627d"
-        ]
+        "path": ["c5e45480500fc1db1efc025e3293fd283de3f9ce7231e9a86ca7bb95e8d5627d"]
       },
       {
         "index": 0,
@@ -96,9 +92,7 @@
       {
         "index": 2,
         "tree_size": 3,
-        "path": [
-          "4286a9ec7cfed90c46c704b3747436144d44fe304babd9440bf7a8339c683a84"
-        ]
+        "path": ["4286a9ec7cfed90c46c704b3747436144d44fe304babd9440bf7a8339c683a84"]
       },
       {
         "index": 0,
@@ -139,9 +133,7 @@
       {
         "index": 4,
         "tree_size": 5,
-        "path": [
-          "4c316362ade57bc0d79f47e013fa095148a913141e8638d7730eec135a9e4c96"
-        ]
+        "path": ["4c316362ade57bc0d79f47e013fa095148a913141e8638d7730eec135a9e4c96"]
       },
       {
         "index": 0,
@@ -210,9 +202,7 @@
       {
         "first": 1,
         "second": 2,
-        "proof": [
-          "b59a1b4f2d202de1fee174de1f3bb459dda81bd302c6fff7e3b04a3ed6448136"
-        ]
+        "proof": ["b59a1b4f2d202de1fee174de1f3bb459dda81bd302c6fff7e3b04a3ed6448136"]
       },
       {
         "first": 1,
@@ -225,9 +215,7 @@
       {
         "first": 2,
         "second": 3,
-        "proof": [
-          "2b9c4e50301dc8206eb9c8a0819b4fbffae7fe6e7faad8cd8396b378b93d0304"
-        ]
+        "proof": ["2b9c4e50301dc8206eb9c8a0819b4fbffae7fe6e7faad8cd8396b378b93d0304"]
       },
       {
         "first": 1,
@@ -259,9 +247,7 @@
       {
         "first": 4,
         "second": 5,
-        "proof": [
-          "32effac4702423125b63022a9e4ea370da25d0014d5ca946ce82fb62f3663c20"
-        ]
+        "proof": ["32effac4702423125b63022a9e4ea370da25d0014d5ca946ce82fb62f3663c20"]
       },
       {
         "first": 1,
@@ -293,9 +279,7 @@
       {
         "first": 4,
         "second": 7,
-        "proof": [
-          "901c146ba31d7ebb759117db53fcc0721599c331d524d9e77cac9483b6c68036"
-        ]
+        "proof": ["901c146ba31d7ebb759117db53fcc0721599c331d524d9e77cac9483b6c68036"]
       },
       {
         "first": 5,

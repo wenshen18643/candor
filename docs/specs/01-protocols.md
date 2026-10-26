@@ -39,17 +39,17 @@ WITHOUT Padmé framing and transmitted as a bare b64u string field named `sealed
 
 ## Keys
 
-| Key | Type | Owner | Purpose |
-| --- | --- | --- | --- |
-| `K_r` report key | 32B symmetric | reporter browser, then quorum | encrypts manifest and files |
-| `K_a` analysis key | 32B symmetric | reporter browser, worker | encrypts the redacted analysis payload |
-| `K_f` findings key | 32B symmetric | worker, reviewers | encrypts the analysis result |
-| reviewer `enc` | X25519 (`crypto_box_keypair`) | reviewer browser | receives sealed shares, findings keys, replies |
-| reviewer `sig` | Ed25519 (`crypto_sign_keypair`) | reviewer browser | auth challenges, quorum approvals |
-| enclave `enc` | X25519 | analysis worker (`CANDOR_ENCLAVE_SK`) | unseals `K_a` |
-| inbox `enc`/`sig` | X25519 / Ed25519 derived from codename | reporter | anonymous two-way channel |
-| issuer | RSA-2048, e=65537 | identity service, one per campaign | RFC 9474 blind token issuance |
-| log | Ed25519 | API | signs tree heads |
+| Key                | Type                                   | Owner                                 | Purpose                                        |
+| ------------------ | -------------------------------------- | ------------------------------------- | ---------------------------------------------- |
+| `K_r` report key   | 32B symmetric                          | reporter browser, then quorum         | encrypts manifest and files                    |
+| `K_a` analysis key | 32B symmetric                          | reporter browser, worker              | encrypts the redacted analysis payload         |
+| `K_f` findings key | 32B symmetric                          | worker, reviewers                     | encrypts the analysis result                   |
+| reviewer `enc`     | X25519 (`crypto_box_keypair`)          | reviewer browser                      | receives sealed shares, findings keys, replies |
+| reviewer `sig`     | Ed25519 (`crypto_sign_keypair`)        | reviewer browser                      | auth challenges, quorum approvals              |
+| enclave `enc`      | X25519                                 | analysis worker (`CANDOR_ENCLAVE_SK`) | unseals `K_a`                                  |
+| inbox `enc`/`sig`  | X25519 / Ed25519 derived from codename | reporter                              | anonymous two-way channel                      |
+| issuer             | RSA-2048, e=65537                      | identity service, one per campaign    | RFC 9474 blind token issuance                  |
+| log                | Ed25519                                | API                                   | signs tree heads                               |
 
 `key_id` for X25519/Ed25519 keys: `hex(generichash(16, pk))` (BLAKE2b-128). For issuer keys:
 first 16 hex chars of `sha256(spki_der)`.
@@ -73,7 +73,7 @@ plus `k-1` resealed) are available, the requester combines locally.
 - `normalize(c)`: lowercase, trim, replace any run of whitespace, `_` or `-` with a single `-`.
 - `INBOX_SALT = generichash(16, utf8("candor/v1/inbox-salt"))`.
 - `seed = crypto_pwhash(32, utf8(normalize(codename)), INBOX_SALT, opslimit = 3,
-  memlimit = 67108864, alg = ARGON2ID13)`.
+memlimit = 67108864, alg = ARGON2ID13)`.
 - `sign_seed = generichash(32, utf8("sign"), key = seed)`;
   `box_seed = generichash(32, utf8("box"), key = seed)`.
 - `crypto_sign_seed_keypair(sign_seed)`, `crypto_box_seed_keypair(box_seed)`.
@@ -105,7 +105,13 @@ proofs (§2.1.3) and consistency proofs (§2.1.4) and their verification algorit
 ## Signed tree head
 
 ```json
-{ "tree_size": 42, "root_hash": "<hex>", "timestamp": "2026-10-26T10:00:00Z", "key_id": "<hex>", "signature": "<b64u>" }
+{
+  "tree_size": 42,
+  "root_hash": "<hex>",
+  "timestamp": "2026-10-26T10:00:00Z",
+  "key_id": "<hex>",
+  "signature": "<b64u>"
+}
 ```
 
 Signature: Ed25519 over `utf8("candor/v1/sth\n" + tree_size + "\n" + root_hash + "\n" + timestamp)`.
@@ -133,7 +139,11 @@ Signature: Ed25519 over `utf8("candor/v1/sth\n" + tree_size + "\n" + root_hash +
     "threshold": 2,
     "shares": [{ "reviewer_id": "uuid", "sealed_share": "b64u" }]
   },
-  "analysis": { "enclave_key_id": "hex", "sealed_key": "b64u", "box": "CandorBox(K_a, ctx('analysis'))" },
+  "analysis": {
+    "enclave_key_id": "hex",
+    "sealed_key": "b64u",
+    "box": "CandorBox(K_a, ctx('analysis'))"
+  },
   "inbox": { "sig_pk": "b64u", "enc_pk": "b64u" }
 }
 ```
@@ -147,12 +157,23 @@ Manifest plaintext:
   "campaign_id": "...",
   "files": [
     {
-      "index": 0, "name": "memo.pdf", "mime": "application/pdf", "size": 1234, "sha256": "hex",
+      "index": 0,
+      "name": "memo.pdf",
+      "mime": "application/pdf",
+      "size": 1234,
+      "sha256": "hex",
       "variant": "original | redacted",
       "metadata_removed": [{ "field": "Author", "preview": "Pr***" }]
     }
   ],
-  "pseudonym_map": [{ "placeholder": "PERSON_1", "type": "person", "value": "Dana Whitfield", "variants": ["Dana", "D. Whitfield"] }],
+  "pseudonym_map": [
+    {
+      "placeholder": "PERSON_1",
+      "type": "person",
+      "value": "Dana Whitfield",
+      "variants": ["Dana", "D. Whitfield"]
+    }
+  ],
   "self_redaction_count": 7
 }
 ```
@@ -173,9 +194,9 @@ contact details or the reporter's self-identifiers.
 ## Messages
 
 - Reviewer to reporter: `SealBox` of JSON `{ "kind": "question" | "message", "body": str,
-  "questions": [{ "question_id", "text" }], "sent_at": iso }` to the inbox `enc_pk`.
+"questions": [{ "question_id", "text" }], "sent_at": iso }` to the inbox `enc_pk`.
 - Reporter to reviewers: one `SealBox` per reviewer `enc_pk`, JSON `{ "kind": "reply", "body": str,
-  "answers": [{ "question_id", "text" }], "sent_at": iso }`.
+"answers": [{ "question_id", "text" }], "sent_at": iso }`.
 
 ## Timing hygiene
 

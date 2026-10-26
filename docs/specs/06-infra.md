@@ -6,8 +6,8 @@
 - Each Python service: `uv sync --project services/<name>`.
 - `pnpm dev` runs `scripts/dev.mjs`, which loads `.env` / `data/demo/.env.local`, then starts with
   prefixed, coloured output: identity (`pnpm --filter @candor/identity dev`), API (`uv run --project
-  services/api candor-api serve --reload`), worker (`uv run --project services/pipeline
-  candor-worker`) and web (`pnpm --filter @candor/web dev`). Ctrl+C stops all children (Windows
+services/api candor-api serve --reload`), worker (`uv run --project services/pipeline
+candor-worker`) and web (`pnpm --filter @candor/web dev`). Ctrl+C stops all children (Windows
   safe: use `tree-kill` or `taskkill /T`).
 - `pnpm seed` runs `candor-api seed --reset` then `pnpm --filter @candor/sdk seed:demo`, which
   submits two complete reports through the real client libraries (mock Self, mock x402) and runs
@@ -16,16 +16,17 @@
 ## Modal (`infra/modal/app.py`)
 
 One Modal app named `candor`:
+
 - `api`: `@modal.asgi_app()` serving `candor_api.main:app`, SQLite on a `modal.Volume` mounted at
   `/data` (acceptable for the hackathon; Postgres URL supported via secret).
 - `identity`: `@modal.web_server(8787)` running the built identity service with Node 22 in the
   image.
 - `run_analysis`: `@app.function(retries=modal.Retries(max_retries=2, backoff_coefficient=2.0),
-  timeout=1800)` that runs `candor-worker --once` against the API URL. Spawned by the API on enqueue.
+timeout=1800)` that runs `candor-worker --once` against the API URL. Spawned by the API on enqueue.
 - `run_evals`: scheduled/manual function running `candor-evals run --provider meta` and writing
   results to the volume.
-Secrets: `candor-secrets` with all env vars from `.env.example`. Deployment command:
-`modal deploy infra/modal/app.py`. Document the one-time `modal token new` step in the README.
+  Secrets: `candor-secrets` with all env vars from `.env.example`. Deployment command:
+  `modal deploy infra/modal/app.py`. Document the one-time `modal token new` step in the README.
 
 ## Web deployment
 

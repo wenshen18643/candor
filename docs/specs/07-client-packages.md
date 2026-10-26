@@ -86,6 +86,7 @@ buildAnalysisPayload(args: { reportId: string; campaignId: string; statementKey:
 ```
 
 Behaviour:
+
 - Metadata stripping. PDF: pdf-lib clears Title, Author, Subject, Keywords, Creator, Producer,
   CreationDate, ModDate and removes the catalog `/Metadata` XMP stream; text via unpdf. DOCX: JSZip
   rewrites `docProps/core.xml` and `docProps/app.xml` (creator, lastModifiedBy, revision, dates,
@@ -115,11 +116,11 @@ Behaviour:
   timestamps) 5 each, capped at 100. `level`: < 15 low, < 40 elevated, else high. Notes explain the
   biggest contributors in plain English.
 - CLI `src/cli.ts` (built to `dist/cli.js`): `scrub --dir <scenario dir> --self-terms <json array
-  or path> --out <file> [--report-id <id>] [--campaign-id <id>]`. Statement file is
+or path> --out <file> [--report-id <id>] [--campaign-id <id>]`. Statement file is
   `reporter_statement.txt`; `ground_truth.json` and `README*` are ignored; every other file is a
   document, ordered by name. Auto-pseudonymises all detections. Output JSON:
   `{ payload, pseudonym_map, stripped_files: [{ name, kind, metadata_before, metadata_after }],
-  leakage_estimate }`.
+leakage_estimate }`.
 
 `AnalysisPayload` must exactly match `services/pipeline/src/candor_pipeline/contracts.py`
 (snake_case keys, `doc_id` `D1..Dn` in file order, statement as `reporter_statement`, `kind`

@@ -14,3 +14,7 @@ services/evals
 docs/research
 **/*.generated.ts
 **/eff_large_wordlist.json
+infra/.artifacts
+packages/sdk/.e2e
+.vercel
+.pnpm-store
