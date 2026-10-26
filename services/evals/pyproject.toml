@@ -1,0 +1,42 @@
+[project]
+name = "candor-evals"
+version = "0.1.0"
+description = "Candor synthetic evidence evaluation and model benchmark"
+requires-python = ">=3.12"
+dependencies = [
+  "candor-pipeline",
+  "pydantic>=2.9",
+  "typer>=0.12",
+  "rapidfuzz>=3.9",
+  "scipy>=1.14",
+  "numpy>=2.0",
+  "python-docx>=1.1",
+  "fpdf2>=2.8",
+  "orjson>=3.10",
+  "rich>=13.9",
+]
+
+[project.scripts]
+candor-evals = "candor_evals.cli:app"
+
+[tool.uv.sources]
+candor-pipeline = { path = "../pipeline", editable = true }
+
+[dependency-groups]
+dev = [
+    "pypdf>=6.21.2",
+    "pypdfium2>=5.14.0",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/candor_evals"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

@@ -1,0 +1,16 @@
+node_modules
+.next
+dist
+coverage
+.venv
+pnpm-lock.yaml
+uv.lock
+data
+playwright-report
+test-results
+services/api
+services/pipeline
+services/evals
+docs/research
+**/*.generated.ts
+**/eff_large_wordlist.json

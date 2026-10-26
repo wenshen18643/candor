@@ -1,0 +1,5 @@
+reference,date,description,amount_usd,status
+L001,2026-04-10,K17 instrument time,1440.00,reconciliation
+L002,2026-04-10,Replacement clamps,360.00,reconciliation
+L003,2026-04-10,Independent repeat runs,1800.00,reconciliation
+TOTAL,2026-04-10,Packet total,3600.00,control

@@ -1,0 +1,2 @@
+extend = "../../ruff.toml"
+extend-exclude = ["pytest-cache-files-*"]

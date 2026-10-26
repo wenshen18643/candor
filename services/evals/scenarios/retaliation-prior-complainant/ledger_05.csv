@@ -1,0 +1,5 @@
+reference,date,description,amount_usd,status
+L001,2026-04-10,Removed account Alder,8000.00,reconciliation
+L002,2026-04-10,Removed account Reed,6500.00,reconciliation
+L003,2026-04-10,Removed account Finch,5500.00,reconciliation
+TOTAL,2026-04-10,Packet total,20000.00,control

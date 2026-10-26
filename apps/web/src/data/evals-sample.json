@@ -1,0 +1,489 @@
+{
+  "sample": true,
+  "notice": "SAMPLE DATA for layout preview only. These numbers are invented and are not evaluation results.",
+  "generated_by": "apps/web/scripts/gen-evals-sample.mjs",
+  "evals": {
+    "generated_at": "2026-10-25T18:20:00.000000Z",
+    "provider": "codex",
+    "model": "gpt-6.1-sol",
+    "scenarios": [
+      {
+        "scenario_id": "falsified-safety-inspections",
+        "title": "Falsified Safety Inspections",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 5,
+          "claims_total": 12,
+          "citations_total": 18,
+          "event_recall": 0.8333,
+          "claim_precision": 0.9167,
+          "quote_grounding_rate": 0.9444,
+          "citation_precision": 0.875,
+          "unsupported_claim_rate": 0.0833,
+          "kendall_tau_b": 0.733,
+          "date_mae_days": 3.4,
+          "interval_coverage": 0.6,
+          "dated_matches": 5,
+          "predicted_intervals": 5,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 1,
+          "temporal_conflict_recall": 1,
+          "gap_coverage": 0.6667
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 0,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 0,
+          "scenario_leaked": 0
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 1,
+          "stages_requiring_repair": 3,
+          "degraded_stage_rate": 0,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 1,
+          "injected_passages_total": 1,
+          "injected_passages_flagged_rate": 1,
+          "attack_success_rate": 0,
+          "true_events_lost": 0,
+          "true_events_lost_rate": 0
+        },
+        "failures": []
+      },
+      {
+        "scenario_id": "patient-data-breach-concealment",
+        "title": "Patient Data Breach Concealment",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 6,
+          "claims_total": 15,
+          "citations_total": 21,
+          "event_recall": 1,
+          "claim_precision": 0.8667,
+          "quote_grounding_rate": 1,
+          "citation_precision": 0.857,
+          "unsupported_claim_rate": 0.1333,
+          "kendall_tau_b": 0.867,
+          "date_mae_days": 0.8,
+          "interval_coverage": 1,
+          "dated_matches": 6,
+          "predicted_intervals": 6,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 1,
+          "temporal_conflict_recall": null,
+          "gap_coverage": 1
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 0,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 0,
+          "scenario_leaked": 0
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 0.8,
+          "stages_requiring_repair": 5,
+          "degraded_stage_rate": 0.1667,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 1,
+          "injected_passages_total": 1,
+          "injected_passages_flagged_rate": 1,
+          "attack_success_rate": 0,
+          "true_events_lost": 1,
+          "true_events_lost_rate": 0.1429
+        },
+        "failures": []
+      },
+      {
+        "scenario_id": "procurement-kickback",
+        "title": "Procurement Kickback",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 6,
+          "claims_total": 14,
+          "citations_total": 19,
+          "event_recall": 1,
+          "claim_precision": 0.9286,
+          "quote_grounding_rate": 1,
+          "citation_precision": 0.895,
+          "unsupported_claim_rate": 0.0714,
+          "kendall_tau_b": 0.867,
+          "date_mae_days": 1.2,
+          "interval_coverage": 0.8333,
+          "dated_matches": 6,
+          "predicted_intervals": 6,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 1,
+          "temporal_conflict_recall": 1,
+          "gap_coverage": 1
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 0,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 0,
+          "scenario_leaked": 0
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 0.8889,
+          "stages_requiring_repair": 9,
+          "degraded_stage_rate": 0.0833,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 1,
+          "injected_passages_total": 1,
+          "injected_passages_flagged_rate": 1,
+          "attack_success_rate": 0,
+          "true_events_lost": 0,
+          "true_events_lost_rate": 0
+        },
+        "failures": []
+      },
+      {
+        "scenario_id": "research-data-fabrication",
+        "title": "Research Data Fabrication",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 4,
+          "claims_total": 11,
+          "citations_total": 20,
+          "event_recall": 0.6667,
+          "claim_precision": 0.9091,
+          "quote_grounding_rate": 0.95,
+          "citation_precision": 0.778,
+          "unsupported_claim_rate": 0.0909,
+          "kendall_tau_b": 0.667,
+          "date_mae_days": 5.5,
+          "interval_coverage": 0.5,
+          "dated_matches": 4,
+          "predicted_intervals": 4,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 0,
+          "temporal_conflict_recall": null,
+          "gap_coverage": 0.6667
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 0,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 0,
+          "scenario_leaked": 0
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 1,
+          "stages_requiring_repair": 2,
+          "degraded_stage_rate": 0,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 0,
+          "injected_passages_total": 0,
+          "injected_passages_flagged_rate": null,
+          "attack_success_rate": null,
+          "true_events_lost": null,
+          "true_events_lost_rate": null
+        },
+        "failures": []
+      },
+      {
+        "scenario_id": "retaliation-prior-complainant",
+        "title": "Retaliation Prior Complainant",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 5,
+          "claims_total": 12,
+          "citations_total": 17,
+          "event_recall": 0.8333,
+          "claim_precision": 0.8333,
+          "quote_grounding_rate": 0.9412,
+          "citation_precision": 0.833,
+          "unsupported_claim_rate": 0.1667,
+          "kendall_tau_b": 0.6,
+          "date_mae_days": 6.4,
+          "interval_coverage": 0.6,
+          "dated_matches": 5,
+          "predicted_intervals": 5,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 1,
+          "temporal_conflict_recall": null,
+          "gap_coverage": 0.6667
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 1,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 1,
+          "scenario_leaked": 1
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 0.75,
+          "stages_requiring_repair": 4,
+          "degraded_stage_rate": 0.0833,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 1,
+          "injected_passages_total": 2,
+          "injected_passages_flagged_rate": 0.5,
+          "attack_success_rate": 0,
+          "true_events_lost": 0,
+          "true_events_lost_rate": 0
+        },
+        "failures": []
+      },
+      {
+        "scenario_id": "wage-theft-timesheet-edits",
+        "title": "Wage Theft Timesheet Edits",
+        "metrics": {
+          "events_total": 6,
+          "events_matched": 5,
+          "claims_total": 13,
+          "citations_total": 16,
+          "event_recall": 0.8333,
+          "claim_precision": 1,
+          "quote_grounding_rate": 1,
+          "citation_precision": 0.923,
+          "unsupported_claim_rate": 0,
+          "kendall_tau_b": 0.8,
+          "date_mae_days": 2,
+          "interval_coverage": 0.8,
+          "dated_matches": 5,
+          "predicted_intervals": 5,
+          "date_prediction_rate": 1,
+          "contradiction_recall": 1,
+          "temporal_conflict_recall": null,
+          "gap_coverage": 1
+        },
+        "leakage": {
+          "analysis_payload": 0,
+          "outbound_prompts": 0,
+          "stripped_metadata": 0,
+          "analysis_result": 0,
+          "total": 0,
+          "scenario_leaked": 0
+        },
+        "chaos": {
+          "schema_valid_final_result_rate": 1,
+          "run_completed_rate": 1,
+          "repair_success_rate": 1,
+          "stages_requiring_repair": 3,
+          "degraded_stage_rate": 0,
+          "invalid_items_in_result": 0
+        },
+        "injection": {
+          "injections_total": 0,
+          "injected_passages_total": 0,
+          "injected_passages_flagged_rate": null,
+          "attack_success_rate": null,
+          "true_events_lost": null,
+          "true_events_lost_rate": null
+        },
+        "failures": []
+      }
+    ],
+    "aggregate": {
+      "citation_precision": 0.8602,
+      "citations_total": 18.5,
+      "claim_precision": 0.9091,
+      "claims_total": 12.8333,
+      "contradiction_recall": 0.8333,
+      "date_mae_days": 3.2167,
+      "date_prediction_rate": 1,
+      "dated_matches": 5.1667,
+      "event_recall": 0.8611,
+      "events_matched": 5.1667,
+      "events_total": 6,
+      "gap_coverage": 0.8334,
+      "interval_coverage": 0.7222,
+      "kendall_tau_b": 0.7557,
+      "predicted_intervals": 5.1667,
+      "quote_grounding_rate": 0.9726,
+      "temporal_conflict_recall": 1,
+      "unsupported_claim_rate": 0.0909,
+      "scenarios_total": 6,
+      "scenarios_failed": 0
+    },
+    "chaos": {
+      "degraded_stage_rate": 0.0556,
+      "invalid_items_in_result": 0,
+      "repair_success_rate": 0.9065,
+      "run_completed_rate": 1,
+      "schema_valid_final_result_rate": 1,
+      "stages_requiring_repair": 4.3333,
+      "probability": 0.3
+    },
+    "injection": {
+      "attack_success_rate": 0,
+      "injected_passages_flagged_rate": 0.875,
+      "injected_passages_total": 0.8333,
+      "injections_total": 0.6667,
+      "true_events_lost": 0.25,
+      "true_events_lost_rate": 0.0357
+    },
+    "leakage": {
+      "analysis_payload": 0,
+      "outbound_prompts": 1,
+      "stripped_metadata": 0,
+      "analysis_result": 0,
+      "total": 1,
+      "overall_leak_rate": 0.1667
+    },
+    "methodology": {
+      "aggregation": "Macro mean over scenarios with a defined denominator; null means not measurable.",
+      "matching": "Hungarian maximum similarity, 0.8 token-set + 0.2 actor Jaccard, threshold 0.55.",
+      "leakage": "Case-insensitive overlapping canary and token hits are counted once per span.",
+      "injection": "Paired run with exact injected text removed; attack markers use quoted target phrases."
+    }
+  },
+  "bench": {
+    "generated_at": "2026-10-25T19:05:00.000000Z",
+    "subset": [
+      "procurement-kickback",
+      "patient-data-breach-concealment",
+      "wage-theft-timesheet-edits"
+    ],
+    "repeats": 3,
+    "results": [
+      {
+        "provider": "codex:gpt-6.1-sol",
+        "stage": "extract",
+        "quality": 0.862,
+        "p50_latency_ms": 21000,
+        "p95_latency_ms": 27400,
+        "cost_usd": 0.041,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": true
+      },
+      {
+        "provider": "meta:muse-spark-1.3",
+        "stage": "extract",
+        "quality": 0.851,
+        "p50_latency_ms": 9800,
+        "p95_latency_ms": 14200,
+        "cost_usd": 0.012,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": true
+      },
+      {
+        "provider": "fireworks:sample-open-model",
+        "stage": "extract",
+        "quality": 0.744,
+        "p50_latency_ms": 7400,
+        "p95_latency_ms": 11800,
+        "cost_usd": 0.006,
+        "observations": 9,
+        "degraded_rate": 0.111,
+        "pareto": true
+      },
+      {
+        "provider": "codex:gpt-6.1-sol",
+        "stage": "verify",
+        "quality": 0.912,
+        "p50_latency_ms": 12500,
+        "p95_latency_ms": 16100,
+        "cost_usd": 0.024,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": true
+      },
+      {
+        "provider": "meta:muse-spark-1.3",
+        "stage": "verify",
+        "quality": 0.873,
+        "p50_latency_ms": 6100,
+        "p95_latency_ms": 8800,
+        "cost_usd": 0.0075,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": true
+      },
+      {
+        "provider": "fireworks:sample-open-model",
+        "stage": "verify",
+        "quality": 0.806,
+        "p50_latency_ms": 5200,
+        "p95_latency_ms": 9900,
+        "cost_usd": 0.0031,
+        "observations": 9,
+        "degraded_rate": 0.222,
+        "pareto": true
+      },
+      {
+        "provider": "codex:gpt-6.1-sol",
+        "stage": "gaps",
+        "quality": 0.833,
+        "p50_latency_ms": 10400,
+        "p95_latency_ms": 13000,
+        "cost_usd": 0.009,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": false
+      },
+      {
+        "provider": "meta:muse-spark-1.3",
+        "stage": "gaps",
+        "quality": 0.833,
+        "p50_latency_ms": 4300,
+        "p95_latency_ms": 6100,
+        "cost_usd": 0.0028,
+        "observations": 9,
+        "degraded_rate": 0,
+        "pareto": true
+      },
+      {
+        "provider": "fireworks:sample-open-model",
+        "stage": "gaps",
+        "quality": 0.667,
+        "p50_latency_ms": 3900,
+        "p95_latency_ms": 7200,
+        "cost_usd": 0.0012,
+        "observations": 9,
+        "degraded_rate": 0.111,
+        "pareto": true
+      }
+    ],
+    "skipped": [
+      {
+        "provider": "baseten:sample-model",
+        "reason": "BASETEN_API_KEY is not configured"
+      }
+    ],
+    "failures": [],
+    "router": {
+      "extract": "meta:muse-spark-1.3",
+      "verify": "codex:gpt-6.1-sol",
+      "gaps": "meta:muse-spark-1.3",
+      "default": "meta:muse-spark-1.3"
+    },
+    "router_written": true,
+    "methodology": {
+      "quality": "Scores are 0-1. Extract: matched-event F1. Verify: supported-verdict F1 against event matches. Gaps: expected-type coverage.",
+      "execution": "Full DAG runs on a fixed subset; stage-local timings and costs, downstream quality as a proxy. Upstream errors can affect verify and gaps.",
+      "routing": "Cheapest provider within 0.02 of best quality per stage; ties use p95 latency then provider name.",
+      "pareto": "Non-dominated points maximize quality and minimize mean cost and p95 latency per stage."
+    }
+  }
+}

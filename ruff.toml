@@ -1,0 +1,14 @@
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "data"]
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF", "N", "C4", "PT", "ERA", "ASYNC", "PIE", "RET", "PL"]
+ignore = ["PLR0913", "PLR2004", "PLR0911", "PLR0912", "PLR0915", "RUF001", "RUF002", "RUF003"]
+
+[lint.per-file-ignores]
+"**/tests/**" = ["PLR2004", "S101"]
+
+[format]
+quote-style = "double"
+line-ending = "lf"

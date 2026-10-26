@@ -1,0 +1,5 @@
+reference,date,description,amount_usd,status
+L001,2026-04-10,Incident response retainer,4200.00,reconciliation
+L002,2026-04-10,Access log storage,180.00,reconciliation
+L003,2026-04-10,Policy review,1620.00,reconciliation
+TOTAL,2026-04-10,Packet total,6000.00,control

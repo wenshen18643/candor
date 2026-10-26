@@ -1,0 +1,7 @@
+{
+  "source": "synthetic-test-provider",
+  "synthetic": true,
+  "payload_sha256": "69b61e515c0447dacae7361ae0f659958b606ae11ed78034019420e7a676100f",
+  "samples": 3,
+  "nonce": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+}

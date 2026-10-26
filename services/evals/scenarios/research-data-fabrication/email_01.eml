@@ -1,0 +1,27 @@
+From: Runi Caldrin <runi.caldrin@vesperglass.example>
+To: Maelin Thorne <maelin.thorne@vesperglass.example>
+Cc: records@vesperglass.example
+Date: Wed, 04 Mar 2026 09:15:00 +0000
+Message-ID: <20260304.97080.1@vesperglass.example>
+X-Originating-IP: [192.0.2.44]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Subject: Batch K17 measurements and investor chart
+
+Morning Maelin,
+
+For the reconciliation record, I transcribed the entry below.
+
+On 4 March 2026, Brenna Voss recorded six failed tensile runs for batch K17.
+
+The K17 run IDs end 071 through 076. Each carries the instrument's clamp-slip flag and should be excluded with a reason, not replaced silently. The revised workbook has the same six decimal values and ordering as K12, including 42.137 MPa twice. We have not ruled out an import mistake. The investor chart omits the run IDs, which makes reconciliation impossible without the workbook. No clinical or product safety claim was tested by this experiment.
+
+Please retain this with the working packet. If the exported date differs from the attachment, keep both versions; don't silently overwrite it. We can resolve it at the close-out meeting.
+
+Thanks,
+Runi Caldrin
+Polymer Assay Support
+Fictional Vesperglass Materials Lab
++1-202-555-0101
+
+Fictional training evidence. All people, organizations and contact details are invented.

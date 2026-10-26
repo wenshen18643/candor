@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "report_id": "c1bb55a2-d287-4e22-bd4c-7f6a59ad0021",
+  "campaign_id": "synthetic-review",
+  "language": "en",
+  "reporter_statement": "I believe the review was delayed. I do not know why.",
+  "documents": [
+    {
+      "doc_id": "D1",
+      "title": "Synthetic review memo",
+      "kind": "memo",
+      "anchor_date": "2026-10-20",
+      "text": "On 15 October 2026, PERSON_1 sent the review memo to PERSON_2. PERSON_2 scheduled the review for 20 October 2026."
+    },
+    {
+      "doc_id": "D2",
+      "title": "Synthetic acknowledgement",
+      "kind": "email",
+      "anchor_date": "2026-10-21",
+      "text": "PERSON_2 acknowledged receiving the review memo on 15 October 2026. The review took place on 20 October 2026."
+    }
+  ],
+  "entity_legend": [
+    {"placeholder": "PERSON_1", "type": "person"},
+    {"placeholder": "PERSON_2", "type": "person"}
+  ],
+  "redaction_summary": {"person": 2}
+}

@@ -1,0 +1,5 @@
+reference,date,description,amount_usd,status
+L001,2026-04-10,Replacement interlock,1850.00,reconciliation
+L002,2026-04-10,External functional test,640.00,reconciliation
+L003,2026-04-10,Calibration hire,210.00,reconciliation
+TOTAL,2026-04-10,Packet total,2700.00,control

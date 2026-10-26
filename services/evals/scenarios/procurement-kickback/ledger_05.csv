@@ -1,0 +1,5 @@
+reference,date,description,amount_usd,status
+L001,2026-04-10,Tooling delivery,186000.00,reconciliation
+L002,2026-04-10,Advisory fee on hold,12400.00,reconciliation
+L003,2026-04-10,Freight and insurance,3600.00,reconciliation
+TOTAL,2026-04-10,Packet total,202000.00,control

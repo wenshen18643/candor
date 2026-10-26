@@ -1,0 +1,37 @@
+{
+  "name": "candor",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "seed": "node scripts/seed.mjs",
+    "e2e": "pnpm --filter @candor/web e2e",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm lint:js && pnpm lint:py",
+    "lint:js": "eslint . --max-warnings 0",
+    "lint:py": "uvx ruff@0.14.2 check services && uvx ruff@0.14.2 format --check services && python scripts/check_no_comments.py services",
+    "format": "prettier --write . && uvx ruff@0.14.2 format services && uvx ruff@0.14.2 check --fix services",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "test:py": "node scripts/test-py.mjs",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm test:py"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.0.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.4.0",
+    "json-schema-to-typescript": "^16.0.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
+  }
+}

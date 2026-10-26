@@ -1,0 +1,9 @@
+.venv/
+.test-tmp/
+.pytest_cache/
+pytest-cache-files-*/
+.ruff_cache/
+__pycache__/
+results/
+cassettes/
+qa/
