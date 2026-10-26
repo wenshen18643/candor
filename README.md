@@ -9,7 +9,10 @@ scattered, redacted evidence into a cited timeline in which every sentence trace
 source passage, with uncertainty and contradictions shown rather than smoothed over.
 
 - **Live demo:** https://candor-whistle.vercel.app (showcase mode: every cryptographic step runs
-  for real in your browser, and nothing is sent anywhere)
+  for real in your browser, and nothing is sent anywhere). The analysis in the reviewer console is
+  a recorded run of the real twelve-stage pipeline on the fictional Northwind case, made with
+  `gpt-6.1-sol` through the Codex CLI while Meta Muse access was pending; the model calls are
+  committed as cassettes in `services/pipeline/tests/cassettes/northwind` and replay exactly.
 - **Built for:** Meta Global AI Developer Hackathon, indie track
 
 ## Try it in five minutes

@@ -70,7 +70,9 @@ def run(
                 "samples": samples,
                 "nonce": nonce,
             }
-            (record / "run.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+            (record / "run.json").write_text(
+                json.dumps(manifest, indent=2), encoding="utf-8", newline="\n"
+            )
         typer.echo(json.dumps({"event": "analysis_completed", **result.metrics.model_dump()}))
     except Exception as error:
         detail = {"event": "analysis_failed"}

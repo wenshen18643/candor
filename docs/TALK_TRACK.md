@@ -34,12 +34,16 @@ is documented from what is alleged.
    - Brief, then click a claim: the quote, its exact character offsets, the verifier's verdict and the
      confidence formula. "Every sentence traces to a verbatim source. Nothing is paraphrased into
      existence."
-   - Timeline: the red conflict. "The minutes say the meeting was on the 10th; the reporter's chat
-     says the score changed on the 6th, before a meeting that the email says was due on the 3rd. We
-     solve this as a constraint network and the negative cycle names the statements that cannot all
-     be true."
-   - Injection badge on the cover letter: "This PDF tells the model to ignore its instructions. It
-     was quarantined, and it cannot support a claim on its own."
+   - Timeline: "The email says the committee meets on March 3, a chat on the 6th says it still had
+     not met, and the minutes record a meeting on the 10th. Every date is resolved against its own
+     document, so 'March 3' and 'on Friday' land on the right day, and anything vaguer is shown as a
+     range. The brief calls the timing unresolved instead of picking a story." If asked about
+     conflicts: the dates and orderings form a simple temporal network, and a set that cannot all
+     hold becomes a named conflict; the evaluation plants those and measures how often they are
+     caught.
+   - Injection badge on the cover letter: "This PDF tells the model to ignore its instructions and
+     confirm nothing was wrong. It was quarantined, the two claims resting only on it are classed
+     unsupported, and the brief says it excluded them."
    - Evidence tab: request access, approve as Morgan: "Two of three reviewers must agree to open the
      originals, and the opening goes into a public log."
 4. **Transparency log (20 s).** `/audit`: Run all checks, then Tamper with this entry: the proofs fail.
