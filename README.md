@@ -14,14 +14,14 @@ source passage, with uncertainty and contradictions shown rather than smoothed o
 
 ## Try it in five minutes
 
-| Page | What to look for |
-| --- | --- |
+| Page                       | What to look for                                                                                                                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/report/northwind-ethics` | The reporter flow. Use test passport A, load the sample evidence, watch metadata get stripped from a real PDF and DOCX, toggle redactions, then seal. Every step shows its real timing. |
-| `/console` | Sign in as a reviewer, open the Northwind report, read the brief, follow any claim to its quote, open the evidence with a 2-of-3 quorum. |
-| `/audit` | Verify the transparency log yourself, then tamper with an entry and watch the proofs fail. |
-| `/inbox` | Read the reviewers' follow-up questions with the demo codename and reply anonymously. |
-| `/architecture` | Every mechanism, with diagrams, the threat model and the source file behind each claim. |
-| `/evals` | Leakage, grounding, timeline accuracy and invalid-output handling on synthetic evidence. |
+| `/console`                 | Sign in as a reviewer, open the Northwind report, read the brief, follow any claim to its quote, open the evidence with a 2-of-3 quorum.                                                |
+| `/audit`                   | Verify the transparency log yourself, then tamper with an entry and watch the proofs fail.                                                                                              |
+| `/inbox`                   | Read the reviewers' follow-up questions with the demo codename and reply anonymously.                                                                                                   |
+| `/architecture`            | Every mechanism, with diagrams, the threat model and the source file behind each claim.                                                                                                 |
+| `/evals`                   | Leakage, grounding, timeline accuracy and invalid-output handling on synthetic evidence.                                                                                                |
 
 ## How it works
 
@@ -65,20 +65,20 @@ source passage, with uncertainty and contradictions shown rather than smoothed o
 
 A 12-stage DAG with explicit dependencies, streamed live to the reviewer:
 
-| Stage | What it does |
-| --- | --- |
-| `segment` | Splits documents into stable passage IDs (`D2.P001`) with offsets and hashes |
-| `injection_scan` | Heuristic and model checks for planted instructions; risky passages are quarantined and spotlighted with nonce delimiters |
-| `extract` | Three independent samples (self-consistency) of claims, each citing verbatim quotes |
-| `consolidate` | Clusters claims across samples; agreement becomes a confidence input |
-| `ground` | Verifies every quote verbatim against the source passage and records exact offsets |
-| `verify` | Judges each claim against its cited and neighbouring passages: supported, contradicted, unsupported |
-| `temporal` | Normalises time expressions to intervals and solves a simple temporal network; negative cycles (Floyd-Warshall bounds, Bellman-Ford extraction) become explicit timeline conflicts |
-| `entities` | Union-find over explicit placeholder equivalences, never over guessed identities |
-| `contradictions` | Pairs of claims that cannot both be true, with the passages that conflict |
-| `calibrate` | A documented logistic formula over grounding, agreement, verification and source type gives each claim a confidence and an evidence class: documented, corroborated allegation, allegation, contradicted, unsupported |
-| `gaps` | Follow-up questions for the reporter that never ask for identifying details |
-| `brief` | A summary in which every key point cites claims |
+| Stage            | What it does                                                                                                                                                                                                          |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `segment`        | Splits documents into stable passage IDs (`D2.P001`) with offsets and hashes                                                                                                                                          |
+| `injection_scan` | Heuristic and model checks for planted instructions; risky passages are quarantined and spotlighted with nonce delimiters                                                                                             |
+| `extract`        | Three independent samples (self-consistency) of claims, each citing verbatim quotes                                                                                                                                   |
+| `consolidate`    | Clusters claims across samples; agreement becomes a confidence input                                                                                                                                                  |
+| `ground`         | Verifies every quote verbatim against the source passage and records exact offsets                                                                                                                                    |
+| `verify`         | Judges each claim against its cited and neighbouring passages: supported, contradicted, unsupported                                                                                                                   |
+| `temporal`       | Normalises time expressions to intervals and solves a simple temporal network; negative cycles (Floyd-Warshall bounds, Bellman-Ford extraction) become explicit timeline conflicts                                    |
+| `entities`       | Union-find over explicit placeholder equivalences, never over guessed identities                                                                                                                                      |
+| `contradictions` | Pairs of claims that cannot both be true, with the passages that conflict                                                                                                                                             |
+| `calibrate`      | A documented logistic formula over grounding, agreement, verification and source type gives each claim a confidence and an evidence class: documented, corroborated allegation, allegation, contradicted, unsupported |
+| `gaps`           | Follow-up questions for the reporter that never ask for identifying details                                                                                                                                           |
+| `brief`          | A summary in which every key point cites claims                                                                                                                                                                       |
 
 Every model call uses strict JSON Schema structured output, semantic validation and a bounded repair
 loop with salvage, so invalid model output degrades a stage instead of corrupting the result.
@@ -99,18 +99,18 @@ quorum of reviewers, who re-seal their shares to the requester.
 
 ## Repository layout
 
-| Path | What |
-| --- | --- |
-| `apps/web` | Next.js 16 app: reporter flow, reviewer console, inbox, audit, evals, architecture |
-| `services/identity` | Hono service: Self verification, nullifier quota, RFC 9474 blind signing |
-| `services/api` | FastAPI: submissions, x402, job queue with leases and dead letters, SSE, quorum, inbox, transparency log |
+| Path                | What                                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `apps/web`          | Next.js 16 app: reporter flow, reviewer console, inbox, audit, evals, architecture                             |
+| `services/identity` | Hono service: Self verification, nullifier quota, RFC 9474 blind signing                                       |
+| `services/api`      | FastAPI: submissions, x402, job queue with leases and dead letters, SSE, quorum, inbox, transparency log       |
 | `services/pipeline` | The 12-stage analysis DAG, providers (Meta, Fireworks, Baseten, Codex, replay, chaos, tap) and the pull worker |
-| `services/evals` | Synthetic scenarios with ground truth, metrics and the provider benchmark |
-| `packages/crypto` | Browser and Node crypto: envelopes, Shamir, blind tokens, codenames, Merkle proofs |
-| `packages/privacy` | Metadata stripping, PII detection, pseudonymisation, leakage scoring |
-| `packages/sdk` | Typed client and submission builder used by the web app and the demo seeder |
-| `infra/modal` | Modal app: API, identity, analysis workers, scheduled evals |
-| `docs/specs` | The contracts between services, including exact wire formats and test vectors |
+| `services/evals`    | Synthetic scenarios with ground truth, metrics and the provider benchmark                                      |
+| `packages/crypto`   | Browser and Node crypto: envelopes, Shamir, blind tokens, codenames, Merkle proofs                             |
+| `packages/privacy`  | Metadata stripping, PII detection, pseudonymisation, leakage scoring                                           |
+| `packages/sdk`      | Typed client and submission builder used by the web app and the demo seeder                                    |
+| `infra/modal`       | Modal app: API, identity, analysis workers, scheduled evals                                                    |
+| `docs/specs`        | The contracts between services, including exact wire formats and test vectors                                  |
 
 Python and TypeScript interoperate through shared test vectors generated with PyNaCl
 (`docs/specs/vectors/protocol-vectors.json`) that both sides must pass.
