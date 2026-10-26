@@ -27,8 +27,15 @@ function AnalysisCell({ report }: { report: ReportSummary }) {
       </span>
     );
   }
-  if (analysis.status === "queued" || analysis.status === "running") {
-    return <span className="text-sm text-seal-ink">Running {analysis.stage ?? ""}</span>;
+  if (analysis.status === "queued") {
+    return <span className="text-sm text-seal-ink">Queued for a worker</span>;
+  }
+  if (analysis.status === "running") {
+    return (
+      <span className="text-sm text-seal-ink">
+        {analysis.stage ? `Running ${analysis.stage}` : "Running"}
+      </span>
+    );
   }
   if (analysis.status === "failed" || analysis.status === "dead") {
     return <span className="text-sm text-contradicted">Analysis failed</span>;
