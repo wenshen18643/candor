@@ -133,7 +133,7 @@ export default function ReportsPage() {
                       </Link>
                       <span className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-ink-3">
                         <span>
-                          {pluralize(report.fileCount, "file")}, {report.sizeBucket}
+                          {pluralize(report.fileCount, "file")}, up to {report.sizeBucket}
                         </span>
                         {report.unreadReplies > 0 ? (
                           <span className="inline-flex items-center gap-1 text-seal-ink">
