@@ -8,6 +8,20 @@ from pydantic import BaseModel, ValidationError
 
 from candor_pipeline.providers.base import LLMProvider, LLMRequest, LLMResponse
 
+REPAIR_HINTS = {
+    "unknown_passage_reference": (
+        "Every passage reference must be one exact passage ID from the input, such as D1.P002, "
+        "with no quoted text."
+    ),
+    "unknown_claim_reference": "Every claim reference must be one exact claim ID from the input.",
+    "verification_coverage": "Return exactly one verification for every input claim ID.",
+    "uncited_verification": "checked_passages may only list that claim's allowed_passages.",
+    "invalid_quote": "Each quote must be copied verbatim from the passage it cites.",
+    "duplicate_claim_id": "Every claim ID must be unique.",
+    "no_json_object": "Return one JSON object.",
+    "expected_object": "Return one JSON object.",
+}
+
 
 def strict_schema(model: type[BaseModel]) -> dict[str, Any]:
     schema = model.model_json_schema()
@@ -138,7 +152,12 @@ async def complete_structured[T: BaseModel](
                     for item in error.errors(include_input=False, include_context=False)
                 ]
             else:
-                errors = [{"type": "invalid_json_or_reference"}]
+                code = str(error)
+                errors = (
+                    [{"type": code, "fix": REPAIR_HINTS[code]}]
+                    if code in REPAIR_HINTS
+                    else [{"type": "invalid_json_or_reference"}]
+                )
             current = request.model_copy(
                 update={
                     "json_schema": strict_schema(model),

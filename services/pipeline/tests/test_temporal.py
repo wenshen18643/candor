@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+from candor_pipeline.stages.temporal import text_anchor
 from candor_pipeline.temporal.normalize import normalize_time
 from candor_pipeline.temporal.stn import SimpleTemporalNetwork
 
@@ -136,3 +137,17 @@ def test_cycle_is_simple_and_irreducible() -> None:
             if edge != omitted:
                 subset.add(edge.source, edge.target, edge.bound, edge.name)
         assert subset.solve().conflicts == []
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("Review status as of 10 April 2026\nPrepared after the call", date(2026, 4, 10)),
+        ("reference,date\nL001,2026-04-10,Tooling", date(2026, 4, 10)),
+        ("Export of review-ops | March 9, 2026 UTC", date(2026, 3, 9)),
+        ("Q2 2026 planning notes", None),
+        ("No dates here", None),
+    ],
+)
+def test_text_anchor_uses_first_full_date(text: str, expected: date | None) -> None:
+    assert text_anchor(text) == expected

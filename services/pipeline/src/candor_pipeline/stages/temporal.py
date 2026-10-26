@@ -7,6 +7,18 @@ from candor_pipeline.stages.context import PipelineContext, StageOutput
 from candor_pipeline.temporal.normalize import normalize_time
 from candor_pipeline.temporal.stn import SimpleTemporalNetwork
 
+FULL_DATE = re.compile(
+    r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{4})\b"
+)
+
+
+def text_anchor(text: str) -> date | None:
+    for match in FULL_DATE.finditer(text):
+        interval = normalize_time(match.group(0), None)
+        if interval.granularity == "day":
+            return interval.earliest
+    return None
+
 
 def add_links(
     network: SimpleTemporalNetwork, claim: Claim, known: set[str], confidence: float
@@ -57,7 +69,10 @@ def topological_ranks(claims: list[Claim]) -> dict[str, int]:
 
 
 async def run(ctx: PipelineContext) -> StageOutput:
-    anchors = {document.doc_id: document.anchor_date for document in ctx.payload.documents}
+    anchors = {
+        document.doc_id: document.anchor_date or text_anchor(document.text)
+        for document in ctx.payload.documents
+    }
     network = SimpleTemporalNetwork()
     originals = {}
     known = {claim.claim_id for claim in ctx.claims}

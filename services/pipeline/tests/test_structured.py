@@ -100,6 +100,10 @@ async def test_semantic_unknown_reference_repair() -> None:
     assert result.repairs == 1
     assert result.value is not None
     assert result.value.claims == [good]
+    feedback = provider.requests[-1].user
+    assert '"type": "unknown_passage_reference"' in feedback
+    assert "exact passage ID" in feedback
+    assert "D99.P001" not in feedback
 
 
 async def test_salvages_only_valid_items() -> None:

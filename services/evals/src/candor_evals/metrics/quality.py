@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import re
+from datetime import date
 
 from candor_pipeline.contracts import AnalysisResult, Claim, Passage, TimeInterval
 from scipy.stats import kendalltau
@@ -83,6 +84,7 @@ def timeline_metrics(
     midpoints = []
     covered = 0
     eligible = 0
+    predicted = 0
     for match in matches:
         event = truth.events[match.event_index]
         if event.date is None:
@@ -91,9 +93,16 @@ def timeline_metrics(
         interval = interval_for(result, result.claims[match.claim_index])
         if interval is None or interval.earliest > interval.latest:
             continue
+        predicted += 1
+        covered += int(interval.earliest <= event.date <= interval.latest)
+        if (
+            interval.granularity == "unknown"
+            or interval.earliest == date.min
+            or interval.latest == date.max
+        ):
+            continue
         dates.append(event.date.toordinal())
         midpoints.append((interval.earliest.toordinal() + interval.latest.toordinal()) / 2)
-        covered += int(interval.earliest <= event.date <= interval.latest)
     tau = None
     if len(dates) >= 2 and len(set(dates)) > 1 and len(set(midpoints)) > 1:
         statistic = float(kendalltau(dates, midpoints, variant="b").statistic)
@@ -105,8 +114,9 @@ def timeline_metrics(
         ),
         "interval_coverage": ratio(covered, eligible),
         "dated_matches": eligible,
-        "predicted_intervals": len(dates),
-        "date_prediction_rate": ratio(len(dates), eligible),
+        "predicted_intervals": predicted,
+        "resolved_intervals": len(dates),
+        "date_prediction_rate": ratio(predicted, eligible),
     }
 
 

@@ -14,10 +14,15 @@ def count_leaks(value: Any, canaries: list[str]) -> int:
         token.casefold()
         for canary in canaries
         for token in re.findall(r"\w+", canary)
-        if len(token) >= 4
+        if len(token) >= 4 and any(character.isdigit() for character in token)
     )
+    folded = text.casefold()
     spans = sorted(
-        {match.span() for term in terms for match in re.finditer(re.escape(term), text.casefold())}
+        {
+            match.span()
+            for term in terms
+            for match in re.finditer(r"(?<!\w)" + re.escape(term) + r"(?!\w)", folded)
+        }
     )
     count = 0
     end = -1

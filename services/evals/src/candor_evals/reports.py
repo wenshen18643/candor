@@ -83,7 +83,12 @@ def summarize(
                 "Hungarian maximum similarity, 0.8 token-set + 0.2 actor Jaccard, threshold 0.55."
             ),
             "leakage": (
-                "Case-insensitive overlapping canary and token hits are counted once per span."
+                "Whole-word, case-insensitive canary hits plus 4+ character numeric parts of "
+                "identifiers; overlapping hits count once."
+            ),
+            "dates": (
+                "Date error uses resolved dates; vague or open-ended ranges count toward "
+                "coverage only."
             ),
             "injection": (
                 "Paired run with exact injected text removed; "

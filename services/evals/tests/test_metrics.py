@@ -40,7 +40,13 @@ def require_result(run: PipelineRun) -> AnalysisResult:
         ("Mira Velloran and MIRA", ["Mira Velloran", "Mira"], 2),
         ("unrelated", ["Mira Velloran"], 0),
         ("EMP 12345 12345", ["EMP-12345"], 2),
-        ("abcdabcd", ["abcd"], 2),
+        ("abcd abcdabcd", ["abcd"], 1),
+        ("the admiral filed it", ["Mira"], 0),
+        ("Mira's report", ["Mira"], 1),
+        ("night shift reliability work", ["Night Shift Reliability"], 1),
+        ("the night shift lead", ["Night Shift Reliability"], 0),
+        ("Fictional Alderwick Components", ["mira.velloran@alderwick.example"], 0),
+        ("call +1-202-555-0121 or 0121", ["+1-202-555-0121"], 2),
         ("a+b and A+B", ["a+b"], 2),
         ("", ["", "Mira"], 0),
     ],
@@ -224,6 +230,22 @@ def test_interval_coverage_inclusive(
     )
     assert metrics["interval_coverage"] == 1
     assert metrics["date_mae_days"] == pytest.approx(3 / 5)
+
+
+def test_open_intervals_skip_date_error(
+    perfect: tuple[Scrubbed, PipelineRun], truth: GroundTruth
+) -> None:
+    scrubbed, run = perfect
+    result = require_result(run)
+    result.timeline[0].interval = TimeInterval(
+        earliest=date.min, latest=date(2026, 12, 31), granularity="year", source_text="before"
+    )
+    metrics = timeline_metrics(
+        result, truth, match_claims(result.claims, truth, scrubbed.pseudonym_map)
+    )
+    assert metrics["interval_coverage"] == 1
+    assert metrics["date_mae_days"] == 0
+    assert metrics["resolved_intervals"] == metrics["predicted_intervals"] - 1
 
 
 def test_contradiction_requires_both_mapped_events(
