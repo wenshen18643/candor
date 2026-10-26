@@ -61,7 +61,7 @@ test("dotenv precedence preserves explicit empty values and resolves custom data
   assert.equal(env.SECOND, "generated");
   assert.equal(env.QUOTED, "two words");
   assert.equal(env.CANDOR_DATA_DIR, resolve(directory, "custom"));
-  assert.equal(env.CANDOR_LLM_PROVIDER, "codex");
+  assert.equal(env.CANDOR_LLM_PROVIDER, "claude");
 });
 
 test("blank .env placeholders are filled by seeded values", async () => {
@@ -382,7 +382,7 @@ test("meta plan runs live Meta evals and a benchmark without cassette reuse", ()
   assert.deepEqual(plan.steps[1].slice(5), [
     "bench",
     "--providers",
-    "meta:muse-spark-1.3,codex:gpt-6.1-sol,fireworks,baseten",
+    "meta:muse-spark-1.3,claude:claude-haiku-5-5,fireworks,baseten",
     "--repeats",
     "2",
   ]);

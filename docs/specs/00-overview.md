@@ -60,7 +60,7 @@ Separation guarantees (talking points, must stay true in code):
 check` and `uvx ruff@0.14.2 format`). Tests with pytest. Type hints everywhere, Pydantic v2 for
   all boundary models.
 - Never commit secrets. All config through env vars listed in `.env.example`.
-- Every external integration (Meta Model API, Codex CLI, Fireworks, Baseten, Self, x402 facilitator,
+- Every external integration (Meta Model API, Claude, Codex CLI, Fireworks, Baseten, Self, x402 facilitator,
   Modal, chain anchoring) sits behind an interface with a real implementation and a deterministic
   mock/replay implementation, selected by env var. Default `CANDOR_MODE=demo` must run fully offline
   except for the chosen LLM provider.
@@ -73,8 +73,9 @@ check` and `uvx ruff@0.14.2 format`). Tests with pytest. Type hints everywhere, 
 
 `CANDOR_MODE` (`demo` | `production`), `CANDOR_DATA_DIR` (default `./data`), `CANDOR_API_URL`,
 `CANDOR_IDENTITY_URL`, `CANDOR_WEB_URL`, `CANDOR_WORKER_TOKEN`, `CANDOR_ENCLAVE_SK`,
-`CANDOR_LLM_PROVIDER` (`codex` | `meta` | `fireworks` | `baseten` | `replay`), `CANDOR_CODEX_MODEL`
-(default `gpt-6.1-sol`), `MODEL_API_KEY`, `CANDOR_META_MODEL` (default `muse-spark-1.3`),
+`CANDOR_LLM_PROVIDER` (`claude` | `codex` | `meta` | `fireworks` | `baseten` | `replay`),
+`CANDOR_CLAUDE_MODEL` (default `claude-haiku-5-5`), `ANTHROPIC_API_KEY` (optional),
+`CANDOR_CODEX_MODEL` (default `gpt-6.1-sol`), `MODEL_API_KEY`, `CANDOR_META_MODEL` (default `muse-spark-1.3`),
 `FIREWORKS_API_KEY`, `CANDOR_FIREWORKS_MODEL`, `BASETEN_API_KEY`, `CANDOR_BASETEN_MODEL`,
 `CANDOR_BASETEN_BASE_URL`, `CANDOR_REPLAY_DIR`, `SELF_MODE` (`mock` | `staging` | `mainnet`),
 `SELF_ENDPOINT`, `X402_MODE` (`mock` | `testnet`), `X402_PAY_TO`, `X402_NETWORK`,

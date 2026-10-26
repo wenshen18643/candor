@@ -22,7 +22,7 @@ export function metaPlan(argv, env) {
     steps.push([...evals, "run", "--provider", meta, "--scenarios", "all", "--samples", "3"]);
   }
   if (mode !== "evals") {
-    const providers = [meta, "codex:gpt-6.1-sol", "fireworks", "baseten"].join(",");
+    const providers = [meta, "claude:claude-haiku-5-5", "fireworks", "baseten"].join(",");
     steps.push([...evals, "bench", "--providers", providers, "--repeats", repeats]);
   }
   const clean = { ...env };

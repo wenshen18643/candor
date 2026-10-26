@@ -143,6 +143,17 @@ def test_missing_credentials(provider: str, key: str, monkeypatch: pytest.Monkey
     assert missing_credentials(provider) is None
 
 
+def test_claude_needs_key_or_claude_code(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setattr("candor_evals.pipeline_adapter.shutil.which", lambda name: None)
+    assert "ANTHROPIC_API_KEY" in (missing_credentials("claude") or "")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "synthetic-test-value")
+    assert missing_credentials("claude:claude-haiku-5-5") is None
+    monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.setattr("candor_evals.pipeline_adapter.shutil.which", lambda name: "claude.exe")
+    assert missing_credentials("claude") is None
+
+
 def test_missing_model_and_unknown_provider(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FIREWORKS_API_KEY", "synthetic-test-value")
     monkeypatch.delenv("CANDOR_FIREWORKS_MODEL", raising=False)

@@ -16,8 +16,8 @@ Prepare a private `.env` using the names in the root `.env.example`. Set public 
 `CANDOR_API_URL`, `CANDOR_IDENTITY_URL`, and `CANDOR_WEB_URL`; configure independent identity,
 worker, JWT and payments secrets. The worker's `CANDOR_ENCLAVE_SK` must correspond to the
 public enclave key distributed by the seeded API. Use `CANDOR_LLM_PROVIDER=meta` and a
-`MODEL_API_KEY` for hosted analysis, or configure Fireworks/Baseten. The images do not contain
-an authenticated Codex CLI. Never upload local credential directories or evidence files.
+`MODEL_API_KEY` for hosted analysis, `CANDOR_LLM_PROVIDER=claude` with `ANTHROPIC_API_KEY`, or
+configure Fireworks/Baseten. The images do not contain an authenticated Codex or Claude Code CLI. Never upload local credential directories or evidence files.
 
 ```sh
 uv run --project services/api modal secret create candor-secrets --from-dotenv .env

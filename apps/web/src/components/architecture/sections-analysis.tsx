@@ -145,8 +145,9 @@ labels: high ≥ 0.80 · moderate ≥ 0.60 · low ≥ 0.35 · otherwise very low
               <>
                 One interface, <C>complete_json</C>, over Meta Muse Spark (<C>muse-spark-1.3</C>)
                 via the Meta Model API’s OpenAI-compatible endpoint with strict JSON schemas,
-                Fireworks, Baseten, a local Codex CLI, and a record-and-replay cassette provider
-                that makes CI deterministic.
+                Fireworks, Baseten, Claude Haiku 5.5 (<C>claude-haiku-5-5</C>, through the Anthropic
+                API or a signed-in Claude Code CLI), a local Codex CLI, and a record-and-replay
+                cassette provider that makes CI deterministic.
               </>
             ),
           },

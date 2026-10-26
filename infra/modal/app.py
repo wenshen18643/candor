@@ -173,7 +173,7 @@ def run_analysis() -> None:
 def run_evals(provider: str = "meta") -> str:
     selected = (
         import_module("pydantic")
-        .TypeAdapter(Literal["meta", "replay", "fireworks", "baseten", "codex"])
+        .TypeAdapter(Literal["meta", "replay", "fireworks", "baseten", "claude", "codex"])
         .validate_python(provider)
     )
     run_id = str(uuid4())

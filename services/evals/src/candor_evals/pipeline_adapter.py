@@ -25,6 +25,12 @@ def missing_credentials(spec: str) -> str | None:
     provider, _, model = spec.partition(":")
     if provider == "replay":
         return None if os.getenv("CANDOR_REPLAY_DIR") else "CANDOR_REPLAY_DIR is not configured"
+    if provider == "claude":
+        return (
+            None
+            if os.getenv("ANTHROPIC_API_KEY", "").strip() or shutil.which("claude")
+            else "ANTHROPIC_API_KEY is not configured and Claude Code is unavailable"
+        )
     if provider == "codex":
         return (
             None if shutil.which("codex") or shutil.which("codex.cmd") else "Codex CLI unavailable"
@@ -47,7 +53,12 @@ def missing_credentials(spec: str) -> str | None:
 
 def provider_model(spec: str) -> tuple[str, str]:
     provider, _, model = spec.partition(":")
-    defaults = {"codex": "gpt-6.1-sol", "meta": "muse-spark-1.3", "replay": "cassette"}
+    defaults = {
+        "claude": "claude-haiku-5-5",
+        "codex": "gpt-6.1-sol",
+        "meta": "muse-spark-1.3",
+        "replay": "cassette",
+    }
     return provider, model or os.getenv(
         f"CANDOR_{provider.upper()}_MODEL", defaults.get(provider, "")
     )

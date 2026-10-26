@@ -21,6 +21,8 @@ candor_pipeline/
   providers/
     base.py             LLMProvider protocol, LLMRequest, LLMResponse, Usage, ProviderError
     openai_compat.py    Meta Model API, Fireworks, Baseten (OpenAI Chat Completions + json_schema)
+    anthropic_api.py    Claude through the Anthropic SDK (output_config json_schema)
+    claude_code.py      Claude through a signed-in Claude Code CLI (no API key)
     codex_cli.py        local Codex CLI subprocess provider
     replay.py           record/replay cassette provider
     chaos.py            fault-injecting wrapper for robustness evals
@@ -51,6 +53,14 @@ from a price table), `latency_ms`, `provider`, `model`.
   `MODEL_API_KEY`), Fireworks and Baseten per `docs/research/fireworks-baseten.md`. Retries with
   exponential backoff and jitter on 429/5xx (max 4), honour `Retry-After`. Read
   `docs/research/meta-model-api.md` for exact request details and adapt if the docs differ.
+- `claude`: Claude Haiku 5.5 by default (`CANDOR_CLAUDE_MODEL`). With `ANTHROPIC_API_KEY` set,
+  `anthropic_api` calls the Messages API with `output_config={"effort": "low", "format":
+{"type": "json_schema", "schema": transform_schema(schema)}}`, no `temperature` (rejected by current
+  models), SDK retries on 429/5xx/connection errors, and maps `refusal` and `max_tokens` stops to
+  provider errors. Without a key, `claude_code` runs `claude -p --model <model> --output-format json
+--json-schema <schema> --system-prompt <stage prompt> --tools "" --setting-sources ""
+--strict-mcp-config --no-session-persistence` in an empty temp directory with the prompt on stdin,
+  strips nested-session variables, and reads `structured_output` and usage from the result.
 - `codex_cli`: runs `codex exec -m <CANDOR_CODEX_MODEL> --output-schema <tmp schema> -o <tmp out>
 --ephemeral --skip-git-repo-check --ignore-user-config -s read-only -C <empty tmp dir> -` with the
   prompt on stdin. The prompt must instruct the model to answer directly with JSON and not run any
@@ -219,7 +229,7 @@ reviewer key returned by the claim response and `POST /internal/jobs/{id}/comple
 
 ## Router
 
-`router.json` maps stage -> provider spec (`codex:gpt-6.1-sol`, `meta:muse-spark-1.3`,
+`router.json` maps stage -> provider spec (`claude:claude-haiku-5-5`, `meta:muse-spark-1.3`,
 `fireworks:<model>`, `baseten:<model>`), with `default`. Written by the eval benchmark
 (05-evals). Env `CANDOR_LLM_PROVIDER` sets the default when no router file is present.
 

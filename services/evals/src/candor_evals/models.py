@@ -100,7 +100,7 @@ class PipelineRun(Boundary):
 class RunOptions(Boundary):
     provider: str = Field(
         default="replay",
-        pattern=r"^(codex|meta|fireworks|baseten|replay)(:[A-Za-z0-9_./:-]+)?$",
+        pattern=r"^(claude|codex|meta|fireworks|baseten|replay)(:[A-Za-z0-9_./:-]+)?$",
     )
     samples: int = Field(default=3, ge=1, le=12)
     chaos: float = Field(default=0.0, ge=0.0, le=1.0)

@@ -28,9 +28,11 @@ def local_path(path: Path) -> Path:
 
 
 def validate_provider(value: str) -> str:
-    if not re.fullmatch(r"(?:codex|meta|fireworks|baseten|replay)(?::[A-Za-z0-9_./:-]+)?", value):
+    if not re.fullmatch(
+        r"(?:claude|codex|meta|fireworks|baseten|replay)(?::[A-Za-z0-9_./:-]+)?", value
+    ):
         raise typer.BadParameter(
-            "Expected codex, meta, fireworks, baseten or replay, optionally :model"
+            "Expected claude, codex, meta, fireworks, baseten or replay, optionally :model"
         )
     return value
 

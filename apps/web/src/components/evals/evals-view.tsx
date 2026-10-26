@@ -48,9 +48,10 @@ const isBench = (value: unknown) =>
 const runCommands = [
   "cd services/evals",
   "uv run candor-evals synth",
-  "uv run candor-evals run --provider codex --scenarios all --samples 3 --chaos 0.3",
+  "uv run candor-evals run --provider claude --scenarios all --samples 3 --chaos 0.3",
 ];
-const benchCommand = "uv run candor-evals bench --providers codex:gpt-6.1-sol,meta:muse-spark-1.3";
+const benchCommand =
+  "uv run candor-evals bench --providers claude:claude-haiku-5-5,meta:muse-spark-1.3";
 
 export function EvalsView() {
   const [evals, setEvals] = useState<Source<EvalsSummary>>({ status: "loading" });

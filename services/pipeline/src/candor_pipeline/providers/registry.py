@@ -1,13 +1,20 @@
 import os
 
+from candor_pipeline.providers.anthropic_api import AnthropicProvider
 from candor_pipeline.providers.base import LLMProvider, ProviderError
+from candor_pipeline.providers.claude_code import ClaudeCodeProvider
 from candor_pipeline.providers.codex_cli import CodexCLIProvider
 from candor_pipeline.providers.openai_compat import OpenAICompatProvider
 from candor_pipeline.providers.replay import ReplayProvider
 
 
 def build_provider(spec: str | None = None) -> LLMProvider:
-    provider, _, model = (spec or os.getenv("CANDOR_LLM_PROVIDER", "codex")).partition(":")
+    provider, _, model = (spec or os.getenv("CANDOR_LLM_PROVIDER", "claude")).partition(":")
+    if provider == "claude":
+        model = model or os.getenv("CANDOR_CLAUDE_MODEL", "claude-haiku-5-5")
+        if os.getenv("ANTHROPIC_API_KEY", "").strip():
+            return AnthropicProvider(model)
+        return ClaudeCodeProvider(model)
     if provider == "codex":
         return CodexCLIProvider(model or os.getenv("CANDOR_CODEX_MODEL", "gpt-6.1-sol"))
     if provider == "replay":

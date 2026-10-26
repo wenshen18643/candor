@@ -29,7 +29,8 @@ uv run --project services/api pytest infra/tests -q -p no:cacheprovider
 `seed:demo`, and cleans up its own processes. It refuses to reset an active API because that
 would invalidate its in-memory audit keys. SDK output is suppressed because it prints a codename.
 Remove an explicitly empty `CANDOR_ENCLAVE_SK` from `.env` to let the generated demo environment
-supply it. The worker defaults to Codex; configure a different provider explicitly as needed.
+supply it. The worker defaults to Claude Haiku 5.5 (Anthropic API key, or a signed-in Claude Code CLI);
+configure a different provider explicitly as needed.
 
 Playwright starts showcase mode at port 3100 unless `E2E_BASE_URL` points to an existing server.
 Traces, screenshots and video are disabled so receipts and evidence are not persisted in artifacts.
@@ -76,7 +77,8 @@ and manual eval invocation. Local app construction succeeded without deployment 
 - Modal image graphs and local wrappers were verified, but cloud builds, deployment, remote
   persistence and authenticated inference were not run. SQLite volumes use one container per
   database owner; abrupt failure can lose writes since the last volume commit. Hosted workers
-  need a supported configured HTTP provider; images contain no authenticated Codex installation.
+  need a configured HTTP provider (`meta`, `claude` with `ANTHROPIC_API_KEY`, Fireworks or
+  Baseten); images contain no authenticated Codex or Claude Code installation.
 - API-reported analysis failures can return worker exit zero, so Modal retries alone do not
   guarantee a successful analysis. Queue status and leases remain authoritative.
 - The reporter UI splits EFF words on internal hyphens; four wordlist entries contain hyphens.

@@ -92,14 +92,14 @@ the scrubber in Python.
 ## Runner
 
 - `candor-evals synth` regenerates scenarios.
-- `candor-evals run --provider codex|meta|replay|... --scenarios all --samples 3 --chaos 0.0
+- `candor-evals run --provider claude|meta|replay|... --scenarios all --samples 3 --chaos 0.0
 --record` writes `services/evals/results/<timestamp>-<provider>.json` and a Markdown report, and
   copies a compact summary to `apps/web/public/data/evals-latest.json` with this shape:
   `{generated_at, provider, model, scenarios: [{scenario_id, title, metrics: {...}}], aggregate:
 {...}, chaos: {...}, injection: {...}, leakage: {...}}`.
 - `--record` uses the replay provider in record mode so later runs can replay deterministically in
   CI (`CANDOR_REPLAY_DIR=services/evals/cassettes`).
-- `candor-evals bench --providers codex:gpt-6.1-sol,meta:muse-spark-1.3,fireworks:...` runs a
+- `candor-evals bench --providers claude:claude-haiku-5-5,meta:muse-spark-1.3,fireworks:...` runs a
   stage-level benchmark (extract, verify, gaps) on a fixed subset, recording quality, p50/p95
   latency and cost per provider and stage, computes the Pareto front over (quality, cost, latency),
   writes `services/pipeline/router.json` choosing per stage the cheapest provider within 2 points of

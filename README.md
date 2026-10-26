@@ -102,18 +102,18 @@ quorum of reviewers, who re-seal their shares to the requester.
 
 ## Repository layout
 
-| Path                | What                                                                                                           |
-| ------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `apps/web`          | Next.js 16 app: reporter flow, reviewer console, inbox, audit, evals, architecture                             |
-| `services/identity` | Hono service: Self verification, nullifier quota, RFC 9474 blind signing                                       |
-| `services/api`      | FastAPI: submissions, x402, job queue with leases and dead letters, SSE, quorum, inbox, transparency log       |
-| `services/pipeline` | The 12-stage analysis DAG, providers (Meta, Fireworks, Baseten, Codex, replay, chaos, tap) and the pull worker |
-| `services/evals`    | Synthetic scenarios with ground truth, metrics and the provider benchmark                                      |
-| `packages/crypto`   | Browser and Node crypto: envelopes, Shamir, blind tokens, codenames, Merkle proofs                             |
-| `packages/privacy`  | Metadata stripping, PII detection, pseudonymisation, leakage scoring                                           |
-| `packages/sdk`      | Typed client and submission builder used by the web app and the demo seeder                                    |
-| `infra/modal`       | Modal app: API, identity, analysis workers, scheduled evals                                                    |
-| `docs/specs`        | The contracts between services, including exact wire formats and test vectors                                  |
+| Path                | What                                                                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`          | Next.js 16 app: reporter flow, reviewer console, inbox, audit, evals, architecture                                     |
+| `services/identity` | Hono service: Self verification, nullifier quota, RFC 9474 blind signing                                               |
+| `services/api`      | FastAPI: submissions, x402, job queue with leases and dead letters, SSE, quorum, inbox, transparency log               |
+| `services/pipeline` | The 12-stage analysis DAG, providers (Meta, Fireworks, Baseten, Claude, Codex, replay, chaos, tap) and the pull worker |
+| `services/evals`    | Synthetic scenarios with ground truth, metrics and the provider benchmark                                              |
+| `packages/crypto`   | Browser and Node crypto: envelopes, Shamir, blind tokens, codenames, Merkle proofs                                     |
+| `packages/privacy`  | Metadata stripping, PII detection, pseudonymisation, leakage scoring                                                   |
+| `packages/sdk`      | Typed client and submission builder used by the web app and the demo seeder                                            |
+| `infra/modal`       | Modal app: API, identity, analysis workers, scheduled evals                                                            |
+| `docs/specs`        | The contracts between services, including exact wire formats and test vectors                                          |
 
 Python and TypeScript interoperate through shared test vectors generated with PyNaCl
 (`docs/specs/vectors/protocol-vectors.json`) that both sides must pass.
@@ -134,9 +134,12 @@ no `NEXT_PUBLIC_API_URL` the web app runs in showcase mode with recorded data.
 ### Choosing the model
 
 The pipeline routes each stage to a provider (`services/pipeline/router.json`). Set
-`CANDOR_LLM_PROVIDER` to `meta`, `fireworks`, `baseten`, `codex` or `replay`. With `MODEL_API_KEY`
-in `.env`, one command runs the evaluation suite against Meta Muse and then benchmarks Muse, Codex,
-Fireworks and Baseten per stage, regenerating the router and the `/evals` data:
+`CANDOR_LLM_PROVIDER` to `claude` (the default), `meta`, `fireworks`, `baseten`, `codex` or
+`replay`. `claude` runs Claude Haiku 5.5 (`CANDOR_CLAUDE_MODEL`) through the Anthropic API when
+`ANTHROPIC_API_KEY` is set, and through a signed-in Claude Code CLI otherwise, so a local run needs
+no key. With `MODEL_API_KEY` in `.env`, one command runs the evaluation suite against Meta Muse and
+then benchmarks Muse, Claude Haiku 5.5, Fireworks and Baseten per stage, regenerating the router and
+the `/evals` data:
 
 ```bash
 pnpm meta
@@ -144,7 +147,7 @@ pnpm meta
 
 `pnpm meta evals` or `pnpm meta bench --repeats 1` runs one half. Providers without credentials are
 listed as skipped rather than guessed. Meta runs always call the live API; they never reuse the
-recorded Codex cassettes.
+recorded cassettes.
 
 ## Quality gates
 
