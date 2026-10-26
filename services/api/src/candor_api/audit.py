@@ -5,7 +5,7 @@ from typing import Any
 from nacl.signing import SigningKey
 from sqlalchemy import Column, Integer, LargeBinary, MetaData, String, Table, select
 
-from candor_api.common import ApiError, b64u, canonical, key_id, require, stamp, unb64
+from candor_api.common import ApiError, b64u, bucket, canonical, key_id, require, stamp, unb64
 from candor_api.database import make_engine, transaction
 from candor_api.integrations import AnchorAdapter
 from candor_api.merkle import MerkleTree, sth_message
@@ -129,7 +129,7 @@ class AuditLog:
                     event_id=event_id,
                     leaf_bytes=leaf,
                     entry_type=entry["type"],
-                    created_at=entry.get("bucket", stamp()),
+                    created_at=entry.get("bucket", bucket()),
                 )
             )
             self.tree.append(leaf)

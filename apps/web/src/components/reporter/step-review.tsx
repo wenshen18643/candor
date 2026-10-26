@@ -362,16 +362,15 @@ export function StepReview() {
         </SectionTitle>
         <div className="overflow-hidden rounded-lg border border-line">
           <div
-            role="tablist"
-            aria-label="Documents"
+            role="group"
+            aria-label="Choose a document"
             className="flex gap-1 overflow-x-auto border-b border-line bg-surface p-1.5"
           >
             {tabs.map((tab) => (
               <button
                 key={tab.key}
-                role="tab"
                 type="button"
-                aria-selected={tab.key === doc?.docKey}
+                aria-pressed={tab.key === doc?.docKey}
                 onClick={() => setActive(tab.key)}
                 className={cn(
                   "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-sm transition-colors duration-150",
@@ -386,7 +385,7 @@ export function StepReview() {
             ))}
           </div>
           {doc ? (
-            <div role="tabpanel">
+            <div>
               <DocumentView
                 text={doc.text}
                 detections={detections.filter((hit) => hit.docKey === doc.docKey)}

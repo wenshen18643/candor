@@ -14,6 +14,7 @@ import {
   Processes,
   root,
   safeLine,
+  serviceEnvironment,
   servicePlan,
   stopChild,
   waitForHealth,
@@ -67,6 +68,24 @@ test("dotenv files are optional and explicit provider wins", async () => {
   const env = loadEnvironment({ CANDOR_LLM_PROVIDER: "replay" }, directory);
   assert.equal(env.CANDOR_LLM_PROVIDER, "replay");
   assert.equal(env.CANDOR_DATA_DIR, resolve(directory, "data"));
+});
+
+test("service environments isolate worker, identity and browser configuration", () => {
+  const env = { CANDOR_ENCLAVE_SK: "test-worker", MODEL_API_KEY: "test-provider", CANDOR_IDENTITY_SECRET: "test-identity", CANDOR_JWT_SECRET: "test-api", CANDOR_IDENTITY_ADMIN_TOKEN: "test-admin", NEXT_PUBLIC_API_URL: "http://localhost:8000" };
+  assert.equal(serviceEnvironment("worker", env).CANDOR_ENCLAVE_SK, "test-worker");
+  assert.equal(serviceEnvironment("api", env).CANDOR_ENCLAVE_SK, undefined);
+  assert.equal(serviceEnvironment("api", env).CANDOR_IDENTITY_SECRET, undefined);
+  assert.equal(serviceEnvironment("identity", env).CANDOR_JWT_SECRET, undefined);
+  assert.equal(serviceEnvironment("web", env).CANDOR_IDENTITY_ADMIN_TOKEN, undefined);
+  assert.equal(serviceEnvironment("web", env).NEXT_PUBLIC_API_URL, env.NEXT_PUBLIC_API_URL);
+  assert.equal(env.CANDOR_ENCLAVE_SK, "test-worker");
+});
+
+test("stopped supervisors refuse to launch more children", async () => {
+  const runner = new Processes({});
+  await runner.stop();
+  assert.equal(await runner.start("stopped", "unavailable", []).completion, 1);
+  assert.equal(runner.children.size, 0);
 });
 
 test("service plan gates worker and web and starts API with reload", () => {

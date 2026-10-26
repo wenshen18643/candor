@@ -24,7 +24,17 @@ type ConsoleState = {
 export const useConsole = create<ConsoleState>()(
   persist(
     (set) => ({
-      client: showcaseClient,
+      client: showcaseMode
+        ? showcaseClient
+        : new Proxy(showcaseClient, {
+            get: (_target, property: keyof ConsoleClient) =>
+              property === "mode"
+                ? "live"
+                : (...args: unknown[]) =>
+                    import("./live").then(({ liveClient }) =>
+                      Reflect.apply(liveClient[property], liveClient, args),
+                    ),
+          }),
       identity: null,
       unlocked: {},
       reidentify: {},

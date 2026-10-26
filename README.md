@@ -8,8 +8,8 @@ an account of what happened that they can actually trust. A multi-stage Meta Mus
 scattered, redacted evidence into a cited timeline in which every sentence traces back to a verbatim
 source passage, with uncertainty and contradictions shown rather than smoothed over.
 
-- **Live demo:** _see the deployment link in the repository description_ (runs in showcase mode:
-  every cryptographic step runs for real in your browser; nothing is sent anywhere)
+- **Live demo:** https://candor-whistle.vercel.app (showcase mode: every cryptographic step runs
+  for real in your browser, and nothing is sent anywhere)
 - **Built for:** Meta Global AI Developer Hackathon, indie track
 
 ## Try it in five minutes

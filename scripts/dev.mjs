@@ -224,6 +224,25 @@ export function localUrl(value, fallback) {
   return url;
 }
 
+export function serviceEnvironment(name, env) {
+  const filtered = { ...env };
+  if (name === "worker") return filtered;
+  for (const key of ["CANDOR_ENCLAVE_SK", "MODEL_API_KEY", "FIREWORKS_API_KEY", "BASETEN_API_KEY"]) {
+    delete filtered[key];
+  }
+  if (name === "api") delete filtered.CANDOR_IDENTITY_SECRET;
+  if (name === "identity" || name === "web") {
+    for (const key of ["CANDOR_WORKER_TOKEN", "CANDOR_JWT_SECRET", "CANDOR_PAYMENTS_LINK_KEY", "ANCHOR_PRIVATE_KEY"]) {
+      delete filtered[key];
+    }
+  }
+  if (name === "web") {
+    delete filtered.CANDOR_IDENTITY_SECRET;
+    delete filtered.CANDOR_IDENTITY_ADMIN_TOKEN;
+  }
+  return filtered;
+}
+
 export function servicePlan(env, flags = []) {
   if (flags.some((flag) => !["--no-worker", "--no-web"].includes(flag))) {
     throw new Error("Usage: pnpm dev [--no-worker] [--no-web]");
@@ -231,14 +250,12 @@ export function servicePlan(env, flags = []) {
   const api = localUrl(env.CANDOR_API_URL, "http://localhost:8000");
   const identity = localUrl(env.CANDOR_IDENTITY_URL, "http://localhost:8787");
   const web = localUrl(env.CANDOR_WEB_URL, "http://localhost:3000");
-  const publicEnv = { ...env };
-  delete publicEnv.CANDOR_ENCLAVE_SK;
   const services = [
     {
       name: "identity",
       command: "pnpm",
       args: ["--filter", "@candor/identity", "dev"],
-      env: { ...publicEnv, PORT: identity.port || "80" },
+      env: { ...serviceEnvironment("identity", env), PORT: identity.port || "80" },
       url: identity,
       health: new URL("/health", identity),
     },
@@ -261,7 +278,7 @@ export function servicePlan(env, flags = []) {
         api.port || "80",
         "--no-access-log",
       ],
-      env: publicEnv,
+      env: serviceEnvironment("api", env),
       url: api,
       health: new URL("/v1/health", api),
     },
@@ -280,7 +297,7 @@ export function servicePlan(env, flags = []) {
         "--port",
         web.port || "80",
       ],
-      env: publicEnv,
+      env: serviceEnvironment("web", env),
       url: web,
       health: web,
     });
