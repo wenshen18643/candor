@@ -78,10 +78,7 @@ export default function ReportsPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-[-0.01em]">Reports</h1>
-          <p className="mt-1 max-w-[64ch] text-base text-ink-2">
-            Each report arrived as ciphertext with an unlinkable token. Times are rounded to the
-            hour so arrival cannot be matched against office access logs.
-          </p>
+          <p className="mt-1 text-base text-ink-2">Times are rounded to the hour.</p>
         </div>
       </header>
 

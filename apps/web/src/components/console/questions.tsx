@@ -137,8 +137,7 @@ export function Questions({
       <section>
         <h3 className="text-base font-semibold">Suggested follow-up questions</h3>
         <p className="mt-1 max-w-[60ch] text-sm text-ink-2">
-          Generated from the weakest parts of the account and checked to never ask the reporter
-          about their own identity. Nothing is sent until you choose.
+          Drafted from gaps in the account. They never ask who the reporter is.
         </p>
         <ul className="mt-4 flex flex-col gap-3">
           {ordered.map((question) => {
@@ -231,7 +230,7 @@ export function Questions({
           </div>
           {sent ? (
             <p className="text-sm text-documented" role="status">
-              Sent. The reporter sees it next time they open their inbox with their codename.
+              Sent. They&apos;ll see it next time they check their inbox.
             </p>
           ) : null}
         </div>

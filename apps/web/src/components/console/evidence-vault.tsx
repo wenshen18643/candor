@@ -216,8 +216,8 @@ export function EvidenceVault({
           </table>
         </div>
         <p className="text-sm text-ink-2">
-          {pluralize(evidence.selfRedactionCount, "self-identifying detail")} were redacted by the
-          reporter before encryption and do not exist anywhere outside their device.
+          {pluralize(evidence.selfRedactionCount, "detail")} about the reporter never left their
+          device.
         </p>
       </div>
     );
@@ -232,10 +232,8 @@ export function EvidenceVault({
         <div>
           <h3 className="text-md font-semibold">Original files and real names are sealed</h3>
           <p className="mt-1 max-w-[68ch] text-base text-ink-2">
-            The reporter&apos;s browser split this report&apos;s key into {detail.reviewers.length}{" "}
-            Shamir shares and sealed one to each reviewer. Any {detail.threshold} can reconstruct
-            it; nobody can alone, including the server. The analysis never needs it: it runs on the
-            redacted view only.
+            Any {detail.threshold} of {detail.reviewers.length} reviewers can open them together.
+            Nobody can alone, not even the server.
           </p>
         </div>
       </div>

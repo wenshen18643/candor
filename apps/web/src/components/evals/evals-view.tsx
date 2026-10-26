@@ -4,6 +4,7 @@ import { FlaskConical, TriangleAlert } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/field";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import sampleData from "@/data/evals-sample.json";
@@ -109,11 +110,10 @@ export function EvalsView() {
           Evaluation
           {usingSample ? <SampleBadge /> : null}
         </h1>
-        <p className="max-w-[68ch] text-md text-ink-2">
-          Candor is tested on six synthetic whistleblowing cases with planted identifiers,
-          contradictions, date puzzles and prompt injections. Results here are read from files
-          written by the evaluation harness, never typed in by hand
-          {usingSample ? "; the numbers shown right now are an invented sample." : "."}
+        <p className="max-w-[56ch] text-md text-ink-2">
+          Six made-up cases with planted names, contradictions, date puzzles and hidden
+          instructions. Numbers come straight from the test runs
+          {usingSample ? "; these ones are an invented sample." : "."}
         </p>
         {shownEvals || shownBench ? (
           <RunMeta evals={shownEvals} bench={shownBench} sample={usingSample} />
@@ -131,25 +131,15 @@ export function EvalsView() {
 
       {shownEvals ? (
         <>
-          <Section
-            id="results"
-            title="Results against targets"
-            description="The four concerns from the product brief, plus injection robustness and reasoning quality."
-            sample={usingSample}
-          >
+          <Section id="results" title="Results" sample={usingSample}>
             <ResultsMatrix summary={shownEvals} />
           </Section>
-          <Section
-            id="scenarios"
-            title="Per scenario"
-            description="The same metrics for each case, so one strong scenario cannot hide a weak one."
-            sample={usingSample}
-          >
+          <Section id="scenarios" title="Per scenario" sample={usingSample}>
             <ScenarioTable summary={shownEvals} />
           </Section>
         </>
       ) : realBench ? (
-        <Section id="results" title="Results against targets" sample={false}>
+        <Section id="results" title="Results" sample={false}>
           <MissingFile
             file="evals-latest.json"
             commands={runCommands}
@@ -162,7 +152,7 @@ export function EvalsView() {
         <Section
           id="benchmark"
           title="Model benchmark"
-          description="Quality against cost and latency for each pipeline stage. Points on the Pareto front are not beaten on all three at once."
+          description="Quality, cost and speed for each AI step, per provider."
           sample={usingSample}
         >
           <BenchSection bench={shownBench} sample={usingSample} />
@@ -178,18 +168,15 @@ export function EvalsView() {
       ) : null}
 
       {shownEvals?.methodology ? (
-        <section aria-labelledby="method-heading" className="mt-16 border-t border-line pt-8">
-          <h2 id="method-heading" className="text-md font-semibold">
-            Method
-          </h2>
-          <ul className="mt-3 grid max-w-[900px] gap-x-10 gap-y-2 text-sm text-ink-2 md:grid-cols-2">
+        <Disclosure summary="How we test" className="mt-16">
+          <ul className="grid max-w-[900px] gap-x-10 gap-y-2 text-sm text-ink-2 md:grid-cols-2">
             {Object.entries(shownEvals.methodology).map(([key, value]) => (
               <li key={key}>
                 <span className="font-medium text-ink capitalize">{key}.</span> {value}
               </li>
             ))}
           </ul>
-        </section>
+        </Disclosure>
       ) : null}
     </div>
   );

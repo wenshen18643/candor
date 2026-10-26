@@ -65,8 +65,7 @@ function SignIn() {
     <div className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-[520px] flex-col justify-center px-5 py-12">
       <h1 className="text-2xl font-semibold tracking-[-0.01em]">Reviewer sign-in</h1>
       <p className="mt-2 text-base text-ink-2">
-        Reviewers authenticate by signing a one-time challenge with their Ed25519 key. There are no
-        passwords to phish. Choose a demo reviewer for Northwind Health.
+        No passwords. Pick a demo reviewer to sign in with their key.
       </p>
       <ul className="mt-6 flex flex-col gap-2">
         {identities.map((identity) => (

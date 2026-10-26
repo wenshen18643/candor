@@ -75,8 +75,7 @@ export function EntriesTable({
             Entries
           </h2>
           <p className="mt-1 text-sm text-ink-2">
-            Event types and IDs only. Times are rounded to the hour. Select an entry to check its
-            inclusion proof.
+            No content, just events. Select one to check it.
           </p>
         </div>
       </div>

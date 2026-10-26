@@ -63,9 +63,7 @@ function EmptyAnalysis({
           </p>
         ) : null}
         <p className="mt-1 max-w-[64ch] text-base text-ink-2">
-          Running the analysis sends only the redacted, pseudonymised view of this report to the
-          analysis worker, which decrypts it in memory, runs the twelve-stage pipeline on Meta Muse,
-          and seals the findings back to each reviewer. Originals and real names stay sealed.
+          The AI reads only the redacted text. Originals and real names stay locked.
         </p>
       </div>
       <Button variant="primary" onClick={onRun}>
@@ -361,11 +359,6 @@ export default function ReportPage() {
                         ? "Analysis running"
                         : "Paid and queued, waiting for a worker"}
                   </h2>
-                  <p className="mt-1 max-w-[68ch] text-base text-ink-2">
-                    The worker pulls the job, unseals the analysis key with its enclave key, and
-                    streams each stage&apos;s progress here over server-sent events. Plaintext
-                    exists only in the worker&apos;s memory.
-                  </p>
                   {failure && !running ? (
                     <p role="alert" className="mt-2 max-w-[68ch] text-base text-contradicted">
                       {failure}
@@ -422,9 +415,8 @@ export default function ReportPage() {
                 ))}
               </ul>
               <p className="mt-2">
-                Risk {Math.round(passage.injection_risk * 100)} / 100. Quarantined passages stay
-                visible to reviewers but are never followed as instructions, and claims resting only
-                on them are marked unsupported.
+                Risk {Math.round(passage.injection_risk * 100)} / 100. Shown to you, never obeyed by
+                the AI.
               </p>
             </div>
           ) : null}

@@ -230,8 +230,7 @@ export function Timeline({
   if (events.length === 0) {
     return (
       <p className="text-base text-ink-2">
-        No dated events could be placed on a timeline. Dates mentioned in the evidence appear here
-        once the analysis finds them.
+        No dates found yet. They appear here once the analysis finds them.
       </p>
     );
   }
@@ -382,9 +381,7 @@ export function Timeline({
             Temporal conflicts
           </h3>
           <p className="mt-1 max-w-[68ch] text-sm text-ink-2">
-            Dates and orderings become constraints in a Simple Temporal Network. When the
-            constraints cannot all hold, the solver finds the negative cycle and names the evidence
-            behind it.
+            These dates can&apos;t all be true at once.
           </p>
           <ul className="mt-3 flex flex-col gap-3">
             {analysis.temporal_conflicts.map((conflict) => (

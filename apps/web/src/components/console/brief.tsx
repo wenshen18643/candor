@@ -196,9 +196,7 @@ export function Brief({
         </div>
 
         <p className="mt-10 max-w-[68ch] border-t border-line pt-4 text-sm text-ink-3">
-          This brief organises evidence; it does not reach conclusions about anyone. Every sentence
-          links to claims, and every claim links to verbatim source passages. Decisions remain with
-          reviewers.
+          This brief organises evidence. It doesn&apos;t judge anyone; that&apos;s your call.
         </p>
       </article>
 
@@ -211,8 +209,7 @@ export function Brief({
               {pluralize(quarantined.length, "passage")} quarantined
             </h3>
             <p className="mt-1 text-sm text-ink-2">
-              Text in the evidence tried to instruct the analysis. It was kept as evidence but never
-              followed.
+              Text that tried to give the AI orders. Kept as evidence, never obeyed.
             </p>
             <div className="mt-2 flex flex-wrap gap-1">
               {quarantined.map((finding) => (

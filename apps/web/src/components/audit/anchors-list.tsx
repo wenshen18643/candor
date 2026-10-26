@@ -16,8 +16,7 @@ export function AnchorsList({ anchors, heads }: { anchors: Anchor[]; heads: Sign
           Anchors
         </h2>
         <p className="mt-1 text-sm text-ink-2">
-          Every 16 entries the root is written to an outside chain. Even the log operator cannot
-          later swap in a different history without the anchor disagreeing.
+          Every 16 entries, a fingerprint of the log is published outside Candor.
         </p>
       </div>
       {anchors.length === 0 ? (

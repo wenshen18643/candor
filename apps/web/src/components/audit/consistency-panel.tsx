@@ -44,16 +44,13 @@ export function ConsistencyPanel({
           Append-only check
         </h2>
         <p className="mt-1 text-sm text-ink-2">
-          Pick an earlier tree head. The server must prove that the earlier tree is an exact prefix
-          of today&apos;s tree of {latest.tree_size}. If it passes, the log was only appended to,
-          never rewritten.
+          Proves the log of {latest.tree_size} entries only grew since an earlier version.
         </p>
       </div>
 
       {checkpoints.length === 0 ? (
         <p className="rounded-lg bg-surface px-4 py-3 text-sm text-ink-2">
-          No earlier tree head is known yet. This browser will remember today&apos;s signed head, so
-          your next visit can check that nothing changed in between.
+          Nothing to compare yet. Come back later and this browser will check nothing changed.
         </p>
       ) : (
         <fieldset className="flex flex-col gap-1.5">

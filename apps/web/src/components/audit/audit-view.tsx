@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/field";
 import {
   type Anchor,
@@ -341,16 +342,15 @@ export function AuditView() {
           <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
             Transparency log
           </h1>
-          <p className="max-w-[64ch] text-md text-ink-2">
-            Each time someone opens findings, asks for evidence or messages a reporter, the server
-            adds an entry to an append-only Merkle tree (RFC 9162) and signs the new root. You do
-            not have to trust the server: your browser checks the signatures and hashes itself.
+          <p className="max-w-[52ch] text-md text-ink-2">
+            Every report, analysis and evidence opening is recorded here, and nobody can quietly
+            change it. Your browser checks that itself.
           </p>
           <p className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
             {client.mode === "showcase" ? (
               <>
                 <Badge tone="seal">Showcase</Badge>
-                Recorded Northwind Health log with demo keys. The hashes and signatures are real.
+                Demo log. The checks are real.
               </>
             ) : (
               <>
@@ -363,14 +363,14 @@ export function AuditView() {
         <div className="flex flex-col gap-3 rounded-xl bg-surface p-4">
           <h2 className="text-sm font-medium">Checked in this browser</h2>
           <ul className="flex flex-col gap-2 text-sm">
-            <SummaryRow label="Tree head signature" check={signature} />
-            <SummaryRow label="Root rebuilt from entries" check={rebuild} />
-            <SummaryRow label="Append-only since earlier head" check={consistency} />
+            <SummaryRow label="Signed by the log" check={signature} />
+            <SummaryRow label="Entries add up" check={rebuild} />
+            <SummaryRow label="Nothing rewritten" check={consistency} />
             <SummaryRow
               label={
                 passedProofs + failedProofs > 0
-                  ? `Inclusion proofs (${passedProofs} of ${passedProofs + failedProofs})`
-                  : "Inclusion proofs"
+                  ? `Entries checked (${passedProofs} of ${passedProofs + failedProofs})`
+                  : "Entries checked"
               }
               check={proofCheck}
             />
@@ -387,30 +387,34 @@ export function AuditView() {
         </div>
       </div>
 
-      <TreeHeadPanel
-        latest={state.latest}
-        logKey={state.key}
-        signature={forged ? forgeCheck : signature}
-        rebuild={rebuild}
-        forged={forged}
-        entryCount={state.entries.length}
-        canRebuild={state.complete}
-        onForgedChange={onForgedChange}
-        onVerify={() => verifySignature(forged)}
-        onRebuild={rebuildRoot}
+      <EntriesTable
+        entries={state.entries}
+        leafHashes={leafHashes}
+        directory={directory}
+        focusReportId={state.focusReportId}
+        checked={checked}
+        selectedIndex={selected}
+        onSelect={setSelected}
       />
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <EntriesTable
-          entries={state.entries}
-          leafHashes={leafHashes}
-          directory={directory}
-          focusReportId={state.focusReportId}
-          checked={checked}
-          selectedIndex={selected}
-          onSelect={setSelected}
+      <Disclosure
+        summary="Under the hood: signatures, history and anchors"
+        className="mt-12"
+        bodyClassName="flex flex-col gap-12 py-6"
+      >
+        <TreeHeadPanel
+          latest={state.latest}
+          logKey={state.key}
+          signature={forged ? forgeCheck : signature}
+          rebuild={rebuild}
+          forged={forged}
+          entryCount={state.entries.length}
+          canRebuild={state.complete}
+          onForgedChange={onForgedChange}
+          onVerify={() => verifySignature(forged)}
+          onRebuild={rebuildRoot}
         />
-        <aside className="flex min-w-0 flex-col gap-12" aria-label="Log history">
+        <div className="grid gap-12 lg:grid-cols-2">
           <ConsistencyPanel
             latest={state.latest}
             checkpoints={checkpoints}
@@ -425,8 +429,8 @@ export function AuditView() {
             onRun={() => checkConsistency(checkpointId)}
           />
           <AnchorsList anchors={state.anchors} heads={state.heads} />
-        </aside>
-      </div>
+        </div>
+      </Disclosure>
 
       <EntrySheet
         key={selectedEntry?.index ?? "none"}

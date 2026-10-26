@@ -38,9 +38,7 @@ export function CodenameForm({
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-3">
         <h1 className="text-2xl font-semibold tracking-[-0.02em]">Check for replies</h1>
-        <p className="text-md text-ink-2">
-          Type the 8-word codename from your receipt. It opens your private inbox on this device.
-        </p>
+        <p className="text-md text-ink-2">Type your eight secret words.</p>
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
@@ -82,7 +80,7 @@ export function CodenameForm({
             className={cn("text-sm", message ? "text-contradicted" : "text-ink-2")}
             role={message ? "alert" : undefined}
           >
-            {message ?? "Spaces or dashes between words both work. Capital letters do not matter."}
+            {message ?? "Spaces or dashes both work."}
           </p>
         </div>
         <Button
@@ -121,15 +119,13 @@ export function CodenameForm({
 
       <ul className="flex flex-col gap-5" aria-label="How your inbox stays private">
         <Point icon={KeyRound} title="Your codename is the only key.">
-          We never see it and we don&apos;t keep a copy. Your device turns it into keys, and only
-          those keys can open your messages.
+          We never see it or keep a copy.
         </Point>
-        <Point icon={ShieldOff} title="It can't be reset or recovered.">
-          If you lose it, nobody can get into this inbox, including us. You can still send a new
-          report at any time.
+        <Point icon={ShieldOff} title="It can't be recovered.">
+          Lose it and nobody can open this inbox, us included.
         </Point>
-        <Point icon={DoorOpen} title="Nothing is saved on this device.">
-          Closing this tab locks your inbox again. Your codename is not stored anywhere.
+        <Point icon={DoorOpen} title="Nothing is saved here.">
+          Closing this tab locks it again.
         </Point>
       </ul>
     </div>
