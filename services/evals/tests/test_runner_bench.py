@@ -189,5 +189,10 @@ def test_cli_refuses_outside_router_and_bad_provider(
     monkeypatch.setattr(cli, "COMPONENT", tmp_path)
     with pytest.raises(Exception, match="inside services/evals"):
         cli.local_path(tmp_path.parent / "router.json")
+    with pytest.raises(Exception, match="inside services/evals"):
+        cli.router_path(tmp_path.parent / "router.json")
+    monkeypatch.setattr(cli, "ROOT", tmp_path.parent)
+    pipeline_router = tmp_path.parent / "services/pipeline/router.json"
+    assert cli.router_path(pipeline_router) == pipeline_router.resolve()
     assert CliRunner().invoke(cli.app, ["run", "--provider", "../../escape"]).exit_code != 0
     assert CliRunner().invoke(cli.app, ["run", "--provider", "replay", "--record"]).exit_code != 0

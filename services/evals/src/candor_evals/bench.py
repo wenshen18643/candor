@@ -51,22 +51,17 @@ def stage_quality(
 ) -> float:
     metrics = quality_metrics(result, truth, pseudonyms)
     if stage == "extract":
-        matched = metrics["events_matched"] or 0
-        precision = matched / len(result.claims) if result.claims else 0.0
-        return f1(precision, metrics["event_recall"])
+        return f1(metrics["claim_precision"] or 0.0, metrics["event_recall"] or 0.0)
     if stage == "gaps":
         return float(metrics["gap_coverage"] or 0.0)
     matches = match_claims(result.claims, truth, pseudonyms)
     expected = {item.claim_index for item in matches}
-    predicted = {
+    supported = {
         index
         for index, claim in enumerate(result.claims)
         if claim.verification and claim.verification.verdict == "supported"
     }
-    correct = len(expected & predicted)
-    return f1(
-        correct / len(predicted) if predicted else 0, correct / len(expected) if expected else 0
-    )
+    return len(expected & supported) / len(expected) if expected else 0.0
 
 
 def pareto_front(points: list[BenchmarkPoint]) -> list[BenchmarkPoint]:
@@ -246,8 +241,9 @@ async def run_benchmark(
         "router_written": bool(router),
         "methodology": {
             "quality": (
-                "Scores are 0-1. Extract: matched-event F1. Verify: supported-verdict F1 "
-                "against event matches. Gaps: expected-type coverage."
+                "Scores are 0-1. Extract: F1 of claim precision and event recall, as on the "
+                "evaluation. Verify: share of documented ground-truth events whose claim is "
+                "verified as supported. Gaps: expected-type coverage."
             ),
             "execution": (
                 "Full DAG runs on a fixed subset; stage-local timings and costs, "

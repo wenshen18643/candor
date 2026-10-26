@@ -27,6 +27,13 @@ def local_path(path: Path) -> Path:
     return resolved
 
 
+def router_path(path: Path) -> Path:
+    resolved = path.resolve()
+    if resolved == (ROOT / "services/pipeline/router.json").resolve():
+        return resolved
+    return local_path(resolved)
+
+
 def validate_provider(value: str) -> str:
     if not re.fullmatch(
         r"(?:claude|codex|meta|fireworks|baseten|replay)(?::[A-Za-z0-9_./:-]+)?", value
@@ -91,7 +98,7 @@ def bench(
     repeats: Annotated[int, typer.Option(min=1, max=100)] = 3,
     scenario_dir: Path = COMPONENT / "scenarios",
     results_dir: Path = COMPONENT / "results",
-    router: Path = COMPONENT / "router.json",
+    router: Path = ROOT / "services/pipeline/router.json",
     publish: bool = True,
 ) -> None:
     choices = [validate_provider(value.strip()) for value in providers.split(",")]
@@ -103,7 +110,7 @@ def bench(
                 NodePrivacyAdapter(ROOT),
                 RealPipelineAdapter(COMPONENT / "cassettes"),
                 local_path(results_dir),
-                local_path(router),
+                router_path(router),
                 ROOT / "apps/web/public/data/bench-latest.json" if publish else None,
                 repeats,
             )
