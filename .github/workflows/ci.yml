@@ -105,12 +105,21 @@ jobs:
           for (const name of ["CANDOR_WORKER_TOKEN", "CANDOR_JWT_SECRET", "CANDOR_PAYMENTS_LINK_KEY", "CANDOR_IDENTITY_SECRET", "CANDOR_IDENTITY_ADMIN_TOKEN"]) {
             appendFileSync(process.env.GITHUB_ENV, `${name}=${randomBytes(32).toString("hex")}\n`);
           }'
-      - name: Seed and exercise showcase flows
+      - name: Showcase flows against the production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm --filter @candor/web exec next start --hostname 127.0.0.1 --port 3100 &
+          web=$!
+          trap 'kill -TERM "$web" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do curl -fsS "$E2E_BASE_URL" >/dev/null && break; sleep 2; done
+          pnpm e2e
+      - name: Real backend through the SDK
         shell: bash
         run: |
           set -euo pipefail
           pnpm seed
-          node scripts/dev.mjs --no-worker &
+          node scripts/dev.mjs --no-worker --no-web &
           runner=$!
           trap 'kill -TERM "$runner" 2>/dev/null || true; wait "$runner" || true' EXIT
           node --input-type=module -e '
@@ -118,7 +127,6 @@ jobs:
           const signal = AbortSignal.timeout(180000);
           await Promise.all([
             waitForHealth("http://127.0.0.1:8000/v1/health", signal),
-            waitForHealth("http://127.0.0.1:8787/health", signal),
-            waitForHealth(process.env.E2E_BASE_URL, signal)
+            waitForHealth("http://127.0.0.1:8787/health", signal)
           ]);'
-          pnpm e2e
+          CANDOR_E2E=1 pnpm --filter @candor/sdk test
