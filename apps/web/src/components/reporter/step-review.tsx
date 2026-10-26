@@ -58,6 +58,13 @@ function uniqueQuasi(report: LeakageReport) {
   });
 }
 
+function quasiGroups(report: LeakageReport) {
+  const groups = new Map<string, string[]>();
+  for (const hit of uniqueQuasi(report))
+    groups.set(hit.kind, [...(groups.get(hit.kind) ?? []), hit.text.trim()]);
+  return [...groups].map(([kind, texts]) => ({ kind, texts }));
+}
+
 function placeholderFor(hit: Detection, map: PseudonymEntry[]) {
   const entry = map.find(
     (item) =>
@@ -178,19 +185,16 @@ function RiskMeter({ leakage }: { leakage: LeakageReport | null }) {
               These could narrow it down to you. Consider rewording:
             </span>
             <ul className="mt-2 ml-6 flex flex-col gap-1">
-              {uniqueQuasi(leakage)
-                .slice(0, 4)
-                .map((hit, index) => (
-                  <li key={`${hit.docKey}-${index}`} className="text-sm">
-                    <span className="text-ink-3">{quasiLabel[hit.kind] ?? "Detail"}:</span>{" "}
-                    <q className="text-ink">{hit.text.trim()}</q>
-                  </li>
-                ))}
-              {uniqueQuasi(leakage).length > 4 ? (
-                <li className="text-sm text-ink-3">
-                  and {uniqueQuasi(leakage).length - 4} more like these
+              {quasiGroups(leakage).map((group) => (
+                <li key={group.kind} className="text-sm">
+                  <span className="text-ink-3">
+                    {quasiLabel[group.kind] ?? "Detail"}
+                    {group.texts.length > 1 ? ` (${group.texts.length})` : ""}:
+                  </span>{" "}
+                  <q className="text-ink">{group.texts[0]}</q>
+                  {group.texts.length > 1 ? <span className="text-ink-3"> and others</span> : null}
                 </li>
-              ) : null}
+              ))}
             </ul>
           </li>
         ) : null}
