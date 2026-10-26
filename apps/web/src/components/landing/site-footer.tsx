@@ -20,13 +20,8 @@ export function SiteFooter() {
             <SealMark className="size-5" />
             Candor
           </p>
-          <p className="text-sm text-ink-2">Built for the Meta Global AI Developer Hackathon.</p>
           <p className="text-sm text-ink-2">
-            Built with Meta Muse Spark via the Meta Model API, Self, Modal, x402, Baseten and
-            Fireworks.
-          </p>
-          <p className="text-sm text-ink-3">
-            Every person and organisation in the demos is fictional.
+            Built for the Meta Global AI Developer Hackathon. Everyone in the demo is fictional.
           </p>
         </div>
         <nav aria-label="Footer">

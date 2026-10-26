@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Lock, Pause, Play } from "lucide-react";
+import { Check, Lock, Pause, Play } from "lucide-react";
 import {
   animate,
   AnimatePresence,
@@ -13,11 +13,9 @@ import {
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
-import { truncateMiddle } from "@/lib/format";
 
 import {
   emailSegments,
-  emailSizes,
   illustrativeSeal,
   nameMap,
   originalEmail,
@@ -34,7 +32,7 @@ const easeOutQuart: [number, number, number, number] = [0.25, 1, 0.5, 1];
 const stages = [
   { label: "Detect", duration: 4200 },
   { label: "Replace", duration: 4600 },
-  { label: "Seal", duration: 4600 },
+  { label: "Lock", duration: 4600 },
   { label: "Split key", duration: 6400 },
 ];
 
@@ -185,19 +183,19 @@ export function MechanismDemo() {
 const captions = [
   {
     title: "Found on your device",
-    body: `${piiSummary.total} identifiers: ${piiSummary.personMentions} mentions of ${piiSummary.distinctPeople} people, ${piiSummary.orgs} organisation, ${piiSummary.emails} email address. Nothing has been uploaded.`,
+    body: `${piiSummary.total} names and details spotted. Nothing has been sent.`,
   },
   {
-    title: "Replaced with consistent placeholders",
-    body: "Dana Whitfield and Dana both become PERSON_1, in every file. The analysis model only ever sees placeholders.",
+    title: "Swapped for placeholders",
+    body: "Dana becomes PERSON_1 everywhere. The AI only ever sees placeholders.",
   },
   {
-    title: "Sealed before upload",
-    body: "XChaCha20-Poly1305 under a fresh report key. Padmé padding hides the exact length. The server stores only this.",
+    title: "Locked before upload",
+    body: "The server only ever gets this scramble.",
   },
   {
-    title: "Key split between three reviewers",
-    body: "Any two reviewers can open the report together, and the opening is logged publicly. One share alone reveals nothing.",
+    title: "Key split three ways",
+    body: "Any two reviewers can open it together. One alone can't.",
   },
 ];
 
@@ -254,7 +252,7 @@ function StepProgress({
 function StatusChip({ status }: { status: SealStatus }) {
   const label =
     status === "live"
-      ? "Real crypto, in this tab"
+      ? "Running for real"
       : status === "pending"
         ? "Generating keys"
         : "Illustrative bytes";
@@ -379,12 +377,6 @@ function CipherView({ active, seal }: { active: boolean; seal: SealResult }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-mono text-2xs text-ink-2">
-        <span>
-          CandorBox · <span className="text-ink">xc20p-padme</span>
-        </span>
-        <span className="truncate">nonce {truncateMiddle(seal.nonce, 6, 4)}</span>
-      </div>
       <p
         className="font-mono text-xs leading-5 break-all text-ink-2 sm:text-[0.8125rem] sm:leading-[1.375rem]"
         aria-label={`Ciphertext, ${total} base64url characters`}
@@ -393,30 +385,7 @@ function CipherView({ active, seal }: { active: boolean; seal: SealResult }) {
         <span className="text-seal-ink">{scrambled}</span>
         <span className="text-transparent">{seal.ciphertext.slice(count + frontier)}</span>
       </p>
-      <ByteMath />
     </div>
-  );
-}
-
-function ByteMath({ className }: { className?: string }) {
-  const steps = [
-    { label: "Email", value: emailSizes.plain },
-    { label: "Framed", value: emailSizes.framed },
-    { label: "Padmé", value: emailSizes.padded },
-    { label: "Sealed", value: emailSizes.sealed },
-  ];
-  return (
-    <dl className={cn("flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs", className)}>
-      {steps.map((step, index) => (
-        <div key={step.label} className="flex items-center gap-1.5">
-          {index > 0 ? <ArrowRight className="size-3 text-ink-3" aria-hidden="true" /> : null}
-          <div className="flex items-baseline gap-1 rounded-sm bg-surface-2 px-1.5 py-0.5">
-            <dt className="text-ink-2">{step.label}</dt>
-            <dd className="tabular font-mono font-medium text-ink">{step.value} B</dd>
-          </div>
-        </div>
-      ))}
-    </dl>
   );
 }
 
@@ -431,22 +400,15 @@ function SplitView({
 }) {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-sm bg-surface-2 px-2 py-1 font-mono text-2xs text-ink-2">
-          <Lock className="size-3" aria-hidden="true" />
-          ciphertext · {emailSizes.sealed} B
-        </span>
-        <span className="text-2xs text-ink-2">Shamir 2-of-3 over GF(256)</span>
-      </div>
-      <div className="mt-4 flex justify-center">
+      <div className="mt-2 flex justify-center">
         <motion.span
           className="inline-flex items-center gap-2 rounded-md bg-ink px-3 py-1.5 font-mono text-xs text-bg"
           initial={false}
           animate={{ scale: active ? 1 : 0.92, opacity: active ? 1 : 0 }}
           transition={{ duration: 0.5, ease: easeOutExpo }}
         >
-          K_r
-          <span className="text-bg/70">{truncateMiddle(seal.keyHex, 6, 4)}</span>
+          <Lock className="size-3.5" aria-hidden="true" />
+          Report key
         </motion.span>
       </div>
       <svg viewBox="0 0 300 36" className="block h-auto w-full" aria-hidden="true" fill="none">
@@ -480,14 +442,8 @@ function SplitView({
               delay: active ? 0.55 + index * 0.12 : 0,
             }}
           >
-            <p className="tabular text-2xs text-ink-2">Share {index + 1}</p>
+            <p className="tabular text-2xs text-ink-2">Piece {index + 1}</p>
             <p className="truncate text-sm font-medium text-ink">{share.reviewer}</p>
-            <p className="mt-1 truncate font-mono text-2xs text-ink-2" title={share.sealed}>
-              {share.sealed}
-            </p>
-            <p className="mt-0.5 truncate font-mono text-2xs text-ink-3">
-              to {share.keyId.slice(0, 8)}
-            </p>
           </motion.li>
         ))}
       </ul>
@@ -512,7 +468,7 @@ function ThresholdLine() {
         <span className="size-2 rounded-full bg-seal" />
         <span className="size-2 rounded-full border border-line-strong" />
       </span>
-      Any 2 of 3 rebuild K_r. One alone learns nothing.
+      Any 2 pieces open it. 1 alone can't.
     </p>
   );
 }
@@ -522,16 +478,12 @@ function VerifiedLine({ status }: { status: SealStatus }) {
     return (
       <p className="flex items-start gap-2 text-xs text-ink-2">
         <Check className="mt-0.5 size-3.5 shrink-0 text-documented" aria-hidden="true" />
-        Checked in this tab: shares 1 and 3 were unsealed, rebuilt K_r and decrypted the email.
+        Tested just now, in your browser.
       </p>
     );
   if (status === "pending")
     return <p className="text-xs text-ink-3">Generating real keys in this tab…</p>;
-  return (
-    <p className="text-xs text-ink-3">
-      Illustrative values with real lengths. The crypto library did not load here.
-    </p>
-  );
+  return <p className="text-xs text-ink-3">Example values. The real test could not run here.</p>;
 }
 
 function StaticEmail({ replaced }: { replaced: boolean }) {
@@ -579,19 +531,17 @@ function Storyboard({ seal, status }: { seal: SealResult; status: SealStatus }) 
           ))}
         </ul>
       </StoryStep>
-      <StoryStep index={3} title="Seal before upload" body={captions[2]?.body ?? ""}>
+      <StoryStep index={3} title="Lock before upload" body={captions[2]?.body ?? ""}>
         <p className="line-clamp-3 font-mono text-xs leading-5 break-all text-ink-2">
           {seal.ciphertext}
         </p>
-        <ByteMath className="mt-3" />
       </StoryStep>
-      <StoryStep index={4} title="Split the key 2-of-3" body={captions[3]?.body ?? ""}>
+      <StoryStep index={4} title="Split the key three ways" body={captions[3]?.body ?? ""}>
         <ul className="grid grid-cols-3 gap-2">
           {seal.shares.map((share, index) => (
             <li key={share.reviewer} className="min-w-0 rounded-lg bg-surface px-2 py-2">
-              <p className="text-2xs text-ink-2">Share {index + 1}</p>
+              <p className="text-2xs text-ink-2">Piece {index + 1}</p>
               <p className="truncate text-sm font-medium">{share.reviewer}</p>
-              <p className="truncate font-mono text-2xs text-ink-2">{share.sealed}</p>
             </li>
           ))}
         </ul>

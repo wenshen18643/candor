@@ -141,7 +141,7 @@ function RiskMeter({ leakage }: { leakage: LeakageReport | null }) {
   return (
     <div className="rounded-lg border border-line p-4" aria-live="polite">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-md font-semibold">Chance this text points to you</h2>
+        <h2 className="text-md font-semibold">Chance this points to you</h2>
         <span className={cn("text-md font-semibold", tone.text)}>
           {leakage ? tone.label : "Checking…"}
         </span>
@@ -156,7 +156,7 @@ function RiskMeter({ leakage }: { leakage: LeakageReport | null }) {
         {selfLeft.length === 0 ? (
           <li className="flex gap-2 text-ink-2">
             <Check className="mt-1 size-4 shrink-0 text-documented" aria-hidden="true" />
-            None of the words you listed about yourself are left.
+            None of your own details are left.
           </li>
         ) : (
           <li className="flex gap-2 text-contradicted">
@@ -175,7 +175,7 @@ function RiskMeter({ leakage }: { leakage: LeakageReport | null }) {
           <li className="text-ink-2">
             <span className="flex gap-2">
               <AlertTriangle className="mt-1 size-4 shrink-0 text-allegation" aria-hidden="true" />
-              These details could narrow down who wrote this. Consider rewording them:
+              These could narrow it down to you. Consider rewording:
             </span>
             <ul className="mt-2 ml-6 flex flex-col gap-1">
               {uniqueQuasi(leakage)
@@ -218,7 +218,7 @@ function FileCard({
           <p className="truncate text-base font-medium">{file.name}</p>
           {file.metadataRemoved.length ? (
             <p className="mt-0.5 text-sm text-ink-2">
-              Removed hidden details:{" "}
+              Removed:{" "}
               {revealingFirst(file.metadataRemoved)
                 .slice(0, 4)
                 .map((field) => metadataLabel(field.field))
@@ -266,9 +266,8 @@ function FileCard({
           </div>
           {variant === "original" ? (
             <p className="mt-2 text-sm text-allegation">
-              The original still contains the names you hid above. Only choose this if the file
-              itself matters, like a signed scan. Reviewers see it only after they agree to open
-              your evidence.
+              This keeps the names you hid. Only pick it if the file itself matters, like a signed
+              scan.
             </p>
           ) : null}
         </fieldset>
@@ -337,12 +336,11 @@ export function StepReview() {
     <section>
       <StepHeading title="Check what will be sent">
         <p>
-          We found names and contact details and swapped them for code names like{" "}
+          Names became code names like{" "}
           <span className="rounded bg-seal-soft px-1 font-mono text-sm font-semibold text-seal-ink">
             PERSON_1
           </span>
-          . Tap any highlight to remove it completely or keep it. The words you listed about
-          yourself are always removed.
+          . Tap one to remove it or keep it.
         </p>
       </StepHeading>
 
@@ -411,8 +409,8 @@ export function StepReview() {
       {map.length ? (
         <div className="mt-8">
           <SectionTitle>Code names</SectionTitle>
-          <p className="mb-3 max-w-[62ch] text-base leading-6 text-ink-2">
-            This list is encrypted with your files. The AI analysis only ever sees the code names.
+          <p className="mb-3 text-base leading-6 text-ink-2">
+            Locked with your files. The AI only sees the code names.
           </p>
           <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
             {map.map((entry) => (

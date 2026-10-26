@@ -9,7 +9,7 @@ import { Hash } from "@/components/ui/hash";
 import { cn } from "@/lib/cn";
 import { useReporter } from "@/lib/reporter/store";
 
-import { StepHeading } from "./parts";
+import { Disclosure, StepHeading } from "./parts";
 
 export function StepReceipt() {
   const receipt = useReporter((state) => state.receipt);
@@ -36,10 +36,7 @@ export function StepReceipt() {
     return (
       <section>
         <StepHeading title="You're done">
-          <p>
-            Your codename has been cleared from this page. Close this tab when you are ready. Check
-            for replies in a few days using your eight words.
-          </p>
+          <p>Close this tab when you&apos;re ready. Check for replies in a few days.</p>
         </StepHeading>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Link href="/inbox" className={buttonVariants({ variant: "primary", size: "lg" })}>
@@ -57,8 +54,8 @@ export function StepReceipt() {
     <section>
       <StepHeading title="Your report is sealed and sent">
         <p>
-          Write down these eight words now. They are the only way to read questions from the
-          reviewers and answer them. We can&apos;t recover them, because we never knew them.
+          Write down these eight words. They&apos;re the only way to read and answer questions. We
+          can&apos;t recover them.
         </p>
       </StepHeading>
 
@@ -93,11 +90,9 @@ export function StepReceipt() {
         </div>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-md font-semibold">Your receipt</h2>
-        <p className="mt-1 max-w-[62ch] text-base leading-6 text-ink-2">
-          Your evidence root is now in Candor&apos;s public, append-only log. If anyone later claims
-          your files said something else, this proves exactly what you sent and when.
+      <Disclosure summary="Proof of what you sent" className="mt-8">
+        <p className="max-w-[62ch] text-base leading-6 text-ink-2">
+          A fingerprint of your files is now in a public log. It proves what you sent and when.
         </p>
         <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-base sm:grid-cols-[auto_1fr]">
           <dt className="text-ink-2">Evidence root</dt>
@@ -130,10 +125,10 @@ export function StepReceipt() {
           <ScrollText className="size-4" aria-hidden="true" />
           See the public log
         </Link>
-      </div>
+      </Disclosure>
 
       <div className="mt-10 flex flex-col-reverse gap-2 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-ink-2">Finishing clears your codename from this page.</p>
+        <p className="text-sm text-ink-2">Finishing clears your words from this page.</p>
         <Button
           variant="primary"
           size="lg"

@@ -10,7 +10,7 @@ import { sealAndSubmit } from "@/lib/reporter/engine";
 import { useReporter } from "@/lib/reporter/store";
 import type { CampaignInfo } from "@/lib/reporter/types";
 
-import { StepActions, StepHeading } from "./parts";
+import { Disclosure, StepActions, StepHeading } from "./parts";
 
 const plannedSteps = [
   "Generate the report key",
@@ -72,13 +72,12 @@ export function StepSeal({ campaign }: { campaign: CampaignInfo }) {
     <section>
       <StepHeading title={done ? "Sealed and sent" : "Seal and send your report"}>
         {done ? (
-          <p>Everything below happened in this browser. The server only ever saw ciphertext.</p>
+          <p>All of this happened in your browser. The server only got locked data.</p>
         ) : (
           <p>
             Your statement and {sentFiles} file{sentFiles === 1 ? "" : "s"}
-            {originals ? ` (${originals} as cleaned originals)` : ""} will be locked so that any{" "}
-            {campaign.threshold} of the {campaign.reviewers.length} {campaign.orgName} reviewers can
-            open them together. The AI analysis sees only the hidden-name text.
+            {originals ? ` (${originals} as originals)` : ""} get locked. Any {campaign.threshold}{" "}
+            of {campaign.reviewers.length} reviewers can open them together.
           </p>
         )}
       </StepHeading>
@@ -135,7 +134,7 @@ export function StepSeal({ campaign }: { campaign: CampaignInfo }) {
                     />
                   ) : null}
                 </div>
-                <div className="min-w-0 flex-1 pb-6">
+                <div className="min-w-0 flex-1 pb-4">
                   <div className="flex items-baseline justify-between gap-3">
                     <p className={cn("text-base font-medium", !step && !activeNow && "text-ink-3")}>
                       {step?.label ?? label}
@@ -146,35 +145,41 @@ export function StepSeal({ campaign }: { campaign: CampaignInfo }) {
                       </span>
                     ) : null}
                   </div>
-                  {step ? (
-                    <div className="motion-safe:animate-[rise-in_250ms_cubic-bezier(0.22,1,0.36,1)_both]">
-                      <p className="mt-1 max-w-[62ch] text-sm leading-6 text-ink-2">
-                        {step.detail}
-                      </p>
-                      {step.values?.length ? (
-                        <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-                          {step.values.map((value) => (
-                            <div key={value.label} className="flex min-w-0 items-center gap-1.5">
-                              <dt className="text-ink-3">{value.label}</dt>
-                              <dd className="min-w-0">
-                                {isHex(value.value) ? (
-                                  <Hash value={value.value} />
-                                ) : (
-                                  <span className="font-mono text-xs text-ink">{value.value}</span>
-                                )}
-                              </dd>
-                            </div>
-                          ))}
-                        </dl>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </div>
               </li>
             );
           })}
         </ol>
       )}
+
+      {done ? (
+        <Disclosure summary="Technical details" className="mt-4">
+          <ol className="flex flex-col gap-4">
+            {sealSteps.map((step) => (
+              <li key={step.label}>
+                <p className="text-sm font-medium text-ink">{step.label}</p>
+                <p className="mt-0.5 text-sm leading-6 text-ink-2">{step.detail}</p>
+                {step.values?.length ? (
+                  <dl className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
+                    {step.values.map((value) => (
+                      <div key={value.label} className="flex min-w-0 items-center gap-1.5">
+                        <dt className="text-ink-3">{value.label}</dt>
+                        <dd className="min-w-0">
+                          {isHex(value.value) ? (
+                            <Hash value={value.value} />
+                          ) : (
+                            <span className="font-mono text-xs text-ink">{value.value}</span>
+                          )}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </Disclosure>
+      ) : null}
 
       {error ? (
         <p

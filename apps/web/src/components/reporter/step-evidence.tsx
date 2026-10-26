@@ -49,7 +49,7 @@ function TermInput({ terms, onChange }: { terms: string[]; onChange: (terms: str
     <Field
       htmlFor={id}
       label="Words that could identify you"
-      hint="Your name and nicknames, email, phone, employee ID or team name. These are always removed from everything you send. They never leave this device."
+      hint="Your name, email, phone, staff ID or team. Always removed, and never leave this device."
     >
       <div className="flex flex-wrap gap-1.5 rounded-md border border-line-strong bg-bg p-1.5 focus-within:border-seal focus-within:ring-2 focus-within:ring-seal/25">
         {terms.map((term) => (
@@ -179,10 +179,7 @@ export function StepEvidence() {
   return (
     <section>
       <StepHeading title="Tell us what happened">
-        <p>
-          Write it in your own words, then add any files that back it up. On the next screen
-          you&apos;ll see exactly what will be hidden before anything is sent.
-        </p>
+        <p>Use your own words. You&apos;ll check everything before it&apos;s sent.</p>
       </StepHeading>
 
       <div className="flex flex-col gap-8">
@@ -191,8 +188,8 @@ export function StepEvidence() {
           label="What happened?"
           hint={
             ready
-              ? "Dates, places and who was involved help reviewers the most."
-              : `Write at least 40 characters. Dates, places and who was involved help the most.`
+              ? "Dates, places and who was involved help most."
+              : "At least 40 characters. Dates and places help most."
           }
         >
           <Textarea
@@ -239,7 +236,7 @@ export function StepEvidence() {
               </button>
             </p>
             <p className="text-sm text-ink-3">
-              PDF, Word, email (.eml), text, CSV or photos. Up to 25 MB each.
+              PDF, Word, email, text or photos. Up to 25 MB each.
             </p>
             <input
               ref={inputRef}
@@ -255,8 +252,8 @@ export function StepEvidence() {
           </div>
           {sample ? (
             <p className="mt-2 text-sm text-ink-2">
-              Loaded <span className="font-medium text-ink">{sample}</span>. Every person and
-              company in it is invented.
+              Loaded <span className="font-medium text-ink">{sample}</span>. Everyone in it is made
+              up.
             </p>
           ) : null}
           {rawFiles.length ? (

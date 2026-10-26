@@ -21,10 +21,9 @@ export function Hero() {
             Say what happened.
             <span className="block text-seal-soft dark:text-seal-ink">Not who you are.</span>
           </h1>
-          <p className="mt-6 max-w-[34rem] text-md sm:text-lg">
-            Candor strips hidden file details and hides names behind placeholders on your own
-            device, then locks your evidence before it is uploaded. You prove you are a real person
-            without saying which one, and no single reviewer can open your files alone.
+          <p className="mt-6 max-w-[30rem] text-md sm:text-lg">
+            Report wrongdoing without revealing yourself. Reviewers get a timeline where every line
+            is checked against your evidence.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
@@ -41,10 +40,6 @@ export function Hero() {
               Open the reviewer console
             </Link>
           </div>
-          <p className="mt-7 max-w-[34rem] text-sm">
-            No account and no email address. You verify once with the Self app: it proves you hold a
-            genuine passport and are over 18, plus a one-way code used only to limit repeat reports.
-          </p>
         </div>
         <MechanismDemo />
       </div>

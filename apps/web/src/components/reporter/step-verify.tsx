@@ -10,7 +10,7 @@ import { mintTokens, mockVerify, pollVerification, startVerification } from "@/l
 import { useReporter } from "@/lib/reporter/store";
 import type { CampaignInfo, SelfSession } from "@/lib/reporter/types";
 
-import { StepActions, StepHeading } from "./parts";
+import { Disclosure, StepActions, StepHeading } from "./parts";
 
 const SelfQr = dynamic(() => import("./self-qr"), {
   ssr: false,
@@ -20,8 +20,7 @@ const SelfQr = dynamic(() => import("./self-qr"), {
 type Phase = "idle" | "verifying" | "minting" | "minted" | "rejected";
 
 const rejectionCopy: Record<string, string> = {
-  quota_exhausted:
-    "This passport has already made 3 reports to this channel this month. You can report again next month.",
+  quota_exhausted: "This passport has made 3 reports here this month. Try again next month.",
   underage: "You must be 18 or older to use this channel.",
   sanctioned: "This channel can't accept a report from this passport.",
 };
@@ -88,7 +87,7 @@ function MintExplainer({ stage, count }: { stage: number; count: number }) {
     "Your browser removed the blinding. The signatures still check out, but the issuer has never seen these tokens, so it can't link them to your scan.",
   ];
   return (
-    <ol className="mt-5 flex flex-col gap-2.5">
+    <ol className="flex flex-col gap-2.5">
       {lines.map((line, index) => (
         <li
           key={line}
@@ -190,12 +189,9 @@ export function StepVerify({ campaign }: { campaign: CampaignInfo }) {
 
   return (
     <section>
-      <StepHeading title="Prove you can report, without saying who you are">
+      <StepHeading title="Prove you can report">
         <p>
-          The Self app reads the chip in your passport on your phone and makes a zero-knowledge
-          proof: you are over 18 and not on a sanctions list. That is all Candor learns. Each
-          passport can make up to 3 reports here each month, and those reports can&apos;t be linked
-          to each other.
+          The Self app checks your passport on your phone. We only learn that you&apos;re over 18.
         </p>
       </StepHeading>
 
@@ -208,9 +204,8 @@ export function StepVerify({ campaign }: { campaign: CampaignInfo }) {
           ) : isMock ? (
             <div>
               <h2 className="text-md font-semibold">Demo verification</h2>
-              <p className="mt-1 max-w-[60ch] text-base leading-6 text-ink-2">
-                This demo uses test passports, so you don&apos;t need the Self app. The rest of the
-                flow, including the blind signatures, runs for real.
+              <p className="mt-1 text-base leading-6 text-ink-2">
+                Pick a test passport. No app needed.
               </p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 {[
@@ -240,9 +235,9 @@ export function StepVerify({ campaign }: { campaign: CampaignInfo }) {
               <div className="max-w-[40ch]">
                 <h2 className="text-md font-semibold">Scan with the Self app</h2>
                 <ol className="mt-2 flex list-decimal flex-col gap-1.5 pl-5 text-base leading-6 text-ink-2">
-                  <li>Install Self from your app store and add your passport.</li>
-                  <li>Scan this code. Check that the request says &quot;Candor&quot;.</li>
-                  <li>Approve. This page continues by itself.</li>
+                  <li>Add your passport in the Self app.</li>
+                  <li>Scan this code.</li>
+                  <li>Approve. This page moves on by itself.</li>
                 </ol>
                 {phase === "verifying" ? (
                   <p className="mt-3 flex items-center gap-2 text-sm text-ink-2">
@@ -276,22 +271,22 @@ export function StepVerify({ campaign }: { campaign: CampaignInfo }) {
             ) : (
               <Spinner />
             )}
-            {phase === "minted"
-              ? "Verified. Your report tokens are ready."
-              : "Minting your report tokens…"}
+            {phase === "minted" ? "Verified. You're anonymous from here." : "Verifying…"}
           </div>
-          <MintExplainer stage={stage} count={mintTrace?.blinded.length ?? 3} />
-          {mintTrace ? (
-            <MintLedger
-              blinded={mintTrace.blinded}
-              signatures={mintTrace.signatures}
-              tokens={tokens.map((token) => token.prepared)}
-              stage={stage}
-            />
-          ) : null}
-          <p className="mt-3 text-sm text-ink-3">
-            RSA blind signatures (RFC 9474, RSABSSA-SHA384-PSS). Tokens stay in this tab only.
-          </p>
+          <Disclosure summary="How this stays unlinkable" className="mt-6">
+            <MintExplainer stage={stage} count={mintTrace?.blinded.length ?? 3} />
+            {mintTrace ? (
+              <MintLedger
+                blinded={mintTrace.blinded}
+                signatures={mintTrace.signatures}
+                tokens={tokens.map((token) => token.prepared)}
+                stage={stage}
+              />
+            ) : null}
+            <p className="mt-3 text-sm text-ink-3">
+              RSA blind signatures (RFC 9474). Tokens stay in this tab only.
+            </p>
+          </Disclosure>
         </div>
       )}
 
