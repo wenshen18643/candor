@@ -43,9 +43,9 @@ class AnthropicProvider:
         started = time.monotonic()
         async with self.semaphore:
             try:
-                message = await self.client.messages.create(
+                async with self.client.messages.stream(
                     model=self.model,
-                    max_tokens=max(request.max_tokens, 16000),
+                    max_tokens=max(request.max_tokens, 64000),
                     system=request.system,
                     messages=[{"role": "user", "content": sample_prompt(request)}],
                     output_config={
@@ -55,7 +55,8 @@ class AnthropicProvider:
                             "schema": anthropic.transform_schema(request.json_schema),
                         },
                     },
-                )
+                ) as stream:
+                    message = await stream.get_final_message()
             except anthropic.APIConnectionError:
                 raise ProviderError("claude_transport_failed", True) from None
             except anthropic.APIStatusError as error:

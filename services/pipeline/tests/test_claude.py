@@ -32,6 +32,50 @@ def message(text: str = '{"ok":true}', stop_reason: str = "end_turn") -> dict[st
     }
 
 
+def streamed(body: dict[str, Any]) -> httpx2.Response:
+    start = body | {"content": [], "stop_reason": None}
+    text = body["content"][0]["text"]
+    events = [
+        ("message_start", {"type": "message_start", "message": start}),
+        (
+            "content_block_start",
+            {
+                "type": "content_block_start",
+                "index": 0,
+                "content_block": {"type": "text", "text": ""},
+            },
+        ),
+        *(
+            [
+                (
+                    "content_block_delta",
+                    {
+                        "type": "content_block_delta",
+                        "index": 0,
+                        "delta": {"type": "text_delta", "text": text},
+                    },
+                )
+            ]
+            if text
+            else []
+        ),
+        ("content_block_stop", {"type": "content_block_stop", "index": 0}),
+        (
+            "message_delta",
+            {
+                "type": "message_delta",
+                "delta": {"stop_reason": body["stop_reason"], "stop_sequence": None},
+                "usage": {"output_tokens": body["usage"]["output_tokens"]},
+            },
+        ),
+        ("message_stop", {"type": "message_stop"}),
+    ]
+    payload = "".join(f"event: {name}\ndata: {json.dumps(data)}\n\n" for name, data in events)
+    return httpx2.Response(
+        200, headers={"content-type": "text/event-stream"}, content=payload.encode()
+    )
+
+
 def client(handler: Any) -> anthropic.AsyncAnthropic:
     return anthropic.AsyncAnthropic(
         api_key="synthetic-credential",
@@ -46,12 +90,14 @@ async def test_anthropic_wire_contract() -> None:
     def handler(incoming: httpx2.Request) -> httpx2.Response:
         assert incoming.url.path == "/v1/messages"
         bodies.append(json.loads(incoming.content))
-        return httpx2.Response(200, json=message())
+        return streamed(message())
 
     response = await AnthropicProvider(client=client(handler)).complete_json(request())
     body = bodies[0]
     assert body["model"] == "claude-haiku-5-5"
     assert "temperature" not in body
+    assert body["stream"] is True
+    assert body["max_tokens"] == 64000
     assert body["output_config"]["effort"] == "low"
     assert body["output_config"]["format"]["type"] == "json_schema"
     assert body["messages"][0]["content"].startswith("Independent extraction sample 0.")
@@ -92,7 +138,7 @@ async def test_anthropic_status_errors(status: int, code: str, retryable: bool) 
 )
 async def test_anthropic_incomplete_answers(body: dict[str, Any], code: str) -> None:
     def handler(incoming: httpx2.Request) -> httpx2.Response:
-        return httpx2.Response(200, json=body)
+        return streamed(body)
 
     with pytest.raises(ProviderError, match=code):
         await AnthropicProvider(client=client(handler)).complete_json(request())
