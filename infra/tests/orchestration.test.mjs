@@ -19,6 +19,7 @@ import {
   stopChild,
   waitForHealth,
 } from "../../scripts/dev.mjs";
+import { metaPlan } from "../../scripts/meta.mjs";
 import { hasDemoSeed, requireStoppedApi, seed } from "../../scripts/seed.mjs";
 import { testPython } from "../../scripts/test-py.mjs";
 
@@ -357,4 +358,35 @@ test("supervisor stops a running parent and its grandchild", async (context) => 
     return;
   }
   for (const pid of pids) assert.throws(() => process.kill(pid, 0), { code: "ESRCH" });
+});
+
+test("meta plan runs live Meta evals and a benchmark without cassette reuse", () => {
+  assert.throws(() => metaPlan([], { MODEL_API_KEY: " " }), /MODEL_API_KEY/);
+  assert.throws(() => metaPlan(["everything"], { MODEL_API_KEY: "k" }), /Usage/);
+  assert.throws(() => metaPlan(["bench", "--repeats", "0"], { MODEL_API_KEY: "k" }), /Usage/);
+  const plan = metaPlan(["--repeats", "2"], {
+    MODEL_API_KEY: "k",
+    CANDOR_REPLAY_DIR: "services/evals/cassettes",
+  });
+  assert.equal(plan.env.CANDOR_REPLAY_DIR, undefined);
+  assert.equal(plan.steps.length, 2);
+  assert.deepEqual(plan.steps[0].slice(5), [
+    "run",
+    "--provider",
+    "meta:muse-spark-1.3",
+    "--scenarios",
+    "all",
+    "--samples",
+    "3",
+  ]);
+  assert.deepEqual(plan.steps[1].slice(5), [
+    "bench",
+    "--providers",
+    "meta:muse-spark-1.3,codex:gpt-6.1-sol,fireworks,baseten",
+    "--repeats",
+    "2",
+  ]);
+  const evalsOnly = metaPlan(["evals"], { MODEL_API_KEY: "k", CANDOR_META_MODEL: "muse-x" });
+  assert.equal(evalsOnly.steps.length, 1);
+  assert.equal(evalsOnly.steps[0][7], "meta:muse-x");
 });

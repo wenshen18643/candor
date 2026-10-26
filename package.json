@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "seed": "node scripts/seed.mjs",
+    "meta": "node scripts/meta.mjs",
     "e2e": "pnpm --filter @candor/web e2e",
     "build": "pnpm -r --if-present build",
     "lint": "pnpm lint:js && pnpm lint:py",

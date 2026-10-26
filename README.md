@@ -134,18 +134,17 @@ no `NEXT_PUBLIC_API_URL` the web app runs in showcase mode with recorded data.
 ### Choosing the model
 
 The pipeline routes each stage to a provider (`services/pipeline/router.json`). Set
-`CANDOR_LLM_PROVIDER` to `meta`, `fireworks`, `baseten`, `codex` or `replay`. To run the evaluation
-suite against Meta Muse:
+`CANDOR_LLM_PROVIDER` to `meta`, `fireworks`, `baseten`, `codex` or `replay`. With `MODEL_API_KEY`
+in `.env`, one command runs the evaluation suite against Meta Muse and then benchmarks Muse, Codex,
+Fireworks and Baseten per stage, regenerating the router and the `/evals` data:
 
 ```bash
-MODEL_API_KEY=... uv run --project services/evals candor-evals run --provider meta --scenarios all
+pnpm meta
 ```
 
-To benchmark providers per stage and regenerate the router:
-
-```bash
-uv run --project services/evals candor-evals bench --providers meta:muse-spark-1.3,fireworks:...,baseten:... --repeats 3
-```
+`pnpm meta evals` or `pnpm meta bench --repeats 1` runs one half. Providers without credentials are
+listed as skipped rather than guessed. Meta runs always call the live API; they never reuse the
+recorded Codex cassettes.
 
 ## Quality gates
 
