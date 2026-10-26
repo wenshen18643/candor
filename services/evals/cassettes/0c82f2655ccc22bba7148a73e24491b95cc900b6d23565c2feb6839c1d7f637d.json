@@ -1,0 +1,1 @@
+{"text":"{\"aliases\": [{\"alias\": \"PERSON_1 PERSON_1\", \"placeholder\": \"PERSON_1\", \"passage_id\": \"D2.P001\", \"quote\": \"to: PERSON_1 PERSON_1 <EMAIL_1>\", \"roles\": [\"recipient\"]}]}","data":null,"usage":{"input_tokens":8198,"output_tokens":2471,"cost_usd":0.00266324},"latency_ms":14882,"provider":"claude","model":"claude-haiku-5-5"}

@@ -149,6 +149,13 @@ pnpm meta
 listed as skipped rather than guessed. Meta runs always call the live API; they never reuse the
 recorded cassettes.
 
+The numbers on `/evals` come from a Claude Haiku 5.5 run whose 171 model calls are committed in
+`services/evals/cassettes`. This reproduces them exactly, offline and without a key:
+
+```bash
+CANDOR_REPLAY_DIR=services/evals/cassettes uv run --project services/evals candor-evals run --provider replay --chaos 0.3 --no-publish
+```
+
 ## Quality gates
 
 ```bash

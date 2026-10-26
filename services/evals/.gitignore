@@ -5,5 +5,4 @@ pytest-cache-files-*/
 .ruff_cache/
 __pycache__/
 results/
-cassettes/
 qa/
