@@ -165,6 +165,18 @@ def submit(runtime: Runtime, submission: Submission) -> dict[str, Any]:
     }
 
 
+def current_stage(connection: Connection, job_id: str) -> str | None:
+    latest: dict[str, tuple[int, str]] = {}
+    for seq, stage, status in connection.execute(
+        select(t.job_events.c.seq, t.job_events.c.stage, t.job_events.c.status)
+        .where(t.job_events.c.job_id == job_id)
+        .order_by(t.job_events.c.seq)
+    ):
+        latest[stage] = (seq, status)
+    running = [(seq, stage) for stage, (seq, status) in latest.items() if status == "started"]
+    return max(running)[1] if running else None
+
+
 def report_summary(
     connection: Connection, report: dict[str, Any], reviewer_id: str
 ) -> dict[str, Any]:
@@ -213,7 +225,14 @@ def report_summary(
             for name in ("campaign_id", "status", "received_bucket", "size_bucket")
         },
         "file_count": count,
-        "analysis": {"status": job["status"], "job_id": job["id"], "updated_at": job["updated_at"]}
+        "analysis": {
+            "status": job["status"],
+            "job_id": job["id"],
+            "updated_at": job["updated_at"],
+            "stage": current_stage(connection, job["id"])
+            if job["status"] in {"leased", "running"}
+            else None,
+        }
         if job
         else None,
         "unread_replies": replies,

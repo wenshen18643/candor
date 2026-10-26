@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/field";
 import { useConsole } from "@/lib/console/store";
 import type { ReportSummary } from "@/lib/console/types";
+import { stageMeta } from "@/lib/evidence";
 import { formatDateTime, pluralize } from "@/lib/format";
 
 const statusTone = {
@@ -33,7 +34,9 @@ function AnalysisCell({ report }: { report: ReportSummary }) {
   if (analysis.status === "running") {
     return (
       <span className="text-sm text-seal-ink">
-        {analysis.stage ? `Running ${analysis.stage}` : "Running"}
+        {analysis.stage
+          ? `Running ${(stageMeta[analysis.stage]?.label ?? analysis.stage).toLowerCase()}`
+          : "Running"}
       </span>
     );
   }

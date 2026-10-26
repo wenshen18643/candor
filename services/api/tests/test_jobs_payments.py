@@ -170,6 +170,41 @@ def test_heartbeat_extends_lease_and_is_fenced(harness: Harness) -> None:
     assert harness.client.post(path, headers=harness.worker(1)).status_code == 409
 
 
+def test_report_list_names_the_newest_running_stage(harness: Harness) -> None:
+    report_id = harness.submit()
+    job_id = harness.enqueue(report_id)
+    headers = harness.login()
+
+    def listed() -> dict:
+        reports = harness.client.get("/v1/reports", headers=headers).json()
+        return next(item for item in reports if item["report_id"] == report_id)["analysis"]
+
+    assert listed()["stage"] is None
+    harness.client.post("/internal/jobs/claim", headers=harness.worker())
+    for stage, status in [
+        ("segment", "started"),
+        ("segment", "succeeded"),
+        ("ground", "started"),
+        ("temporal", "started"),
+        ("temporal", "succeeded"),
+    ]:
+        event = {
+            "job_id": job_id,
+            "stage": stage,
+            "status": status,
+            "at": stamp(),
+            "provider": "replay",
+            "model": "fixture",
+        }
+        assert (
+            harness.client.post(
+                f"/internal/jobs/{job_id}/events", headers=harness.worker(1), json=event
+            ).status_code
+            == 204
+        )
+    assert listed()["stage"] == "ground"
+
+
 def test_completion_findings_and_sse_resume(harness: Harness) -> None:
     report_id = harness.submit()
     job_id = harness.enqueue(report_id)

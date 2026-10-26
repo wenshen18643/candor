@@ -142,7 +142,7 @@ function analysisState(
       return { status: "queued", jobId, stage: null };
     case "leased":
     case "running":
-      return { status: "running", jobId, stage: null };
+      return { status: "running", jobId, stage: snapshot.stage ?? null };
     case "succeeded":
       return {
         status: "succeeded",

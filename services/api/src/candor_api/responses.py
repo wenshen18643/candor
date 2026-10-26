@@ -94,6 +94,7 @@ class JobSnapshot(BaseModel):
     status: str
     job_id: str
     updated_at: str
+    stage: str | None = None
 
 
 class ReportSummary(BaseModel):
