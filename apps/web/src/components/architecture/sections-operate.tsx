@@ -102,6 +102,7 @@ export function PaymentsSection() {
   return (
     <ArchSection
       id="payments"
+      summary="Organisations pay per analysis. Reporters never pay, so there is no money trail."
       title="Payments with x402"
       lead="Running the model costs money, so someone has to pay for each analysis. It is never the reporter."
       sources={[
@@ -149,6 +150,7 @@ export function InfrastructureSection() {
   return (
     <ArchSection
       id="infrastructure"
+      summary="Analysis runs as a background job that retries on failure and streams progress live."
       title="Infrastructure"
       lead="Analysis runs as an asynchronous job: leased, retried, dead-lettered when it keeps failing, and streamed to the reviewer stage by stage."
       sources={[
@@ -254,6 +256,8 @@ export function EvaluationSection() {
   return (
     <ArchSection
       id="evaluation"
+      summary="Six made-up cases test for leaks, accuracy, broken AI output and hidden instructions."
+      showFirst={false}
       title="Evaluation methodology"
       lead="Six seeded synthetic scenarios, each with planted canaries, contradictions and injected instructions, run through the real on-device scrubber and the real pipeline."
       sources={[
@@ -400,6 +404,8 @@ export function ThreatSection() {
   return (
     <ArchSection
       id="threats"
+      summary="What Candor protects against, and what it can't."
+      showFirst={false}
       title="Threat model"
       lead="What Candor defends against, and what it does not. Residual risks are stated plainly; some of them only the reporter can reduce."
       sources={["docs/specs/00-overview.md", "docs/specs/01-protocols.md", "PRODUCT.md"]}

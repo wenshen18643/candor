@@ -29,6 +29,7 @@ export function PipelineArchSection() {
   return (
     <ArchSection
       id="pipeline"
+      summary="Twelve steps turn evidence into a checked timeline. Five are plain code; seven use the AI."
       title="Analysis pipeline"
       lead="A directed acyclic graph of twelve stages, five of them plain code. Independent stages run concurrently; a failed non-critical stage degrades the result instead of failing the job, and invalid model output never reaches the result."
       sources={[
@@ -194,6 +195,7 @@ export function InjectionSection() {
   return (
     <ArchSection
       id="injection"
+      summary="Evidence that tries to give the AI orders is flagged and ignored."
       title="Prompt-injection defence"
       lead="Evidence is data, never instructions. Candor assumes some documents were written to manipulate the analysis, and treats the attempt as a finding in its own right."
       sources={[
@@ -295,6 +297,7 @@ export function TransparencySection() {
   return (
     <ArchSection
       id="transparency"
+      summary="Every action is logged in public, and anyone can check the log was never changed."
       title="Transparency log"
       lead="Every submission, analysis, opening, fetch, approval and message is appended to a public, append-only Merkle log. Anyone can check that an entry is in it and that the log has only grown."
       sources={[

@@ -52,13 +52,7 @@ export default function ArchitecturePage() {
             How Candor works
           </h1>
           <p className="mt-4 text-lg text-ink-2">
-            The system as built: five trust domains, the protocols between them, a twelve-stage
-            analysis pipeline, and the risks that remain. Every section names the files that
-            implement it.
-          </p>
-          <p className="mt-4 text-sm text-ink-3">
-            The specs in <code className="font-mono text-ink-2">docs/specs</code> are the contract
-            between services; where code and spec disagree, the spec wins.
+            The full design, one part at a time. Open any section for the details.
           </p>
         </header>
         <div className="grid gap-10 pb-24 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-14">

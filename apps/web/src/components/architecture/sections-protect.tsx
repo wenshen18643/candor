@@ -50,6 +50,7 @@ export function TrustSection() {
   return (
     <ArchSection
       id="trust-domains"
+      summary="No single part of Candor can connect a person to a report."
       title="Trust domains"
       lead="Candor is split so that no single service can connect a person to a report. Each box is a separate trust domain with its own keys and storage, and the arrows carry only what is written on them."
       sources={[
@@ -244,6 +245,7 @@ export function IdentitySection() {
   return (
     <ArchSection
       id="identity"
+      summary="Prove you're a real adult once, then report with tokens nobody can trace back to you."
       title="Identity without identification"
       lead="A reporter proves once per campaign that they are a real adult with a genuine passport, and leaves with three tokens that cannot be traced back to that proof."
       sources={[
@@ -351,6 +353,8 @@ export function DeviceSection() {
   return (
     <ArchSection
       id="on-device"
+      summary="Names and hidden file details are removed in the reporter's browser before upload."
+      showFirst={false}
       title="On-device privacy"
       lead="Everything here runs in the reporter’s browser before a single byte is uploaded. The server never sees the before."
       sources={[
@@ -429,6 +433,7 @@ export function CustodySection({
   return (
     <ArchSection
       id="custody"
+      summary="Files are locked with keys only the right people hold. The server can open none of them."
       title="Envelope encryption and threshold custody"
       lead="Three symmetric keys, each wrapped only for the parties that need it. The API stores every envelope and can open none of them."
       sources={[

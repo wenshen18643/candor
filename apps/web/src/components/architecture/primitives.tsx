@@ -1,39 +1,51 @@
-import type { ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 
+import { Disclosure } from "@/components/ui/disclosure";
 import { cn } from "@/lib/cn";
 
 export function ArchSection({
   id,
   title,
+  summary,
   lead,
   sources,
+  showFirst = true,
   children,
 }: {
   id: string;
   title: string;
+  summary: string;
   lead: ReactNode;
   sources: string[];
+  showFirst?: boolean;
   children: ReactNode;
 }) {
+  const items = Children.toArray(children);
+  const shown = showFirst ? items.slice(0, 1) : [];
+  const hidden = showFirst ? items.slice(1) : items;
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="scroll-mt-6 border-t border-line pt-14 first:border-t-0 first:pt-0"
+      className="scroll-mt-6 border-t border-line pt-12 first:border-t-0 first:pt-0"
     >
       <h2 id={`${id}-title`} className="text-2xl font-semibold tracking-[-0.02em]">
         {title}
       </h2>
-      <p className="mt-3 max-w-[68ch] text-md text-ink-2">{lead}</p>
-      <div className="mt-8 flex flex-col gap-10">{children}</div>
-      <Sources paths={sources} />
+      <p className="mt-2 max-w-[56ch] text-md text-ink-2">{summary}</p>
+      {shown.length ? <div className="mt-8">{shown}</div> : null}
+      <Disclosure summary="Details" className="mt-6" bodyClassName="flex flex-col gap-10 py-6">
+        <p className="max-w-[68ch] text-base text-ink-2">{lead}</p>
+        {hidden}
+        <Sources paths={sources} />
+      </Disclosure>
     </section>
   );
 }
 
 export function Sources({ paths }: { paths: string[] }) {
   return (
-    <div className="mt-10 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
       <p className="shrink-0 text-xs font-medium text-ink-2">Implemented in</p>
       <ul className="flex flex-wrap gap-1.5">
         {paths.map((path) => (
@@ -142,9 +154,16 @@ export function Figure({
         {visual}
       </div>
       {mode === "swap" ? (
-        <div className="rounded-xl bg-surface p-4 md:hidden">{alternative}</div>
+        <Disclosure summary="Show the diagram as text" className="md:hidden">
+          {alternative}
+          <p className="mt-4 text-sm text-ink-3">{caption}</p>
+        </Disclosure>
       ) : null}
-      <figcaption className="max-w-[68ch] text-sm text-ink-2">{caption}</figcaption>
+      <figcaption
+        className={cn("max-w-[68ch] text-sm text-ink-2", mode === "swap" && "hidden md:block")}
+      >
+        {caption}
+      </figcaption>
       <details className={cn("group", mode === "swap" && "hidden md:block")}>
         <summary className="inline-flex cursor-pointer items-center gap-1.5 rounded-xs text-sm font-medium text-ink-2 hover:text-ink">
           Read this diagram as text
