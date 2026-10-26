@@ -356,7 +356,7 @@ export function StepReview() {
           <div
             role="group"
             aria-label="Choose a document"
-            className="flex gap-1 overflow-x-auto border-b border-line bg-surface p-1.5"
+            className="scroll-strip flex gap-1 overflow-x-auto border-b border-line bg-surface p-1.5 pr-8"
           >
             {tabs.map((tab) => (
               <button

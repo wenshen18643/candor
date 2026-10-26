@@ -35,6 +35,29 @@ function spanOf(interval: Interval): Span {
   };
 }
 
+const inverse: Record<string, string> = { before: "after", after: "before" };
+
+function orderings(event: TimelineEvent) {
+  const own = new Set(event.claim_ids);
+  const seen = new Map<string, { relation: string; other: string }>();
+  for (const name of event.constraints) {
+    const match = /^(C\d+):(before|after|during|same_time):(C\d+):\d+$/.exec(name);
+    if (!match) continue;
+    const [, left = "", relation = "", right = ""] = match;
+    const entry = own.has(left)
+      ? { relation, other: right }
+      : own.has(right)
+        ? { relation: inverse[relation] ?? relation, other: left }
+        : null;
+    if (entry && !own.has(entry.other))
+      seen.set(`${entry.relation}:${entry.other}`, {
+        relation: entry.relation.replace("_", " "),
+        other: entry.other,
+      });
+  }
+  return [...seen.values()];
+}
+
 function spanLabel(interval: Interval) {
   const { from, to } = spanOf(interval);
   if (from === null && to === null) return "Date not stated";
@@ -167,9 +190,18 @@ export function Timeline({
   onClaim: (id: string) => void;
 }) {
   const [trackRef, trackWidth] = useElementWidth<HTMLDivElement>(420);
-  const events = useMemo(
-    () => [...analysis.timeline].sort((a, b) => a.order_rank - b.order_rank),
-    [analysis.timeline],
+  const events = useMemo(() => {
+    const anchor = (event: TimelineEvent) => {
+      const { from, to } = spanOf(event.interval);
+      return from ?? to ?? Number.POSITIVE_INFINITY;
+    };
+    return [...analysis.timeline].sort(
+      (a, b) => anchor(a) - anchor(b) || a.order_rank - b.order_rank,
+    );
+  }, [analysis.timeline]);
+  const statements = useMemo(
+    () => new Map(analysis.claims.map((claim) => [claim.claim_id, claim.statement])),
+    [analysis.claims],
   );
   const conflictEvents = new Set(analysis.temporal_conflicts.flatMap((item) => item.event_ids));
 
@@ -308,20 +340,27 @@ export function Timeline({
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-0.5 text-base font-medium text-ink">
-                  <PseudoText text={event.title} map={map} />
+                <p className="mt-0.5 max-w-[68ch] text-base font-medium text-pretty text-ink">
+                  <PseudoText
+                    text={statements.get(event.claim_ids[0] ?? "") ?? event.title}
+                    map={map}
+                  />
                 </p>
                 <div className="mt-1 flex flex-wrap items-center gap-1.5">
                   <EvidenceClassBadge value={evidenceClass} />
                   {event.claim_ids.map((id) => (
                     <RefChip key={id} id={id} onSelect={onClaim} />
                   ))}
+                  {orderings(event).map(({ relation, other }) => (
+                    <span
+                      key={`${relation}-${other}`}
+                      className="inline-flex items-center gap-1 text-xs text-ink-3"
+                    >
+                      {relation}
+                      <RefChip id={other} onSelect={onClaim} />
+                    </span>
+                  ))}
                 </div>
-                {event.constraints.length > 0 ? (
-                  <p className="mt-1 text-xs text-ink-3">
-                    <PseudoText text={event.constraints.join("; ")} map={map} />
-                  </p>
-                ) : null}
               </div>
               <div role="cell" className="hidden overflow-hidden md:block">
                 <Track

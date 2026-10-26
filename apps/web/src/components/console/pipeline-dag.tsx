@@ -131,7 +131,7 @@ export function PipelineDag({
         <span className="text-ink-3">Stages in the same column run concurrently.</span>
       </div>
       <ol
-        className="scrollbar-quiet flex snap-x gap-3 overflow-x-auto pb-2"
+        className="scroll-strip flex snap-x gap-3 overflow-x-auto pr-8 pb-2"
         aria-label="Analysis pipeline stages"
       >
         {columns.map((column, index) => (

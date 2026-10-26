@@ -225,7 +225,7 @@ export function detectPii(
     for (const [type, terms] of entities)
       for (const raw of terms) {
         const term = raw.replace(/^[^\p{L}\p{N}]+|[\s.,;:!?]+$/gu, "");
-        if (!term || stopwords.has(term.toLowerCase())) continue;
+        if (!term || stopwords.has(term.toLowerCase()) || !/\p{Lu}/u.test(term)) continue;
         for (const match of doc.text.matchAll(termPattern(term)))
           add(type, match.index, match.index + match[0].length, "ner", 0.8);
       }

@@ -230,6 +230,11 @@ describe("PII precision and self precedence", () => {
     expect(text).toContain("the spare parts order");
     expect(text).not.toMatch(/Spare Parts Reconciliation|\bParts were|SPARE/);
   });
+  it("named-entity guesses need a capital letter", () => {
+    const docs = [{ docKey: "S", text: "I reconcile the spare-parts queue for Dana Whitfield." }];
+    const hits = detectPii(docs, { selfTerms: [] }).filter((hit) => hit.source === "ner");
+    expect(hits.map((hit) => hit.text)).not.toContain("spare");
+  });
   it("custom terms are literal, Unicode-safe, and deterministic", () => {
     const docs = [
       { docKey: "S", text: "Project (Orchid) and René Martin. Project (Orchid) again." },
