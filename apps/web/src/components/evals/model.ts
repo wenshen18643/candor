@@ -196,7 +196,7 @@ export const metricGroups: MetricGroup[] = [
       {
         key: "metrics.date_mae_days",
         label: "Date error",
-        hint: "Mean absolute error of interval midpoints",
+        hint: "Average days off, for dates the pipeline pinned down",
         format: "days",
         target: { op: "lte", value: 3, source: "candor" },
         aggregate: fromAggregate("date_mae_days"),
