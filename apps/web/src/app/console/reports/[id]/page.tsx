@@ -236,7 +236,10 @@ export default function ReportPage() {
             <ListChecks aria-hidden="true" />
             Claims
             {analysis ? (
-              <span className="tabular text-xs text-ink-3">{analysis.claims.length}</span>
+              <span className="tabular text-xs text-ink-3">
+                <span className="sr-only">, </span>
+                {analysis.claims.length}
+              </span>
             ) : null}
           </TabsTrigger>
           <TabsTrigger value="people" disabled={!hasAnalysis}>

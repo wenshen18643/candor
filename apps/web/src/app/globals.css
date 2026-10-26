@@ -220,6 +220,15 @@
   }
 }
 
+@keyframes sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+
 @keyframes pulse-ring {
   0% {
     box-shadow: 0 0 0 0 oklch(from var(--seal) l c h / 0.35);

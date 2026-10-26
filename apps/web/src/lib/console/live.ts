@@ -536,14 +536,16 @@ export function createLiveClient(): ConsoleClient {
         wallet: quote.mode === "testnet" ? await browserWallet() : undefined,
       });
       const job = await active.sdk.startAnalysis(reportId, quote.payment, quote.idempotencyKey);
-      if (!job.payment.success) throw new Error("Analysis payment was not settled");
+      if (job.payment.status !== "settled") throw new Error("Analysis payment was not settled");
+      const settlement = active.receipts.get(quote.idempotencyKey);
+      if (!settlement) throw new Error("Payment settlement receipt is unavailable");
       const done = finishAnalysis(active, reportId, job.job_id, onEvent);
       void done.catch(() => undefined);
       return {
         receipt: {
-          payer: job.payment.payer,
-          txRef: job.payment.transaction,
-          network: job.payment.network,
+          payer: settlement.payer,
+          txRef: settlement.transaction,
+          network: settlement.network,
           amountUsd: quote.display.amountUsd,
           mode: quote.mode,
         },

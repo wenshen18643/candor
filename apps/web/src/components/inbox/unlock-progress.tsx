@@ -30,11 +30,6 @@ const steps: { id: InboxStep; title: string; running: string; explain: string }[
 export function UnlockProgress({ states }: { states: Record<InboxStep, StepState> }) {
   return (
     <ol className="flex flex-col gap-1" aria-label="Unlocking your inbox">
-      <style>
-        {
-          "@keyframes candor-inbox-sweep{from{transform:translateX(-110%)}to{transform:translateX(260%)}}"
-        }
-      </style>
       {steps.map((step) => {
         const state = states[step.id];
         const running = state.status === "running";
@@ -89,7 +84,7 @@ export function UnlockProgress({ states }: { states: Record<InboxStep, StepState
                     aria-label={step.title}
                     aria-busy="true"
                   >
-                    <span className="absolute inset-y-0 left-0 w-2/5 animate-[candor-inbox-sweep_1.3s_linear_infinite] rounded-full bg-seal will-change-transform" />
+                    <span className="absolute inset-y-0 left-0 w-2/5 animate-[sweep_1.3s_linear_infinite] rounded-full bg-seal will-change-transform" />
                   </span>
                 </>
               ) : null}
