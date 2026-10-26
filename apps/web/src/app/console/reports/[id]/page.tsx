@@ -176,10 +176,17 @@ export default function ReportPage() {
 
   if (error && !detail) {
     return (
-      <div className="px-8 py-10">
-        <p role="alert" className="text-contradicted">
+      <div className="flex flex-col items-start gap-3 px-5 py-8 sm:px-8">
+        <p role="alert" className="text-base text-contradicted">
           {error}
         </p>
+        <Link
+          href="/console"
+          className="inline-flex items-center gap-1.5 rounded-md text-sm text-ink-2 hover:text-ink"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Back to reports
+        </Link>
       </div>
     );
   }
