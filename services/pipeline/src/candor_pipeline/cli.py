@@ -47,6 +47,10 @@ def run(
                 if manifest["payload_sha256"] != fingerprint or manifest["samples"] != samples:
                     raise ValueError("replay_run_mismatch")
                 nonce = manifest["nonce"]
+        if record and nonce is None and (record / "run.json").is_file():
+            manifest = json.loads((record / "run.json").read_text(encoding="utf-8"))
+            if manifest["payload_sha256"] == fingerprint and manifest["samples"] == samples:
+                nonce = manifest["nonce"]
         if record:
             nonce = nonce or secrets.token_hex(16)
             selected = ReplayProvider(record, selected, "record", synthetic=synthetic)

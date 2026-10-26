@@ -2,7 +2,7 @@ import { buildTrace, stageStats } from "./pipeline-data";
 import { PipelineExplorer } from "./pipeline-explorer";
 
 export function PipelineSection() {
-  const trace = buildTrace("C002");
+  const trace = buildTrace("C004");
   return (
     <section aria-labelledby="pipeline-title" className="bg-surface">
       <div className="mx-auto w-full max-w-[1200px] px-5 py-20 sm:px-8 sm:py-28">

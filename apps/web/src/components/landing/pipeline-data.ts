@@ -1,6 +1,8 @@
-import analysis from "@/data/showcase-analysis.json";
+import showcaseAnalysis from "@/data/showcase-analysis.json";
 import { stageMeta, stageOrder } from "@/lib/evidence";
-import type { EvidenceClass, StageName, Verdict } from "@/lib/types";
+import type { AnalysisResult, EvidenceClass, StageName, Verdict } from "@/lib/types";
+
+export const analysis = showcaseAnalysis as unknown as AnalysisResult;
 
 export const stageDetail: Record<StageName, { calls: string; algorithm: string }> = {
   segment: {
@@ -230,7 +232,10 @@ export const quarantinedPassage = (() => {
     : null;
 })();
 
-export const stnNote =
-  analysis.stages.find((run) => run.stage === "temporal")?.notes[0] ?? "Simple Temporal Network";
+export const timelineSummary = {
+  events: analysis.timeline.length,
+  exact: analysis.timeline.filter((event) => event.interval.granularity === "day").length,
+  conflicts: analysis.temporal_conflicts.length,
+};
 
 export const temporalConflict = analysis.temporal_conflicts[0] ?? null;

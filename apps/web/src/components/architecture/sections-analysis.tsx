@@ -1,14 +1,14 @@
 import { EvidenceClassBadge, QuarantineBadge } from "@/components/evidence/badges";
 import {
+  analysis,
   quarantinedPassage,
   stageDetail,
   stageStats,
-  stnNote,
   temporalConflict,
+  timelineSummary,
 } from "@/components/landing/pipeline-data";
 import { PipelineExplorer } from "@/components/landing/pipeline-explorer";
 import { Badge } from "@/components/ui/badge";
-import analysis from "@/data/showcase-analysis.json";
 import { stageDependencies, stageMeta, stageOrder } from "@/lib/evidence";
 import type { EvidenceClass } from "@/lib/types";
 
@@ -84,7 +84,12 @@ export function PipelineArchSection() {
             constraints that cannot all hold shows up as a negative cycle.
           </p>
           <p>
-            In the demo report the solver reported <strong>{stnNote}</strong>.
+            In the demo report the solver placed {timelineSummary.events} events,{" "}
+            {timelineSummary.exact} of them to the day, and found{" "}
+            {timelineSummary.conflicts === 0
+              ? "no constraints that contradict each other"
+              : `${timelineSummary.conflicts} set${timelineSummary.conflicts === 1 ? "" : "s"} of constraints that cannot all hold`}
+            .
           </p>
         </Prose>
         {temporalConflict ? (
@@ -161,8 +166,29 @@ labels: high ≥ 0.80 · moderate ≥ 0.60 · low ≥ 0.35 · otherwise very low
 }
 
 const unsupportedClaim = analysis.claims.find((claim) =>
-  (claim.flags as string[]).includes("cites_injected_passage"),
+  claim.flags.includes("cites_injected_passage"),
 );
+
+const cleanPassage =
+  analysis.passages.find((passage) => passage.passage_id === "D2.P001") ??
+  analysis.passages.find((passage) => passage.doc_id !== "S" && passage.injection_risk < 0.7);
+
+function signalText(signal: string) {
+  const text = signal.replace(/_/g, " ").replace(/\.$/, "");
+  return /\s/.test(text) ? text : `Heuristic match: ${text}`;
+}
+
+function wrap(text: string, width = 76) {
+  const lines: string[] = [];
+  let line = "";
+  for (const word of text.replace(/\s+/g, " ").trim().split(" ")) {
+    if (line && line.length + word.length + 1 > width) {
+      lines.push(line);
+      line = word;
+    } else line = line ? `${line} ${word}` : word;
+  }
+  return [...lines, line].join("\n");
+}
 
 export function InjectionSection() {
   return (
@@ -177,13 +203,12 @@ export function InjectionSection() {
       ]}
     >
       <CodeBlock label="Spotlighted evidence as the model receives it">
-        {`<<EVIDENCE id="D6.P001" nonce="7c41e09b">>
-ORG_2 is pleased to submit our proposal for the replacement of 340 infusion
-pumps across ORG_1 facilities. …
+        {`<<EVIDENCE id="${cleanPassage?.passage_id ?? "D2.P001"}" nonce="7c41e09b">>
+${wrap(cleanPassage?.text ?? "")}
 <</EVIDENCE nonce="7c41e09b">>
 
-<<EVIDENCE id="${quarantinedPassage?.id ?? "D6.P002"}" nonce="7c41e09b" quarantined="true">>
-${quarantinedPassage?.text ?? ""}
+<<EVIDENCE id="${quarantinedPassage?.id ?? "D6.P001"}" nonce="7c41e09b" quarantined="true">>
+${wrap(quarantinedPassage?.text ?? "")}
 <</EVIDENCE nonce="7c41e09b">>`}
       </CodeBlock>
       <Steps
@@ -218,13 +243,17 @@ ${quarantinedPassage?.text ?? ""}
               {quarantinedPassage.id} · risk {quarantinedPassage.risk.toFixed(2)}
             </span>
           </div>
-          <p className="text-sm text-ink-2">
-            Signals:{" "}
-            {quarantinedPassage.signals.map((signal) => signal.replace(/_/g, " ")).join(", ")}.
-          </p>
+          <div className="text-sm text-ink-2">
+            <p>What the scan found:</p>
+            <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5">
+              {quarantinedPassage.signals.map((signal) => (
+                <li key={signal}>{signalText(signal)}</li>
+              ))}
+            </ul>
+          </div>
           <div className="flex flex-col gap-2 border-t border-line pt-3">
             <p className="text-sm text-ink">
-              The claim it tried to plant,{" "}
+              A claim that rests only on this passage,{" "}
               <span className="font-mono">{unsupportedClaim.claim_id}</span>: “
               {unsupportedClaim.statement}”
             </p>

@@ -422,6 +422,16 @@ def install_jobs(app: FastAPI) -> None:
         jobs.event(runtime, job_id, value, x_job_attempt)
         return Response(status_code=204)
 
+    @app.post("/internal/jobs/{job_id}/heartbeat", status_code=204)
+    def heartbeat(
+        job_id: str,
+        runtime: RuntimeDep,
+        worker: WorkerDep,
+        x_job_attempt: Attempt = None,
+    ) -> Response:
+        jobs.heartbeat(runtime, job_id, x_job_attempt)
+        return Response(status_code=204)
+
     @app.post("/internal/jobs/{job_id}/complete", status_code=204)
     def complete(
         job_id: str,

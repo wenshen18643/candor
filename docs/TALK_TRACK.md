@@ -112,9 +112,12 @@ payments database is separate and linked to jobs only by an HMAC, so the payment
 the reporter [`services/api/src/candor_api/payments.py`].
 
 **How does it scale?**
-Analysis jobs sit in a durable queue with ten-minute leases, retries and a dead-letter queue;
-workers pull jobs, so they can run anywhere, including Modal functions spawned on enqueue with
-retries and timeouts [`infra/modal/app.py`]. Stage events stream to the browser over resumable SSE.
+Analysis jobs sit in a durable queue with ten-minute leases that the worker renews with a heartbeat,
+retries and a dead-letter queue. Every write from a worker carries its attempt number, so a worker
+that lost its lease cannot overwrite the result of the one that replaced it
+[`services/api/src/candor_api/jobs.py`]. Workers pull jobs, so they can run anywhere, including
+Modal functions spawned on enqueue with retries and timeouts [`infra/modal/app.py`]. Stage events
+stream to the browser over resumable SSE.
 
 ## Honest limits (say them before they are asked)
 

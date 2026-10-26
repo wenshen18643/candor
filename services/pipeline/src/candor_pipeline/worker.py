@@ -28,15 +28,31 @@ class Job(Strict):
 
 class Worker:
     def __init__(
-        self, client: httpx.AsyncClient, private_key: bytes, runner: DAGRunner | None = None
+        self,
+        client: httpx.AsyncClient,
+        private_key: bytes,
+        runner: DAGRunner | None = None,
+        heartbeat_seconds: float = 60,
     ) -> None:
         self.client = client
         self.private_key = private_key
         self.runner = runner or DAGRunner()
+        self.heartbeat_seconds = heartbeat_seconds
 
     async def post(self, path: str, data: dict[str, Any], attempt: int) -> None:
         response = await self.client.post(path, json=data, headers={"X-Job-Attempt": str(attempt)})
         response.raise_for_status()
+
+    async def keep_leased(self, job: Job) -> None:
+        while True:
+            await asyncio.sleep(self.heartbeat_seconds)
+            try:
+                await self.post(f"/internal/jobs/{job.job_id}/heartbeat", {}, job.attempt)
+            except httpx.HTTPStatusError as error:
+                if error.response.status_code == 409:
+                    return
+            except httpx.TransportError:
+                continue
 
     async def once(self) -> bool:
         response = await self.client.post("/internal/jobs/claim")
@@ -44,6 +60,7 @@ class Worker:
             return False
         response.raise_for_status()
         job = Job.model_validate(response.json())
+        lease = asyncio.create_task(self.keep_leased(job))
         try:
             payload = unseal_analysis(job.analysis, self.private_key, job.report_id)
 
@@ -96,6 +113,8 @@ class Worker:
                 {"error": "analysis_failed", "retryable": retryable},
                 job.attempt,
             )
+        finally:
+            lease.cancel()
         return True
 
     async def run(self, once: bool = False) -> None:

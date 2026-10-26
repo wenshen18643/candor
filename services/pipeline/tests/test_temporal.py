@@ -37,12 +37,47 @@ def test_normalization(
     assert interval.granularity == granularity
 
 
+@pytest.mark.parametrize(
+    ("expression", "anchor", "expected"),
+    [
+        ("March 3", date(2026, 2, 18), "2026-03-03"),
+        ("on March 3rd", date(2026, 2, 18), "2026-03-03"),
+        ("3 March", date(2026, 2, 18), "2026-03-03"),
+        ("Dec 30", date(2026, 1, 4), "2025-12-30"),
+        ("the 10th", date(2026, 3, 6), "2026-03-10"),
+        ("the 28th", date(2026, 3, 2), "2026-02-28"),
+        ("February 29", date(2025, 3, 1), "2024-02-29"),
+        ("on Friday", date(2026, 3, 5), "2026-03-06"),
+        ("Monday", date(2026, 3, 5), "2026-03-02"),
+        ("next Thursday", date(2026, 3, 5), "2026-03-12"),
+        ("this Thursday", date(2026, 3, 5), "2026-03-05"),
+    ],
+)
+def test_yearless_dates_resolve_to_nearest_occurrence(
+    expression: str, anchor: date, expected: str
+) -> None:
+    interval = normalize_time(expression, anchor)
+    assert interval.earliest.isoformat() == expected
+    assert interval.latest.isoformat() == expected
+    assert interval.granularity == "day"
+
+
+def test_yearless_dates_need_an_anchor() -> None:
+    assert normalize_time("March 3", None).granularity == "unknown"
+    assert normalize_time("February 31", date(2026, 2, 1)).granularity == "unknown"
+
+
 def test_before_after_and_missing_anchor() -> None:
     assert normalize_time("before 15 October 2026", date(2026, 10, 26)).latest == date(2026, 10, 14)
     assert normalize_time("after 15 October 2026", date(2026, 10, 26)).earliest == date(
         2026, 10, 16
     )
     assert normalize_time("last Tuesday", None).granularity == "unknown"
+    phrase = normalize_time("before the sheet goes to PERSON_4 on Friday", date(2026, 3, 5))
+    assert phrase.latest == date(2026, 3, 5)
+    assert normalize_time("after the contract was signed", date(2026, 3, 5)).latest == date(
+        2026, 3, 5
+    )
     assert normalize_time("2026-10-15", None).earliest == date(2026, 10, 15)
 
 

@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { EvidenceClassBadge } from "@/components/evidence/badges";
 import { cn } from "@/lib/cn";
 import { evidenceClassMeta } from "@/lib/evidence";
-import { formatInterval, formatShortDay } from "@/lib/format";
+import { formatDay, formatInterval, formatShortDay } from "@/lib/format";
 import type { AnalysisResult, EvidenceClass, PseudonymEntry, TimelineEvent } from "@/lib/types";
 import { useElementWidth } from "@/lib/use-width";
 
@@ -17,6 +17,30 @@ const DAY = 86_400_000;
 
 function toTime(iso: string) {
   return Date.parse(`${iso.slice(0, 10)}T00:00:00Z`);
+}
+
+const OPEN_START = toTime("1900-01-01");
+const OPEN_END = toTime("2100-01-01");
+
+type Interval = TimelineEvent["interval"];
+type Span = { from: number | null; to: number | null };
+
+function spanOf(interval: Interval): Span {
+  const from = toTime(interval.earliest);
+  const to = toTime(interval.latest);
+  const vague = interval.granularity === "unknown" && to - from >= 300 * DAY;
+  return {
+    from: from < OPEN_START || vague ? null : from,
+    to: to > OPEN_END ? null : to,
+  };
+}
+
+function spanLabel(interval: Interval) {
+  const { from, to } = spanOf(interval);
+  if (from === null && to === null) return "Date not stated";
+  if (from === null) return `By ${formatDay(interval.latest)}`;
+  if (to === null) return `From ${formatDay(interval.earliest)}`;
+  return formatInterval(interval.earliest, interval.latest);
 }
 
 function strongestClass(event: TimelineEvent, analysis: AnalysisResult): EvidenceClass | null {
@@ -48,11 +72,37 @@ function Track({
   conflict: boolean;
   color: string;
 }) {
-  const start = scale(toTime(event.interval.earliest));
-  const end = scale(toTime(event.interval.latest) + DAY);
-  const original = event.original_interval;
-  const point = event.interval.earliest === event.interval.latest;
-  const center = point ? scale(toTime(event.interval.earliest) + DAY / 2) : (start + end) / 2;
+  const { from, to } = spanOf(event.interval);
+  if (from === null || to === null) {
+    const edge = from === null ? (to === null ? null : scale(to + DAY)) : scale(from);
+    return (
+      <svg width={width} height={28} className="block overflow-visible" aria-hidden="true">
+        <line x1={0} x2={width} y1={14} y2={14} stroke="var(--line)" strokeWidth={1} />
+        {edge === null ? null : (
+          <>
+            <line
+              x1={from === null ? 0 : edge}
+              x2={from === null ? edge : width}
+              y1={14}
+              y2={14}
+              stroke={color}
+              strokeOpacity={0.7}
+              strokeWidth={2}
+              strokeDasharray="2 4"
+            />
+            <circle cx={edge} cy={14} r={3.5} fill="var(--bg)" stroke={color} strokeWidth={2} />
+          </>
+        )}
+      </svg>
+    );
+  }
+  const start = scale(from);
+  const end = scale(to + DAY);
+  const prior = event.original_interval ? spanOf(event.original_interval) : null;
+  const original =
+    prior && prior.from !== null && prior.to !== null ? event.original_interval : null;
+  const point = from === to;
+  const center = point ? scale(from + DAY / 2) : (start + end) / 2;
   return (
     <svg width={width} height={28} className="block overflow-visible" aria-hidden="true">
       <line x1={0} x2={width} y1={14} y2={14} stroke="var(--line)" strokeWidth={1} />
@@ -124,15 +174,18 @@ export function Timeline({
   const conflictEvents = new Set(analysis.temporal_conflicts.flatMap((item) => item.event_ids));
 
   const scale = useMemo(() => {
-    const times = events.flatMap((event) => [
-      toTime(event.interval.earliest),
-      toTime(event.interval.latest) + DAY,
-      ...(event.original_interval
-        ? [toTime(event.original_interval.earliest), toTime(event.original_interval.latest) + DAY]
-        : []),
-    ]);
-    const min = Math.min(...times);
-    const max = Math.max(...times);
+    const times = events.flatMap((event) =>
+      [event.interval, event.original_interval].flatMap((interval) => {
+        if (!interval) return [];
+        const { from, to } = spanOf(interval);
+        return [from, to === null ? null : to + DAY].filter(
+          (value): value is number => value !== null,
+        );
+      }),
+    );
+    const fallback = Date.parse("2026-01-01T00:00:00Z");
+    const min = times.length > 0 ? Math.min(...times) : fallback;
+    const max = times.length > 0 ? Math.max(...times) : fallback + 30 * DAY;
     const pad = Math.max(2 * DAY, (max - min) * 0.04);
     return scaleUtc()
       .domain([new Date(min - pad), new Date(max + pad)])
@@ -244,10 +297,8 @@ export function Timeline({
             >
               <div role="cell" className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="tabular text-sm text-ink-2">
-                    {formatInterval(event.interval.earliest, event.interval.latest)}
-                  </span>
-                  {event.interval.granularity !== "day" ? (
+                  <span className="tabular text-sm text-ink-2">{spanLabel(event.interval)}</span>
+                  {!["day", "unknown"].includes(event.interval.granularity) ? (
                     <span className="text-xs text-ink-3">± {event.interval.granularity}</span>
                   ) : null}
                   {conflict ? (

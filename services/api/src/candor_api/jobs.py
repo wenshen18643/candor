@@ -16,6 +16,7 @@ from candor_api.schemas import Completion, Failure
 
 logger = logging.getLogger("candor.api")
 TERMINAL = {"succeeded", "dead", "failed"}
+LEASE = timedelta(minutes=10)
 
 
 def enqueue(
@@ -148,7 +149,7 @@ def claim(runtime: Runtime) -> dict[str, Any] | None:
             .values(
                 status="leased",
                 attempts=attempt,
-                lease_expires_at=stamp(now() + timedelta(minutes=10)),
+                lease_expires_at=stamp(now() + LEASE),
                 updated_at=stamp(),
             )
         )
@@ -210,7 +211,17 @@ def event(runtime: Runtime, job_id: str, value: StageEvent, attempt: int | None)
         connection.execute(
             t.jobs.update()
             .where(t.jobs.c.id == job_id)
-            .values(status="running", updated_at=stamp())
+            .values(status="running", lease_expires_at=stamp(now() + LEASE), updated_at=stamp())
+        )
+
+
+def heartbeat(runtime: Runtime, job_id: str, attempt: int | None) -> None:
+    with runtime.write() as connection:
+        active_job(connection, job_id, attempt)
+        connection.execute(
+            t.jobs.update()
+            .where(t.jobs.c.id == job_id)
+            .values(lease_expires_at=stamp(now() + LEASE), updated_at=stamp())
         )
 
 

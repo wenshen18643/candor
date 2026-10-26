@@ -178,6 +178,15 @@
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
   }
+
+  .scroll-strip {
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent);
+  }
+
+  .scroll-strip::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes fade-in {

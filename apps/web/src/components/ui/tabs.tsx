@@ -11,7 +11,7 @@ export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrim
   return (
     <TabsPrimitive.List
       className={cn(
-        "scrollbar-quiet flex items-center gap-1 overflow-x-auto border-b border-line",
+        "scroll-strip flex items-center gap-1 overflow-x-auto border-b border-line pr-8",
         className,
       )}
       {...props}

@@ -145,6 +145,31 @@ def test_expired_final_lease_dead_letters(harness: Harness) -> None:
     assert response.json()["status"] == "dead"
 
 
+def test_heartbeat_extends_lease_and_is_fenced(harness: Harness) -> None:
+    job_id = harness.enqueue()
+    harness.client.post("/internal/jobs/claim", headers=harness.worker())
+    soon = stamp(now() + timedelta(seconds=30))
+    with transaction(harness.runtime.engine) as connection:
+        connection.execute(
+            t.jobs.update().where(t.jobs.c.id == job_id).values(lease_expires_at=soon)
+        )
+    path = f"/internal/jobs/{job_id}/heartbeat"
+    assert harness.client.post(path, headers=harness.worker(2)).status_code == 409
+    assert harness.client.post(path, headers=harness.worker(1)).status_code == 204
+    with transaction(harness.runtime.engine) as connection:
+        lease = connection.execute(
+            select(t.jobs.c.lease_expires_at).where(t.jobs.c.id == job_id)
+        ).scalar_one()
+    assert lease > stamp(now() + timedelta(minutes=9))
+    with transaction(harness.runtime.engine) as connection:
+        connection.execute(
+            t.jobs.update()
+            .where(t.jobs.c.id == job_id)
+            .values(lease_expires_at=stamp(now() - timedelta(seconds=1)))
+        )
+    assert harness.client.post(path, headers=harness.worker(1)).status_code == 409
+
+
 def test_completion_findings_and_sse_resume(harness: Harness) -> None:
     report_id = harness.submit()
     job_id = harness.enqueue(report_id)

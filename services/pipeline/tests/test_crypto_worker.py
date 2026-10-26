@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import json
 from pathlib import Path
@@ -27,7 +28,7 @@ from candor_pipeline.crypto import (
     unseal_analysis,
 )
 from candor_pipeline.dag import DAGRunner
-from candor_pipeline.worker import Worker
+from candor_pipeline.worker import Job, Worker
 from tests.helpers import FakeProvider, payload
 
 
@@ -149,6 +150,27 @@ async def test_worker_claim_events_encrypted_complete() -> None:
         CandorBox.model_validate(findings["box"]), key, context("findings", payload().report_id)
     )
     assert AnalysisResult.model_validate_json(plaintext).metrics.citations_verified == 1
+
+
+@respx.mock
+async def test_worker_heartbeats_while_running_and_stops_on_lost_lease() -> None:
+    job = Job.model_validate(
+        {
+            "job_id": "synthetic-job",
+            "report_id": payload().report_id,
+            "attempt": 2,
+            "analysis": envelope(PrivateKey.generate()).model_dump(),
+            "reviewers": [],
+        }
+    )
+    beats = respx.post("https://api.invalid/internal/jobs/synthetic-job/heartbeat").mock(
+        side_effect=[httpx.Response(204), httpx.ConnectError("down"), httpx.Response(409)]
+    )
+    async with httpx.AsyncClient(base_url="https://api.invalid") as client:
+        worker = Worker(client, b"", DAGRunner(FakeProvider()), heartbeat_seconds=0.01)
+        await asyncio.wait_for(worker.keep_leased(job), timeout=2)
+    assert beats.call_count == 3
+    assert {call.request.headers["X-Job-Attempt"] for call in beats.calls} == {"2"}
 
 
 @respx.mock

@@ -218,7 +218,7 @@ const state: ShowcaseState = {
         id: "m2",
         direction: "to_reviewers",
         author: "Reporter",
-        body: "The meeting was not moved as far as I know. Nobody on the team got a new invite for the 10th. I don't have the company registration for ORG_3 but I can try to find it.",
+        body: "As far as I know the committee never met on 3 March. Nobody on the team got an invite for that date or for the 10th, and the minutes only went round after the award. I don't have the scoring sheet history, but the version PERSON_4 signed off should still be on the procurement shared drive.",
         questions: [],
         sentAt: "2026-10-26T13:00:00Z",
       },

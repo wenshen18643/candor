@@ -43,6 +43,18 @@ def unknown_interval(expression: str | None, anchor: date | None) -> TimeInterva
     )
 
 
+def nearest_date(reference: date, candidates: list[tuple[int, int, int]]) -> date:
+    options = []
+    for year, month, day in candidates:
+        try:
+            options.append(date(year, month, day))
+        except ValueError:
+            continue
+    if not options:
+        raise ValueError("invalid_calendar_date")
+    return min(options, key=lambda value: (abs((value - reference).days), value))
+
+
 def normalize_known_time(expression: str | None, anchor: date | None) -> TimeInterval:
     reference = anchor or date(1970, 1, 1)
     text = (expression or "").strip()
@@ -60,11 +72,31 @@ def normalize_known_time(expression: str | None, anchor: date | None) -> TimeInt
     )
     bound = re.fullmatch(r"(before|after)\s+(.+)", lower)
     weekday = re.fullmatch(
-        r"last\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)", lower
+        r"(?:(last|next|this|on)\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)",
+        lower,
     )
+    month_day = re.fullmatch(
+        r"(?:(?:on\s+)?([a-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?"
+        r"|(?:on\s+)?(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?([a-z]+)\.?)",
+        lower,
+    )
+    day_only = re.fullmatch(r"(?:on\s+)?(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)", lower)
     if re.fullmatch(r"\d{4}", text):
         earliest, latest = date(int(text), 1, 1), date(int(text), 12, 31)
         granularity = "year"
+    elif month_day and (month_day[1] or month_day[4]) in MONTHS and anchor is not None:
+        month = MONTHS[month_day[1] or month_day[4]]
+        day = int(month_day[2] or month_day[3])
+        earliest = latest = nearest_date(
+            reference, [(reference.year + offset, month, day) for offset in (-1, 0, 1)]
+        )
+        granularity = "day"
+    elif day_only and anchor is not None:
+        months = [reference.replace(day=1) + relativedelta(months=offset) for offset in (-1, 0, 1)]
+        earliest = latest = nearest_date(
+            reference, [(value.year, value.month, int(day_only[1])) for value in months]
+        )
+        granularity = "day"
     elif quarter:
         year = int(quarter[2] or quarter[3])
         month = (int(quarter[1] or quarter[4]) - 1) * 3 + 1
@@ -89,11 +121,23 @@ def normalize_known_time(expression: str | None, anchor: date | None) -> TimeInt
         latest = earliest + relativedelta(months=1) - timedelta(days=1)
         granularity = "month"
     elif weekday:
-        target = list(calendar.day_name).index(weekday[1].capitalize())
-        earliest = latest = reference - timedelta(days=(reference.weekday() - target) % 7 or 7)
+        target = list(calendar.day_name).index(weekday[2].capitalize())
+        back, ahead = (reference.weekday() - target) % 7, (target - reference.weekday()) % 7
+        if weekday[1] == "last":
+            offset = -(back or 7)
+        elif weekday[1] == "next":
+            offset = ahead or 7
+        else:
+            offset = ahead if ahead <= back else -back
+        earliest = latest = reference + timedelta(days=offset)
         granularity = "day"
     elif bound:
-        inner = normalize_time(bound[2], anchor)
+        words = bound[2].split()
+        inner = unknown_interval(bound[2], anchor)
+        for start in range(len(words)):
+            inner = normalize_time(" ".join(words[start:]), anchor)
+            if inner.granularity != "unknown":
+                break
         if inner.granularity != "unknown":
             if bound[1] == "before":
                 latest = inner.earliest - timedelta(days=1)
