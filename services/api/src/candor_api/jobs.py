@@ -29,7 +29,8 @@ def enqueue(
     identity = idempotency or payer + "/" + nonce
     require(0 < len(identity) <= 256, 400, "invalid_idempotency", "Invalid idempotency key")
     identifier = runtime.payments.digest("idempotency/" + reviewer["org_id"] + "/" + identity)
-    job_id = str(UUID(bytes=bytes.fromhex(identifier)[:16], version=4))
+    job_digest = runtime.payments.digest("job/" + identifier + "/" + report_id)
+    job_id = str(UUID(bytes=bytes.fromhex(job_digest)[:16], version=4))
     with runtime.write() as connection:
         report = runtime.report_for(connection, report_id, reviewer)
         existing = (
@@ -168,7 +169,16 @@ def claim(runtime: Runtime) -> dict[str, Any] | None:
         }
 
 
-def active_job(connection: Connection, job_id: str, attempt: int | None = None) -> dict[str, Any]:
+def check_attempt(job: dict[str, Any], attempt: int | None) -> None:
+    require(
+        attempt is not None and attempt == job["attempts"],
+        409,
+        "stale_attempt",
+        "Current worker attempt is required",
+    )
+
+
+def active_job(connection: Connection, job_id: str, attempt: int | None) -> dict[str, Any]:
     job = get_one(connection, t.jobs, t.jobs.c.id == job_id)
     require(
         job["status"] in {"leased", "running"} and job["lease_expires_at"] > stamp(),
@@ -176,12 +186,7 @@ def active_job(connection: Connection, job_id: str, attempt: int | None = None) 
         "invalid_lease",
         "Job does not have an active lease",
     )
-    require(
-        attempt is None or attempt == job["attempts"],
-        409,
-        "stale_attempt",
-        "Worker attempt is stale",
-    )
+    check_attempt(job, attempt)
     return job
 
 
@@ -212,6 +217,7 @@ def event(runtime: Runtime, job_id: str, value: StageEvent, attempt: int | None)
 def complete(runtime: Runtime, job_id: str, value: Completion, attempt: int | None) -> None:
     with runtime.write() as connection:
         job = get_one(connection, t.jobs, t.jobs.c.id == job_id)
+        check_attempt(job, attempt)
         if job["status"] == "succeeded":
             old = get_one(connection, t.findings, t.findings.c.job_id == job_id)
             require(
@@ -277,13 +283,17 @@ def fail(runtime: Runtime, job_id: str, value: Failure, attempt: int | None) -> 
         )
 
 
-def events_after(runtime: Runtime, job_id: str, sequence: int) -> tuple[list[dict[str, Any]], str]:
+def events_after(
+    runtime: Runtime, job_id: str, sequence: int, reviewer: dict[str, Any]
+) -> tuple[list[dict[str, Any]], str]:
     with runtime.engine.connect() as connection:
         job = get_one(connection, t.jobs, t.jobs.c.id == job_id)
+        runtime.report_for(connection, job["report_id"], reviewer)
         rows = connection.execute(
             select(t.job_events)
             .where(t.job_events.c.job_id == job_id, t.job_events.c.seq > sequence)
             .order_by(t.job_events.c.seq)
+            .limit(100)
         ).mappings()
         return [dict(row) for row in rows], job["status"]
 

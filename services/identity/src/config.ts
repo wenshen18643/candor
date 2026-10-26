@@ -38,13 +38,15 @@ function url(value: string, name: string): URL {
 }
 
 export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
+  if (env.CANDOR_MODE !== undefined && !["demo", "production"].includes(env.CANDOR_MODE))
+    throw new Error("invalid_configuration:CANDOR_MODE");
   const port = Number(env.PORT ?? 8787);
   if (!Number.isInteger(port) || port < 1 || port > 65535)
     throw new Error("invalid_configuration:PORT");
   const mode = env.SELF_MODE ?? "mock";
   if (mode !== "mock" && mode !== "staging" && mode !== "mainnet")
     throw new Error("invalid_configuration:SELF_MODE");
-  if (env.CANDOR_MODE === "production" && mode === "mock")
+  if (env.CANDOR_MODE === "production" && mode !== "mainnet")
     throw new Error("invalid_configuration:SELF_MODE");
   const endpoint =
     env.SELF_ENDPOINT || (mode === "mock" ? `http://localhost:${port}/v1/self/verify` : "");

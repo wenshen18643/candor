@@ -138,6 +138,8 @@ async def test_worker_claim_events_encrypted_complete() -> None:
     ) as client:
         assert await Worker(client, bytes(secret), DAGRunner(FakeProvider())).once()
     assert events.call_count == 24
+    assert {call.request.headers["X-Job-Attempt"] for call in events.calls} == {"1"}
+    assert complete.calls[0].request.headers["X-Job-Attempt"] == "1"
     body = json.loads(complete.calls[0].request.content)
     assert "PERSON_1" not in json.dumps(body)
     assert "statement" not in json.dumps(body["summary"])

@@ -126,7 +126,7 @@ def test_worker_leases_retry_dead_letter_and_admin(harness: Harness) -> None:
     )
     assert harness.client.post(f"/v1/admin/jobs/{job_id}/retry", headers=admin).status_code == 200
     assert (
-        harness.client.post("/internal/jobs/claim", headers=harness.worker()).json()["attempt"] == 1
+        harness.client.post("/internal/jobs/claim", headers=harness.worker()).json()["attempt"] == 4
     )
 
 
@@ -160,14 +160,14 @@ def test_completion_findings_and_sse_resume(harness: Harness) -> None:
     }
     assert (
         harness.client.post(
-            f"/internal/jobs/{job_id}/events", headers=harness.worker(), json=event
+            f"/internal/jobs/{job_id}/events", headers=harness.worker(1), json=event
         ).status_code
         == 204
     )
     event["status"] = "succeeded"
     assert (
         harness.client.post(
-            f"/internal/jobs/{job_id}/events", headers=harness.worker(), json=event
+            f"/internal/jobs/{job_id}/events", headers=harness.worker(1), json=event
         ).status_code
         == 204
     )
@@ -197,13 +197,13 @@ def test_completion_findings_and_sse_resume(harness: Harness) -> None:
     }
     assert (
         harness.client.post(
-            f"/internal/jobs/{job_id}/complete", headers=harness.worker(), json=completion
+            f"/internal/jobs/{job_id}/complete", headers=harness.worker(1), json=completion
         ).status_code
         == 204
     )
     assert (
         harness.client.post(
-            f"/internal/jobs/{job_id}/complete", headers=harness.worker(), json=completion
+            f"/internal/jobs/{job_id}/complete", headers=harness.worker(1), json=completion
         ).status_code
         == 204
     )

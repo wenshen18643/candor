@@ -5,7 +5,7 @@ from typing import Any
 from nacl.signing import SigningKey
 from sqlalchemy import Column, Integer, LargeBinary, MetaData, String, Table, select
 
-from candor_api.common import ApiError, b64u, bucket, canonical, key_id, require, stamp, unb64
+from candor_api.common import ApiError, b64u, bucket, canonical, key_id, require, unb64
 from candor_api.database import make_engine, transaction
 from candor_api.integrations import AnchorAdapter
 from candor_api.merkle import MerkleTree, sth_message
@@ -103,7 +103,7 @@ class AuditLog:
             self.tree.append(leaf)
 
     def signed_head(self) -> dict[str, Any]:
-        size, root, timestamp = len(self.tree.leaves), self.tree.root().hex(), stamp()
+        size, root, timestamp = len(self.tree.leaves), self.tree.root().hex(), bucket()
         signature = self.signing_key.sign(sth_message(size, root, timestamp)).signature
         return {
             "tree_size": size,
@@ -212,7 +212,7 @@ class AuditLog:
                 "root_hash": head["root_hash"],
                 "chain": chain,
                 "tx_ref": tx_ref,
-                "created_at": stamp(),
+                "created_at": bucket(),
             }
             connection.execute(anchors.insert().values(**anchor))
         self.record_anchor(anchor)

@@ -34,8 +34,8 @@ class Worker:
         self.private_key = private_key
         self.runner = runner or DAGRunner()
 
-    async def post(self, path: str, data: dict[str, Any]) -> None:
-        response = await self.client.post(path, json=data)
+    async def post(self, path: str, data: dict[str, Any], attempt: int) -> None:
+        response = await self.client.post(path, json=data, headers={"X-Job-Attempt": str(attempt)})
         response.raise_for_status()
 
     async def once(self) -> bool:
@@ -49,7 +49,9 @@ class Worker:
 
             async def event_callback(event: StageEvent) -> None:
                 await self.post(
-                    f"/internal/jobs/{job.job_id}/events", event.model_dump(mode="json")
+                    f"/internal/jobs/{job.job_id}/events",
+                    event.model_dump(mode="json"),
+                    job.attempt,
                 )
 
             result = await self.runner.run(payload, event_callback, job_id=job.job_id)
@@ -75,6 +77,7 @@ class Worker:
             await self.post(
                 f"/internal/jobs/{job.job_id}/complete",
                 {"findings": findings.model_dump(), "summary": summary},
+                job.attempt,
             )
         except Exception as error:
             retryable = (
@@ -91,6 +94,7 @@ class Worker:
             await self.post(
                 f"/internal/jobs/{job.job_id}/fail",
                 {"error": "analysis_failed", "retryable": retryable},
+                job.attempt,
             )
         return True
 

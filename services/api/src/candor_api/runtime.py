@@ -66,6 +66,7 @@ class Runtime:
         settings.candor_data_dir.mkdir(parents=True, exist_ok=True)
         self.engine = make_engine(settings.candor_reports_db_url)
         t.metadata.create_all(self.engine)
+        self.initialize_message_order()
         self.client = client or httpx.Client(timeout=15, follow_redirects=False)
         self.issuers = issuer_provider or IdentityClient(settings, self.client)
         self.blobs: BlobStore = LocalBlobStore(settings.candor_data_dir / "blobs")
@@ -93,6 +94,24 @@ class Runtime:
         self.payments = PaymentLedger(settings, link_key, adapter)
         self.launcher = ModalLauncher() if settings.modal_enabled else LocalLauncher()
         self.flush_audit()
+
+    def initialize_message_order(self) -> None:
+        with transaction(self.engine) as connection:
+            rows = (
+                connection.execute(
+                    select(t.messages.c.id)
+                    .where(~t.messages.c.id.in_(select(t.message_order.c.message_id)))
+                    .order_by(t.messages.c.created_at, t.messages.c.id)
+                )
+                .scalars()
+                .all()
+            )
+            for message_id in rows:
+                connection.execute(t.message_order.insert().values(message_id=message_id))
+
+    def store_message(self, connection: Connection, **fields: Any) -> None:
+        connection.execute(t.messages.insert().values(**fields))
+        connection.execute(t.message_order.insert().values(message_id=fields["id"]))
 
     def close(self) -> None:
         self.client.close()

@@ -4,10 +4,53 @@ import threading
 import time
 from typing import Any
 
+from sse_starlette import EventSourceResponse
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 logger = logging.getLogger("candor.api")
+
+
+class StreamLimits:
+    def __init__(self, per_subject: int = 4, total: int = 64) -> None:
+        self.per_subject = per_subject
+        self.total = total
+        self.active: dict[str, int] = {}
+        self.lock = threading.Lock()
+
+    def acquire(self, subject: str) -> bool:
+        with self.lock:
+            count = self.active.get(subject, 0)
+            if count >= self.per_subject or sum(self.active.values()) >= self.total:
+                return False
+            self.active[subject] = count + 1
+            return True
+
+    def release(self, subject: str) -> None:
+        with self.lock:
+            count = self.active[subject] - 1
+            if count:
+                self.active[subject] = count
+            else:
+                del self.active[subject]
+
+
+class LimitedEventSourceResponse(EventSourceResponse):
+    def __init__(self, content: Any, limits: StreamLimits, subject: str) -> None:
+        super().__init__(
+            content,
+            ping=15,
+            send_timeout=15,
+            headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+        )
+        self.limits = limits
+        self.subject = subject
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            self.limits.release(self.subject)
 
 
 class TokenBuckets:

@@ -1,6 +1,7 @@
 import asyncio
 import hmac
 import json
+import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
@@ -20,9 +21,14 @@ from starlette.exceptions import HTTPException
 from candor_api import auth, custody, jobs, reports
 from candor_api import responses as wire
 from candor_api import tables as t
-from candor_api.common import ApiError, b64u, require, stamp, uid
+from candor_api.common import ApiError, b64u, bucket, require, stamp, uid
 from candor_api.merkle import leaf_hash
-from candor_api.middleware import GuardMiddleware, TokenBuckets
+from candor_api.middleware import (
+    GuardMiddleware,
+    LimitedEventSourceResponse,
+    StreamLimits,
+    TokenBuckets,
+)
 from candor_api.payments import receipt_header
 from candor_api.runtime import Runtime, get_many, get_one
 from candor_api.schemas import (
@@ -116,6 +122,7 @@ def create_app(settings: Settings | None = None, runtime: Runtime | None = None)
     if runtime:
         app.state.runtime = runtime
     app.state.buckets = TokenBuckets()
+    app.state.stream_limits = StreamLimits()
     app.add_middleware(GuardMiddleware, buckets=app.state.buckets)
     app.add_middleware(
         CORSMiddleware,
@@ -280,15 +287,14 @@ def install_reviewers(app: FastAPI) -> None:
         message_id = uid()
         with runtime.write() as connection:
             runtime.report_for(connection, report_id, reviewer)
-            connection.execute(
-                t.messages.insert().values(
-                    id=message_id,
-                    report_id=report_id,
-                    direction="to_reporter",
-                    sender_reviewer_id=reviewer["id"],
-                    boxes_json=value.box.model_dump(),
-                    created_at=stamp(),
-                )
+            runtime.store_message(
+                connection,
+                id=message_id,
+                report_id=report_id,
+                direction="to_reporter",
+                sender_reviewer_id=reviewer["id"],
+                boxes_json=value.box.model_dump(),
+                created_at=bucket(),
             )
             runtime.emit(connection, "message.sent", report_id=report_id, direction="to_reporter")
         return {"id": message_id}
@@ -364,23 +370,30 @@ def install_jobs(app: FastAPI) -> None:
         except ValueError as error:
             raise ApiError(400, "invalid_cursor", "Invalid Last-Event-ID") from error
         require(cursor >= 0, 400, "invalid_cursor", "Invalid Last-Event-ID")
+        limits = request.app.state.stream_limits
+        require(limits.acquire(reviewer["id"]), 429, "stream_limit", "Stream limit exceeded")
 
         async def events() -> AsyncIterator[dict[str, str]]:
             sequence = cursor
+            deadline = time.monotonic() + 300
             while not await request.is_disconnected():
+                if time.monotonic() >= deadline:
+                    return
                 try:
-                    auth.decode(runtime, token, "reviewer")
+                    current_reviewer = await run_in_threadpool(auth.reviewer_for, runtime, token)
+                    rows, status = await run_in_threadpool(
+                        jobs.events_after, runtime, job_id, sequence, current_reviewer
+                    )
                 except ApiError:
                     yield {"event": "done", "data": '{"status":"auth_expired"}'}
                     return
-                rows, status = await run_in_threadpool(jobs.events_after, runtime, job_id, sequence)
                 for row in rows:
                     sequence = row["seq"]
                     value = StageEvent.model_validate(
                         {key: value for key, value in row.items() if key not in {"id", "seq"}}
                     )
                     yield {"id": str(sequence), "event": "stage", "data": value.model_dump_json()}
-                if status in jobs.TERMINAL:
+                if status in jobs.TERMINAL and len(rows) < 100:
                     yield {
                         "event": "done",
                         "data": json.dumps({"job_id": job_id, "status": status}),
@@ -388,9 +401,7 @@ def install_jobs(app: FastAPI) -> None:
                     return
                 await asyncio.sleep(0.25)
 
-        return EventSourceResponse(
-            events(), ping=15, headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"}
-        )
+        return LimitedEventSourceResponse(events(), limits, reviewer["id"])
 
     @app.post(
         "/internal/jobs/claim",
@@ -516,15 +527,14 @@ def install_inbox(app: FastAPI) -> None:
             runtime.validate_recipients(
                 connection, report["org_id"], [box.reviewer_id for box in value.boxes]
             )
-            connection.execute(
-                t.messages.insert().values(
-                    id=message_id,
-                    report_id=value.report_id,
-                    direction="to_reviewers",
-                    sender_reviewer_id=None,
-                    boxes_json=[box.model_dump() for box in value.boxes],
-                    created_at=stamp(),
-                )
+            runtime.store_message(
+                connection,
+                id=message_id,
+                report_id=value.report_id,
+                direction="to_reviewers",
+                sender_reviewer_id=None,
+                boxes_json=[box.model_dump() for box in value.boxes],
+                created_at=bucket(),
             )
             runtime.emit(
                 connection, "message.sent", report_id=value.report_id, direction="to_reviewers"
@@ -600,7 +610,7 @@ def install_admin(app: FastAPI) -> None:
                 .where(t.jobs.c.id == job_id)
                 .values(
                     status="queued",
-                    attempts=0,
+                    max_attempts=job["attempts"] + 3,
                     lease_expires_at=None,
                     updated_at=stamp(),
                     last_error=None,

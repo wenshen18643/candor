@@ -1,5 +1,3 @@
-import { randomUUID } from "node:crypto";
-
 import type { Context } from "hono";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -7,6 +5,7 @@ import { cors } from "hono/cors";
 
 import type { Config } from "./config.js";
 import { authorized } from "./crypto.js";
+import { remoteAddress, RequestLimits } from "./limits.js";
 import { ServiceError } from "./models.js";
 import type { SelfVerifier } from "./self.js";
 import { MockSelfVerifier, OfficialSelfVerifier, parseSelfInput } from "./self.js";
@@ -16,17 +15,16 @@ import { blindedMessages, campaignId, integer, record, text, uuid } from "./vali
 
 export type LogEntry = {
   event: "request" | "started" | "stopped" | "startup_failed" | "purge_failed" | "shutdown_failed";
-  request_id?: string;
   method?: string;
   route?: string;
   status?: number;
-  duration_ms?: number;
 };
 
 export type Logger = (entry: LogEntry) => void;
 
 export const jsonLogger: Logger = (entry) => {
-  process.stdout.write(`${JSON.stringify({ timestamp: new Date().toISOString(), ...entry })}\n`);
+  const timestamp = `${new Date().toISOString().slice(0, 13)}:00:00Z`;
+  process.stdout.write(`${JSON.stringify({ timestamp, ...entry })}\n`);
 };
 
 export interface AppOptions {
@@ -66,21 +64,17 @@ export function createApp(options: AppOptions): Hono {
       : new OfficialSelfVerifier(config.selfMode, config.selfEndpoint));
   const service = new IdentityService(store, config.secret, verifier, options.now);
   const logger = options.logger ?? jsonLogger;
+  const limits = new RequestLimits(options.now);
   const app = new Hono();
   app.use("*", async (context, next) => {
-    const started = performance.now();
-    const requestId = randomUUID();
     context.header("Cache-Control", "no-store");
     context.header("X-Content-Type-Options", "nosniff");
-    context.header("X-Request-ID", requestId);
     await next();
     logger({
       event: "request",
-      request_id: requestId,
       method: context.req.method,
       route: context.req.routePath ?? "unmatched",
       status: context.res.status,
-      duration_ms: Math.round(performance.now() - started),
     });
   });
   app.use(
@@ -99,6 +93,17 @@ export function createApp(options: AppOptions): Hono {
       onError: (context) => errorResponse(context, new ServiceError(413, "body_too_large")),
     }),
   );
+  app.use("/v1/*", async (context, next) => {
+    if (!limits.acquire(remoteAddress(context))) {
+      context.header("Retry-After", "1");
+      return errorResponse(context, new ServiceError(429, "rate_limited"));
+    }
+    try {
+      await next();
+    } finally {
+      limits.release();
+    }
+  });
   app.onError((error, context) => errorResponse(context, error));
   app.notFound((context) => context.json({ error: "not_found" }, 404));
   app.get("/health", (context) => context.json({ status: "ok" }));

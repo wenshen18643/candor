@@ -1,31 +1,40 @@
-Implemented the complete identity service with a testable `createApp()` Hono factory and runnable `src/main.ts`: authenticated, idempotent campaign creation; RSA-2048 issuer keys encrypted with HKDF-SHA256/AES-256-GCM; SQLite and memory stores; 15-minute sessions and purge loop; scoped HMAC nullifier tags; atomic quota consumption and single-use issuance; CORS; bounded requests; privacy-safe JSON logs; and graceful shutdown.
+﻿# Identity handoff — security review, 2026-10-26
 
-Self integration uses the official `@selfxyz/core@1.2.0-beta.1` off-chain verifier for staging/mainnet, with proof-bound UUID routing, age checks, a 20-second verification deadline, and provider cleanup. Passport and biometric-ID attestations are enabled. Relayer replies use HTTP 200 with `status`/`result` and a safe `reason` on rejection. Callback retries preserve terminal session states. `SELF_MODE=mock` enables deterministic persona verification; real modes disable that endpoint. Proofs and personal disclosures are never persisted or returned.
+The identity service implements Self verification, campaign-scoped encrypted RSA issuers, RFC 9474 blind issuance, transactional epoch quotas, short-lived sessions, and SQLite/in-memory stores. This review fixed three identity findings; [SECURITY_REVIEW.md](../SECURITY_REVIEW.md) records all backend findings and reviewed-safe areas.
 
-Run from the repository root with Node 24+ and the environment variables in `.env.example` configured:
+Changes:
 
-```sh
+- Production requires `SELF_MODE=mainnet`; mock and staging verification are rejected. Invalid `CANDOR_MODE` values also fail startup.
+- Request logs use hour-bucket timestamps and omit durations and response-correlated request IDs. Bodies, proofs, nullifiers, credentials, and session identifiers remain excluded.
+- All `/v1` routes have per-socket-peer and global token buckets, a bounded peer map, and a 16-request concurrency cap. Forwarded-address headers cannot bypass the limiter. Self callbacks preserve the required HTTP-200 error response shape.
+
+## Run and validate
+
+Use Node 24+ and the existing installed dependencies. Configure `CANDOR_IDENTITY_SECRET`, `CANDOR_IDENTITY_ADMIN_TOKEN`, and the service URLs through the documented environment variables; real verification requires a public HTTPS callback.
+
+```powershell
 pnpm --filter @candor/identity build
-node --env-file=.env services/identity/dist/main.js
+pnpm --filter @candor/identity start
+pnpm --filter @candor/identity test
+pnpm --filter @candor/identity typecheck
+pnpm exec eslint services/identity
+pnpm exec prettier --check "services/identity/src/**/*.ts" "services/identity/tests/**/*.ts"
 ```
 
-Alternatively, export the environment and run `pnpm --filter @candor/identity start`. Defaults are port 8787, `./data/identity.db`, and mock Self verification. `CANDOR_IDENTITY_SECRET` and `CANDOR_IDENTITY_ADMIN_TOKEN` are required, at least 24 characters; use independently generated high-entropy values. Preserve the identity secret across restarts. Real Self modes require a public HTTPS `SELF_ENDPOINT`. Production rejects mock mode and the example development credentials.
-
-Validation on Node 24.15.0:
+Final full-suite summary:
 
 ```text
-Test Files  4 passed (4)
-     Tests  54 passed (54)
-  Duration  3.93s (tests 63%, import 22%, transform 14%, worker 1%)
+Test Files  5 passed (5)
+     Tests  61 passed (61)
+  Duration  3.88s (tests 77%, import 18%, transform 4%, worker 1%)
 ```
 
-ESLint, Prettier, typecheck, build, and the component no-comments checker pass. Tests cover the complete blindrsa-ts client flow, native/SDK signature equivalence, both stores, restart persistence, concurrent issuance across SQLite connections, quota and campaign independence, epoch rollover, expiry during asynchronous work, malformed input, encryption tampering, safe logs, and Self callbacks with mocked verification. A separate built-server HTTP/SQLite smoke test finalized and verified a token and completed graceful shutdown.
+Typecheck, TypeScript build, ESLint, and Prettier pass. No source comments were introduced. Tests include real blind-sign/finalize/verify operations, SQLite restart and concurrent quota enforcement, Self adapter policy, deployment guards, rate-limit recovery, forwarded-address spoofing, and concurrent-verifier capacity release. No packages were installed or pnpm stores changed.
 
-Implementation decisions and deviations:
+## Decisions and limits
 
-- Sessions additionally retain only a scoped `tag` and `epoch` until consumption or TTL purge, allowing atomic quota enforcement after restart. No raw nullifier is stored.
-- Epochs are UTC intervals anchored at the Unix epoch. Crossing an epoch requires a new verification session. Scopes use the SDK's 31-ASCII-character limit; truncation collisions fail closed.
-- Cloudflare generates issuer keys; the server uses native OpenSSL raw RSA with input validation and a public-exponent fault check for signing, avoiding the SDK's JavaScript private-exponent operation. Signatures are byte-identical to `blindSign()` and pass client finalization and SHA-384/PSS verification.
-- Build uses TypeScript emit instead of tsup because esbuild subprocesses are blocked in this Windows sandbox. Vitest uses native config loading and worker threads. The authorized pnpm dependency command updated the shared lockfile; installation used a component-local store because the existing shared store was read-only.
+Admission limits are 60 requests per peer with one token/second refill, 600 globally with ten/second refill, 16 in flight, and at most 10,000 peer records. Limits are per process and use the real socket peer; behind a proxy, clients share that peer's limit unless deployment supplies a separately trusted ingress policy. IPs remain only in transient limiter memory and are never logged or persisted.
 
-Known gaps: a mobile Self staging/mainnet proof has not been exercised; the real SDK constructor and adapter are tested with its proof method mocked. Self labels this SDK legacy; it is retained to honor the specified self-hosted architecture. The protocol's fixed issuer key and token wire format do not authenticate an epoch, so `epoch_ends_at` describes issuance quota timing and cannot independently enforce token expiration at redemption. Tokens lost after a committed issuance response are not recoverable because signatures and blinded messages are never retained.
+The existing service retains precise short-lived expiry for the mandatory 15-minute session TTL and purges expired sessions. Removing request timing does not eliminate live-network, storage, or external-proxy correlation. No mobile staging/mainnet proof was exercised; the official SDK constructor is tested with its proof operation mocked. Production staging rejection is intentional because staging accepts mock passports.
+
+Existing protocol limitations remain: fixed issuer keys do not authenticate token epochs; issuance enforces quota epochs, but redemption expiry needs a coordinated protocol/client change. Committed blind signatures cannot be recovered if their response is lost because messages and signatures are not retained. Native OpenSSL raw RSA signing, SDK-compatible signature checks, encrypted issuer storage, and scoped HMAC nullifier tags remain unchanged.

@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import secrets
 from datetime import timedelta
 from typing import Any
@@ -28,10 +30,22 @@ def challenge(runtime: Runtime, subject: str, purpose: str) -> dict[str, str]:
         connection.execute(t.challenges.delete().where(t.challenges.c.expires_at < stamp()))
         connection.execute(
             t.challenges.insert().values(
-                challenge=value, subject=subject, purpose=purpose, expires_at=expires, used=False
+                challenge=value,
+                subject=challenge_subject(runtime, subject, purpose, value),
+                purpose=purpose,
+                expires_at=expires,
+                used=False,
             )
         )
     return {"challenge": value, "expires_at": expires}
+
+
+def challenge_subject(runtime: Runtime, subject: str, purpose: str, value: str) -> str:
+    if purpose == "reviewer":
+        return subject
+    return hmac.new(
+        runtime.jwt_key, f"inbox-challenge/{value}/{subject}".encode(), hashlib.sha256
+    ).hexdigest()
 
 
 def login(
@@ -42,7 +56,7 @@ def login(
             connection,
             t.challenges,
             t.challenges.c.challenge == value,
-            t.challenges.c.subject == subject,
+            t.challenges.c.subject == challenge_subject(runtime, subject, purpose, value),
             t.challenges.c.purpose == purpose,
         )
         require(

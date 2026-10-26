@@ -9,7 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from sqlalchemy import Column, MetaData, String, Table, select
 
-from candor_api.common import ApiError, canonical, require, stamp, uid
+from candor_api.common import ApiError, bucket, canonical, require, uid
 from candor_api.database import make_engine, transaction
 from candor_api.settings import Settings
 
@@ -238,7 +238,7 @@ class PaymentLedger:
                 "facilitator": "mock"
                 if self.settings.x402_mode == "mock"
                 else self.settings.x402_facilitator_url,
-                "created_at": stamp(),
+                "created_at": bucket(),
                 "job_link": link,
                 "nonce_tag": nonce_tag,
             }

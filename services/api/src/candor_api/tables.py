@@ -177,3 +177,17 @@ report_reads = Table(
     Column("reviewer_id", String, ForeignKey("reviewers.id"), primary_key=True),
     string("last_read_at"),
 )
+
+message_reads = Table(
+    "message_reads",
+    metadata,
+    Column("message_id", String, ForeignKey("messages.id"), primary_key=True),
+    Column("reviewer_id", String, ForeignKey("reviewers.id"), primary_key=True),
+)
+
+message_order = Table(
+    "message_order",
+    metadata,
+    Column("sequence", Integer, primary_key=True, autoincrement=True),
+    Column("message_id", String, ForeignKey("messages.id"), nullable=False, unique=True),
+)

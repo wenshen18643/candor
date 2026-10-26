@@ -183,22 +183,18 @@ def report_summary(
         .select_from(t.report_files)
         .where(t.report_files.c.report_id == report["id"])
     ).scalar_one()
-    last_read = (
-        connection.execute(
-            select(t.report_reads.c.last_read_at).where(
-                t.report_reads.c.report_id == report["id"],
-                t.report_reads.c.reviewer_id == reviewer_id,
-            )
-        ).scalar()
-        or ""
-    )
     replies = connection.execute(
         select(func.count())
         .select_from(t.messages)
         .where(
             t.messages.c.report_id == report["id"],
             t.messages.c.direction == "to_reviewers",
-            t.messages.c.created_at > last_read,
+            ~select(t.message_reads.c.message_id)
+            .where(
+                t.message_reads.c.message_id == t.messages.c.id,
+                t.message_reads.c.reviewer_id == reviewer_id,
+            )
+            .exists(),
         )
     ).scalar_one()
     pending = connection.execute(
@@ -231,8 +227,9 @@ def visible_messages(
     result = []
     rows = connection.execute(
         select(t.messages)
+        .join(t.message_order, t.message_order.c.message_id == t.messages.c.id)
         .where(t.messages.c.report_id == report_id)
-        .order_by(t.messages.c.created_at)
+        .order_by(t.message_order.c.sequence)
     ).mappings()
     for row in rows:
         item = {name: row[name] for name in ("id", "direction", "created_at")}
@@ -261,6 +258,20 @@ def detail(runtime: Runtime, report_id: str, reviewer: dict[str, Any]) -> dict[s
                 report_id=report_id, reviewer_id=reviewer["id"], last_read_at=stamp()
             )
         )
+        unread = select(t.messages.c.id).where(
+            t.messages.c.report_id == report_id,
+            t.messages.c.direction == "to_reviewers",
+            ~select(t.message_reads.c.message_id)
+            .where(
+                t.message_reads.c.message_id == t.messages.c.id,
+                t.message_reads.c.reviewer_id == reviewer["id"],
+            )
+            .exists(),
+        )
+        for message_id in connection.execute(unread).scalars().all():
+            connection.execute(
+                t.message_reads.insert().values(message_id=message_id, reviewer_id=reviewer["id"])
+            )
         share = get_one(
             connection,
             t.key_shares,

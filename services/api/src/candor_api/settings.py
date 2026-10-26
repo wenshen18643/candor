@@ -62,4 +62,6 @@ class Settings(BaseSettings):
                     raise ValueError("Production requires strong configured secrets")
             if self.x402_mode == "mock":
                 raise ValueError("Production cannot accept mock payments")
+            if self.anchor_mode == "mock":
+                raise ValueError("Production cannot use mock anchoring")
         return self
