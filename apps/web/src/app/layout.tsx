@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
 import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next } from "next/font/google";
+import Script from "next/script";
 import type { ReactNode } from "react";
 
 const hyperlegible = Atkinson_Hyperlegible_Next({
@@ -42,10 +43,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
       className={`${hyperlegible.variable} ${hyperlegibleMono.variable}`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body className="bg-bg text-ink">{children}</body>
+      <body className="bg-bg text-ink">
+        <Script id="theme" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }
