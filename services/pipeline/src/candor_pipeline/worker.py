@@ -18,6 +18,10 @@ from candor_pipeline.dag import DAGRunner, PipelineError
 from candor_pipeline.providers.base import ProviderError
 
 
+def log(event: str, **fields: Any) -> None:
+    print(json.dumps({"event": event, **fields}), flush=True)
+
+
 class Job(Strict):
     job_id: str
     report_id: str
@@ -60,11 +64,15 @@ class Worker:
             return False
         response.raise_for_status()
         job = Job.model_validate(response.json())
+        tag = job.job_id[:8]
+        log("job_claimed", job=tag, attempt=job.attempt)
         lease = asyncio.create_task(self.keep_leased(job))
         try:
             payload = unseal_analysis(job.analysis, self.private_key, job.report_id)
 
             async def event_callback(event: StageEvent) -> None:
+                if event.status != "started":
+                    log("stage", job=tag, stage=event.stage, status=event.status)
                 await self.post(
                     f"/internal/jobs/{job.job_id}/events",
                     event.model_dump(mode="json"),
@@ -96,6 +104,12 @@ class Worker:
                 {"findings": findings.model_dump(), "summary": summary},
                 job.attempt,
             )
+            log(
+                "job_completed",
+                job=tag,
+                claims=result.metrics.claims_total,
+                duration_ms=result.metrics.total_duration_ms,
+            )
         except Exception as error:
             retryable = (
                 isinstance(error, (httpx.TransportError,))
@@ -108,6 +122,7 @@ class Worker:
                     )
                 )
             )
+            log("job_failed", job=tag, error=type(error).__name__, retryable=retryable)
             await self.post(
                 f"/internal/jobs/{job.job_id}/fail",
                 {"error": "analysis_failed", "retryable": retryable},

@@ -116,7 +116,7 @@ async def test_findings_each_reviewer_can_decrypt() -> None:
 
 
 @respx.mock
-async def test_worker_claim_events_encrypted_complete() -> None:
+async def test_worker_claim_events_encrypted_complete(capsys: pytest.CaptureFixture[str]) -> None:
     secret, reviewer = PrivateKey.generate(), PrivateKey.generate()
     job = {
         "job_id": "synthetic-job",
@@ -150,6 +150,11 @@ async def test_worker_claim_events_encrypted_complete() -> None:
         CandorBox.model_validate(findings["box"]), key, context("findings", payload().report_id)
     )
     assert AnalysisResult.model_validate_json(plaintext).metrics.citations_verified == 1
+    logged = capsys.readouterr().out
+    assert '"event": "job_completed"' in logged
+    assert '"stage": "brief"' in logged
+    assert "PERSON_1" not in logged
+    assert payload().report_id not in logged
 
 
 @respx.mock
@@ -181,7 +186,7 @@ async def test_worker_no_job() -> None:
 
 
 @respx.mock
-async def test_worker_failure_contains_no_evidence() -> None:
+async def test_worker_failure_contains_no_evidence(capsys: pytest.CaptureFixture[str]) -> None:
     secret = PrivateKey.generate()
     job = {
         "job_id": "synthetic-job",
@@ -202,3 +207,4 @@ async def test_worker_failure_contains_no_evidence() -> None:
         "error": "analysis_failed",
         "retryable": False,
     }
+    assert '"event": "job_failed"' in capsys.readouterr().out
