@@ -54,7 +54,7 @@ from a price table), `latency_ms`, `provider`, `model`.
   exponential backoff and jitter on 429/5xx (max 4), honour `Retry-After`. Read
   `docs/research/meta-model-api.md` for exact request details and adapt if the docs differ.
 - `claude`: Claude Haiku 5.5 by default (`CANDOR_CLAUDE_MODEL`). With `ANTHROPIC_API_KEY` set,
-  `anthropic_api` calls the Messages API with `output_config={"effort": "low", "format":
+  `anthropic_api` streams the Messages API (64K `max_tokens`) with `output_config={"effort": "low", "format":
 {"type": "json_schema", "schema": transform_schema(schema)}}`, no `temperature` (rejected by current
   models), SDK retries on 429/5xx/connection errors, and maps `refusal` and `max_tokens` stops to
   provider errors. Without a key, `claude_code` runs `claude -p --model <model> --output-format json

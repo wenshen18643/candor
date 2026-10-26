@@ -185,8 +185,8 @@ def test_claude_code_result_and_usage() -> None:
 @pytest.mark.parametrize(
     ("output", "code", "retryable"),
     [
-        (b"not json", "claude_invalid_output", False),
-        (b"[]", "claude_invalid_output", False),
+        (b"not json", "claude_invalid_output", True),
+        (b"[]", "claude_invalid_output", True),
         (result(is_error=True, api_error_status=429), "claude_turn_failed", True),
         (result(is_error=True, api_error_status=401), "claude_turn_failed", False),
         (result(subtype="error_max_turns"), "claude_turn_failed", True),

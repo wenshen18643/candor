@@ -105,9 +105,9 @@ def parse_result(output: bytes) -> tuple[str, Usage]:
     try:
         event = json.loads(output.decode("utf-8"))
     except (ValueError, UnicodeError):
-        raise ProviderError("claude_invalid_output") from None
+        raise ProviderError("claude_invalid_output", True) from None
     if not isinstance(event, dict) or event.get("type") != "result":
-        raise ProviderError("claude_invalid_output")
+        raise ProviderError("claude_invalid_output", True)
     if event.get("is_error") or event.get("subtype") != "success":
         status = event.get("api_error_status")
         retryable = not isinstance(status, int) or status == 429 or status >= 500
