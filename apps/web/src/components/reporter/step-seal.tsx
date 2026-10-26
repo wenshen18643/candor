@@ -140,7 +140,7 @@ export function StepSeal({ campaign }: { campaign: CampaignInfo }) {
                     <p className={cn("text-base font-medium", !step && !activeNow && "text-ink-3")}>
                       {step?.label ?? label}
                     </p>
-                    {step ? (
+                    {step && step.durationMs > 0 ? (
                       <span className="shrink-0 font-mono text-xs text-ink-3 tabular-nums">
                         {step.durationMs} ms
                       </span>

@@ -37,6 +37,19 @@ const streamResponse = (body: string): Response =>
   new Response(chunks([body]), { headers: { "Content-Type": "text/event-stream" } });
 
 describe("SSE", () => {
+  it("dispatches a CR-terminated event at EOF and decodes split UTF-8", async () => {
+    expect(await collect(parseSse(chunks(["data: complete\r\r"])))).toEqual([
+      { event: "message", data: "complete" },
+    ]);
+    const bytes = utf8("data: café\n\n");
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const byte of bytes) controller.enqueue(new Uint8Array([byte]));
+        controller.close();
+      },
+    });
+    expect(await collect(parseSse(stream))).toEqual([{ event: "message", data: "café" }]);
+  });
   it("parses chunk boundaries, CRLF, comments, multiline data, ids and retry", async () => {
     const events = await collect(
       parseSse(

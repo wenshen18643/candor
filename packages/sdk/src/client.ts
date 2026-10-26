@@ -165,7 +165,13 @@ export class CandorClient {
   ): Promise<Submitted> {
     const random = globalThis.crypto.getRandomValues(new Uint32Array(1))[0]! / 4294967296;
     await delay(options.jitterMs ?? Math.floor(2000 + random * 18001), options.signal);
-    return this.request("/v1/reports", "POST", body, options, "public");
+    const submitted = await this.request<Submitted>("/v1/reports", "POST", body, options, "public");
+    if (
+      submitted.report_id !== body.report_id ||
+      submitted.receipt?.evidence_root !== body.evidence_root
+    )
+      throw new CandorError(0, "receipt_mismatch");
+    return submitted;
   }
 
   sendChaff(body: unknown, options?: RequestOptions): Promise<void> {

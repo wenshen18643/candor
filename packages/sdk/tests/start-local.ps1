@@ -34,6 +34,7 @@ try {
     try { Invoke-RestMethod "$env:CANDOR_IDENTITY_URL/health" -TimeoutSec 3 | Out-Null; break } catch { Start-Sleep -Seconds 1 }
   }
   Invoke-RestMethod "$env:CANDOR_IDENTITY_URL/health" -TimeoutSec 3 | Out-Null
+  if ($identity.HasExited) { throw 'The SDK identity process exited before validation' }
   uv run --no-sync --project services/api candor-api seed --reset
   if ($LASTEXITCODE -ne 0) { throw 'API seed failed' }
   $api = Start-Process (Join-Path $repository 'services/api/.venv/Scripts/python.exe') -WindowStyle Hidden -PassThru -ArgumentList '-m', 'candor_api.cli', 'serve', '--port', ([string]$ApiPort) -WorkingDirectory $repository -RedirectStandardOutput (Join-Path $runtimeDirectory 'api.out.log') -RedirectStandardError (Join-Path $runtimeDirectory 'api.err.log')
@@ -41,6 +42,7 @@ try {
     try { Invoke-RestMethod "$env:CANDOR_API_URL/v1/health" -TimeoutSec 3 | Out-Null; break } catch { Start-Sleep -Seconds 1 }
   }
   Invoke-RestMethod "$env:CANDOR_API_URL/v1/health" -TimeoutSec 3 | Out-Null
+  if ($api.HasExited) { throw 'The SDK API process exited before validation' }
   Write-Output "Local SDK integration services are healthy on $IdentityPort and $ApiPort."
   $env:CANDOR_E2E = '1'
   pnpm --filter '@candor/sdk' test

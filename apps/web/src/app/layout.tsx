@@ -8,12 +8,14 @@ const hyperlegible = Atkinson_Hyperlegible_Next({
   subsets: ["latin"],
   variable: "--font-hyperlegible",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 const hyperlegibleMono = Atkinson_Hyperlegible_Mono({
   subsets: ["latin"],
   variable: "--font-hyperlegible-mono",
   display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {

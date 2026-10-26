@@ -1,16 +1,10 @@
 "use client";
 
+import type { BlindToken } from "@candor/crypto";
 import type { Detection, LeakageReport, ScrubResult, StrippedFile } from "@candor/privacy";
 import { create } from "zustand";
 
-import type {
-  BlindToken,
-  CampaignInfo,
-  Receipt,
-  SealStep,
-  SelfSession,
-  VerificationResult,
-} from "./types";
+import type { CampaignInfo, Receipt, SealStep, SelfSession, VerificationResult } from "./types";
 
 export type StepId = "intro" | "verify" | "evidence" | "review" | "seal" | "receipt";
 

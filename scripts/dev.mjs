@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, delimiter, resolve } from "node:path";
+import { delimiter, dirname, resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -37,9 +37,7 @@ export function commandFor(command, args, env = process.env, platform = process.
       resolve(directory, "node_modules/corepack/dist/pnpm.js"),
     );
   }
-  const cli = candidates.find(
-    (path) => path && /pnpm\.(?:c?js)$/.test(path) && existsSync(path),
-  );
+  const cli = candidates.find((path) => path && /pnpm\.(?:c?js)$/.test(path) && existsSync(path));
   if (!cli) throw new Error("pnpm entry point unavailable; run this command through pnpm.");
   return [process.execPath, [cli, ...args]];
 }
@@ -66,16 +64,26 @@ export function prefixOutput(stream, name, color, env, output = process.stdout) 
   return lines;
 }
 
-export async function stopChild(child, platform = process.platform) {
+export async function stopChild(child, platform = process.platform, launch = spawn) {
   if (!child.pid) return;
   if (platform === "win32") {
-    await new Promise((done) => {
-      const killer = spawn("taskkill", ["/T", "/F", "/PID", String(child.pid)], {
+    if (child.exitCode !== null && child.exitCode !== undefined) return;
+    await new Promise((done, reject) => {
+      const killer = launch("taskkill", ["/T", "/F", "/PID", String(child.pid)], {
         windowsHide: true,
         stdio: "ignore",
       });
-      killer.once("error", done);
-      killer.once("close", done);
+      const failed = () => {
+        child.kill();
+        reject(
+          new Error("taskkill could not stop the child tree; check Windows process permissions."),
+        );
+      };
+      killer.once("error", failed);
+      killer.once("close", (code) => {
+        if (code === 0) done();
+        else failed();
+      });
     });
     return;
   }
@@ -106,17 +114,33 @@ export class Processes {
     this.onUnexpectedExit = onUnexpectedExit;
   }
 
-  start(name, command, args, { env = this.env, persistent = true, quiet = false } = {}) {
+  start(
+    name,
+    command,
+    args,
+    { env = this.env, persistent = true, quiet = false, inherit = false } = {},
+  ) {
+    if (this.controller.signal.aborted) return { completion: Promise.resolve(1) };
     const [executable, argv] = commandFor(command, args, env);
-    const child = spawn(executable, argv, {
-      cwd: root,
-      env,
-      detached: process.platform !== "win32",
-      windowsHide: true,
-      stdio: ["ignore", quiet ? "ignore" : "pipe", quiet ? "ignore" : "pipe"],
-    });
+    const output = quiet ? "ignore" : inherit ? "inherit" : "pipe";
+    let child;
+    try {
+      child = spawn(executable, argv, {
+        cwd: root,
+        env,
+        detached: process.platform !== "win32",
+        windowsHide: true,
+        stdio: ["ignore", output, output],
+      });
+    } catch {
+      console.error(
+        `[${name}] Process could not start; check executable availability and process permissions.`,
+      );
+      if (persistent) this.onUnexpectedExit(name, 1);
+      return { completion: Promise.resolve(1) };
+    }
     this.children.add(child);
-    if (!quiet) {
+    if (!quiet && !inherit) {
       const color = { identity: 36, api: 32, worker: 35, web: 34 }[name] || 33;
       prefixOutput(child.stdout, name, color, this.env);
       prefixOutput(child.stderr, name, color, this.env, process.stderr);
@@ -139,7 +163,16 @@ export class Processes {
   stop() {
     if (!this.stopping) {
       this.controller.abort();
-      this.stopping = Promise.allSettled([...this.children].map((child) => stopChild(child)));
+      this.stopping = Promise.allSettled([...this.children].map((child) => stopChild(child))).then(
+        (results) => {
+          if (results.some((result) => result.status === "rejected")) {
+            console.error(
+              "[dev] Process-tree cleanup failed; check Windows taskkill permissions and stop remaining service processes.",
+            );
+          }
+          return results;
+        },
+      );
     }
     return this.stopping;
   }
@@ -181,8 +214,13 @@ export function localUrl(value, fallback) {
   if (
     url.protocol !== "http:" ||
     !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) ||
-    url.username || url.password || url.search || url.hash || url.pathname !== "/"
-  ) throw new Error("Local service URLs must be HTTP loopback origins without credentials.");
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    url.pathname !== "/"
+  )
+    throw new Error("Local service URLs must be HTTP loopback origins without credentials.");
   return url;
 }
 
@@ -197,24 +235,62 @@ export function servicePlan(env, flags = []) {
   delete publicEnv.CANDOR_ENCLAVE_SK;
   const services = [
     {
-      name: "identity", command: "pnpm", args: ["--filter", "@candor/identity", "dev"],
-      env: { ...publicEnv, PORT: identity.port || "80" }, url: identity,
+      name: "identity",
+      command: "pnpm",
+      args: ["--filter", "@candor/identity", "dev"],
+      env: { ...publicEnv, PORT: identity.port || "80" },
+      url: identity,
       health: new URL("/health", identity),
     },
     {
-      name: "api", command: "uv",
-      args: ["run", "--project", "services/api", "uvicorn", "candor_api.app:create_app", "--factory", "--reload", "--reload-dir", "services/api/src", "--host", api.hostname, "--port", api.port || "80", "--no-access-log"],
-      env: publicEnv, url: api, health: new URL("/v1/health", api),
+      name: "api",
+      command: "uv",
+      args: [
+        "run",
+        "--project",
+        "services/api",
+        "uvicorn",
+        "candor_api.app:create_app",
+        "--factory",
+        "--reload",
+        "--reload-dir",
+        "services/api/src",
+        "--host",
+        api.hostname.replace(/^\[|\]$/g, ""),
+        "--port",
+        api.port || "80",
+        "--no-access-log",
+      ],
+      env: publicEnv,
+      url: api,
+      health: new URL("/v1/health", api),
     },
   ];
-  if (!flags.includes("--no-web")) services.push({
-    name: "web", command: "pnpm",
-    args: ["--filter", "@candor/web", "exec", "next", "dev", "--webpack", "--port", web.port || "80"],
-    env: publicEnv, url: web, health: web,
-  });
-  if (!flags.includes("--no-worker") && env.CANDOR_ENCLAVE_SK?.trim()) services.push({
-    name: "worker", command: "uv", args: ["run", "--project", "services/pipeline", "candor-worker"], env,
-  });
+  if (!flags.includes("--no-web"))
+    services.push({
+      name: "web",
+      command: "pnpm",
+      args: [
+        "--filter",
+        "@candor/web",
+        "exec",
+        "next",
+        "dev",
+        "--webpack",
+        "--port",
+        web.port || "80",
+      ],
+      env: publicEnv,
+      url: web,
+      health: web,
+    });
+  if (!flags.includes("--no-worker") && env.CANDOR_ENCLAVE_SK?.trim())
+    services.push({
+      name: "worker",
+      command: "uv",
+      args: ["run", "--project", "services/pipeline", "candor-worker"],
+      env,
+    });
   return services;
 }
 
@@ -229,11 +305,16 @@ export async function main(flags = process.argv.slice(2)) {
   const removeSignals = handleSignals(processes);
   try {
     if (!flags.includes("--no-worker") && !env.CANDOR_ENCLAVE_SK?.trim()) {
-      console.warn("[dev] Worker skipped: CANDOR_ENCLAVE_SK is absent. Run pnpm seed, then restart; remove any empty override from .env.");
+      console.warn(
+        "[dev] Worker skipped: CANDOR_ENCLAVE_SK is absent. Run pnpm seed, then restart; remove any empty override from .env.",
+      );
     }
     const servers = plan.filter((service) => service.health);
-    for (const service of servers) processes.start(service.name, service.command, service.args, service);
-    await Promise.all(servers.map((service) => waitForHealth(service.health, processes.controller.signal)));
+    for (const service of servers)
+      processes.start(service.name, service.command, service.args, service);
+    await Promise.all(
+      servers.map((service) => waitForHealth(service.health, processes.controller.signal)),
+    );
     for (const service of plan.filter((entry) => !entry.health)) {
       processes.start(service.name, service.command, service.args, service);
     }

@@ -31,11 +31,10 @@ export async function* parseSse(
       signal?.throwIfAborted();
       const chunk = await reader.read();
       signal?.throwIfAborted();
-      if (chunk.done) break;
-      pending += decoder.decode(chunk.value, { stream: true });
+      pending += chunk.done ? decoder.decode() : decoder.decode(chunk.value, { stream: true });
       let match: RegExpExecArray | null;
       while ((match = /\r\n|\r|\n/.exec(pending))) {
-        if (match[0] === "\r" && match.index === pending.length - 1) break;
+        if (match[0] === "\r" && match.index === pending.length - 1 && !chunk.done) break;
         const line = pending.slice(0, match.index);
         pending = pending.slice(match.index + match[0].length);
         eventSize += line.length;
@@ -57,6 +56,7 @@ export async function* parseSse(
         if (field === "retry" && /^\d+$/.test(value)) event.retry = Math.min(Number(value), 30000);
       }
       if (pending.length + eventSize > 1048576) throw new CandorError(0, "event_too_large");
+      if (chunk.done) break;
     }
   } finally {
     signal?.removeEventListener("abort", abort);

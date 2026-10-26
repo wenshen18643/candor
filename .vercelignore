@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/.next
+**/.venv
+**/dist
+.pnpm-store
+/data
+services/api
+services/pipeline
+services/evals
+docs/research
+**/pytest-cache-files-*
+**/*.log

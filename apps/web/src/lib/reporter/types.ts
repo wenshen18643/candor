@@ -1,3 +1,5 @@
+import type { Campaign } from "@candor/sdk";
+
 export type CampaignInfo = {
   campaignId: string;
   orgName: string;
@@ -8,6 +10,7 @@ export type CampaignInfo = {
   enclave: { keyId: string; encPk: string };
   issuer: { keyId: string; spki: string };
   mode: "showcase" | "live";
+  descriptor: Campaign;
 };
 
 export type SelfSession = {
@@ -20,13 +23,6 @@ export type SelfSession = {
 
 export type VerificationResult =
   { status: "verified"; allowance: number } | { status: "rejected"; reason: string };
-
-export type BlindToken = { key_id: string; prepared: string; signature: string };
-
-export type MintStep = {
-  label: string;
-  detail: string;
-};
 
 export type SealStep = {
   id: string;

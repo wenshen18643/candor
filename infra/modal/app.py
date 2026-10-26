@@ -4,8 +4,9 @@ import os
 import subprocess
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 from uuid import uuid4
 
 import modal
@@ -37,9 +38,16 @@ def python_image(name: str, base: modal.Image | None = None) -> modal.Image:
     image = add_python_project(image.pip_install("uv==0.11.7"), "pipeline")
     if name != "pipeline":
         image = add_python_project(image, name)
-    return image.run_commands(
-        f"uv sync --project {REMOTE}/services/{name} --frozen --no-dev"
-    ).workdir(REMOTE)
+    paths = [
+        f"{REMOTE}/services/{name}/.venv/lib/python3.12/site-packages",
+        f"{REMOTE}/services/{name}/src",
+        f"{REMOTE}/services/pipeline/src",
+    ]
+    return (
+        image.run_commands(f"uv sync --project {REMOTE}/services/{name} --frozen --no-dev")
+        .env({"PYTHONPATH": ":".join(paths)})
+        .workdir(REMOTE)
+    )
 
 
 def node_image() -> modal.Image:
@@ -102,9 +110,7 @@ def api() -> FastAPI:
     os.environ["CANDOR_DATA_DIR"] = "/data"
     os.environ["MODAL_ENABLED"] = "true"
     os.environ.pop("CANDOR_ENCLAVE_SK", None)
-    from candor_api.app import create_app
-
-    application = create_app()
+    application = import_module("candor_api.app").create_app()
     original_lifespan = application.router.lifespan_context
 
     @asynccontextmanager
@@ -165,9 +171,11 @@ def run_analysis() -> None:
     max_containers=1,
 )
 def run_evals(provider: str = "meta") -> str:
-    from candor_evals.cli import validate_provider
-
-    selected = validate_provider(provider)
+    selected = (
+        import_module("pydantic")
+        .TypeAdapter(Literal["meta", "replay", "fireworks", "baseten", "codex"])
+        .validate_python(provider)
+    )
     run_id = str(uuid4())
     try:
         run_private(

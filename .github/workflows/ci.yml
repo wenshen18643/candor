@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CANDOR_MODE: demo
+  CANDOR_LLM_PROVIDER: replay
+  CANDOR_REPLAY_DIR: services/pipeline/tests/cassettes/synthetic
+  SELF_MODE: mock
+  X402_MODE: mock
+  ANCHOR_MODE: mock
+  MODAL_ENABLED: "false"
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  js:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint:js
+      - run: pnpm typecheck
+      - run: pnpm -r --if-present test --exclude '**/e2e/**'
+      - run: node --test infra/tests/orchestration.test.mjs
+
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api, pipeline, evals]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.7"
+      - run: uv sync --project services/${{ matrix.service }} --frozen
+      - run: uvx ruff@0.14.2 check services/${{ matrix.service }} infra
+      - run: uvx ruff@0.14.2 format --check services/${{ matrix.service }} infra
+      - run: python scripts/check_no_comments.py services/${{ matrix.service }} infra
+      - run: uv run --project services/${{ matrix.service }} pytest services/${{ matrix.service }}/tests -q
+        env:
+          UV_OFFLINE: "1"
+          UV_NO_SYNC: "1"
+      - if: matrix.service == 'api'
+        run: uv run --project services/api pytest infra/tests -q -p no:cacheprovider
+        env:
+          UV_OFFLINE: "1"
+          UV_NO_SYNC: "1"
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CANDOR_DATA_DIR: ${{ github.workspace }}/infra/.artifacts/e2e-data
+      CANDOR_API_URL: http://127.0.0.1:8000
+      CANDOR_IDENTITY_URL: http://127.0.0.1:8787
+      CANDOR_WEB_URL: http://127.0.0.1:3100
+      NEXT_PUBLIC_API_URL: ""
+      NEXT_PUBLIC_IDENTITY_URL: ""
+      E2E_BASE_URL: http://127.0.0.1:3100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.7"
+      - run: pnpm install --frozen-lockfile
+      - run: uv sync --project services/api --frozen
+      - run: uv sync --project services/pipeline --frozen
+      - run: pnpm --filter @candor/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @candor/web build
+      - name: Generate ephemeral demo configuration
+        run: |
+          node --input-type=module -e '
+          import { randomBytes } from "node:crypto";
+          import { appendFileSync } from "node:fs";
+          for (const name of ["CANDOR_WORKER_TOKEN", "CANDOR_JWT_SECRET", "CANDOR_PAYMENTS_LINK_KEY", "CANDOR_IDENTITY_SECRET", "CANDOR_IDENTITY_ADMIN_TOKEN"]) {
+            appendFileSync(process.env.GITHUB_ENV, `${name}=${randomBytes(32).toString("hex")}\n`);
+          }'
+      - name: Seed and exercise showcase flows
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm seed
+          node scripts/dev.mjs --no-worker &
+          runner=$!
+          trap 'kill -TERM "$runner" 2>/dev/null || true; wait "$runner" || true' EXIT
+          node --input-type=module -e '
+          import { waitForHealth } from "./scripts/dev.mjs";
+          const signal = AbortSignal.timeout(180000);
+          await Promise.all([
+            waitForHealth("http://127.0.0.1:8000/v1/health", signal),
+            waitForHealth("http://127.0.0.1:8787/health", signal),
+            waitForHealth(process.env.E2E_BASE_URL, signal)
+          ]);'
+          pnpm e2e
