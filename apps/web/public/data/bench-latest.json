@@ -1,0 +1,72 @@
+{
+  "failures": [],
+  "generated_at": "2026-10-26T12:58:01.373028Z",
+  "methodology": {
+    "execution": "Full DAG runs on a fixed subset; stage-local timings and costs, downstream quality as a proxy. Upstream errors can affect verify and gaps.",
+    "pareto": "Non-dominated points maximize quality and minimize mean cost and p95 latency per stage.",
+    "quality": "Scores are 0-1. Extract: F1 of claim precision and event recall, as on the evaluation. Verify: share of documented ground-truth events whose claim is verified as supported. Gaps: expected-type coverage.",
+    "routing": "Cheapest provider within 0.02 of best quality per stage; ties use p95 latency then provider name."
+  },
+  "repeats": 2,
+  "results": [
+    {
+      "cost_usd": 0.020400471666666666,
+      "degraded_rate": 0.0,
+      "observations": 6,
+      "p50_latency_ms": 62611.0,
+      "p95_latency_ms": 64833.0,
+      "pareto": true,
+      "provider": "claude:claude-haiku-5-5",
+      "quality": 0.8766223075197281,
+      "stage": "extract"
+    },
+    {
+      "cost_usd": 0.005164576666666667,
+      "degraded_rate": 0.0,
+      "observations": 6,
+      "p50_latency_ms": 18277.0,
+      "p95_latency_ms": 24870.0,
+      "pareto": true,
+      "provider": "claude:claude-haiku-5-5",
+      "quality": 0.8888888888888888,
+      "stage": "gaps"
+    },
+    {
+      "cost_usd": 0.009488926666666666,
+      "degraded_rate": 0.0,
+      "observations": 6,
+      "p50_latency_ms": 52996.0,
+      "p95_latency_ms": 84386.0,
+      "pareto": true,
+      "provider": "claude:claude-haiku-5-5",
+      "quality": 0.5833333333333334,
+      "stage": "verify"
+    }
+  ],
+  "router": {
+    "default": "claude:claude-haiku-5-5",
+    "extract": "claude:claude-haiku-5-5",
+    "gaps": "claude:claude-haiku-5-5",
+    "verify": "claude:claude-haiku-5-5"
+  },
+  "router_written": true,
+  "skipped": [
+    {
+      "provider": "meta:muse-spark-1.3",
+      "reason": "MODEL_API_KEY is not configured"
+    },
+    {
+      "provider": "fireworks",
+      "reason": "FIREWORKS_API_KEY is not configured"
+    },
+    {
+      "provider": "baseten",
+      "reason": "BASETEN_API_KEY is not configured"
+    }
+  ],
+  "subset": [
+    "procurement-kickback",
+    "patient-data-breach-concealment",
+    "wage-theft-timesheet-edits"
+  ]
+}
