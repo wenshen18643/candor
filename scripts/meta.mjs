@@ -4,6 +4,23 @@ import { isMain, loadEnvironment, root } from "./dev.mjs";
 
 const usage = "Usage: pnpm meta [all|evals|bench] [--repeats N]";
 
+const hosts = [
+  ["meta", "MODEL_API_KEY", "CANDOR_META_MODEL", "muse-spark-1.3"],
+  ["baseten", "BASETEN_API_KEY", "CANDOR_BASETEN_MODEL", "meta-models/muse-spark-open-1026"],
+  [
+    "fireworks",
+    "FIREWORKS_API_KEY",
+    "CANDOR_FIREWORKS_MODEL",
+    "accounts/fireworks/models/muse-spark-open",
+  ],
+];
+
+export function museHosts(env) {
+  return hosts
+    .filter(([, key]) => env[key]?.trim())
+    .map(([name, , model, fallback]) => `${name}:${env[model] || fallback}`);
+}
+
 export function metaPlan(argv, env) {
   const index = argv.indexOf("--repeats");
   const repeats = index === -1 ? "3" : argv[index + 1];
@@ -12,22 +29,34 @@ export function metaPlan(argv, env) {
   const mode = rest[0] ?? "all";
   if (!["all", "evals", "bench"].includes(mode)) throw new Error(usage);
   if (!/^\d+$/.test(repeats ?? "") || Number(repeats) < 1) throw new Error(usage);
-  if (!env.MODEL_API_KEY?.trim()) {
-    throw new Error("Set MODEL_API_KEY in .env or your shell before running the Meta evaluation.");
+  const muse = museHosts(env);
+  if (!muse.length) {
+    throw new Error(
+      "Set MODEL_API_KEY, BASETEN_API_KEY or FIREWORKS_API_KEY in .env before running the Muse evaluation.",
+    );
   }
-  const meta = `meta:${env.CANDOR_META_MODEL || "muse-spark-1.3"}`;
   const evals = ["uv", "run", "--project", "services/evals", "candor-evals"];
   const steps = [];
   if (mode !== "bench") {
-    steps.push([...evals, "run", "--provider", meta, "--scenarios", "all", "--samples", "3"]);
+    steps.push([
+      ...evals,
+      "run",
+      "--provider",
+      muse[0],
+      "--scenarios",
+      "all",
+      "--samples",
+      "3",
+      "--record",
+    ]);
   }
   if (mode !== "evals") {
-    const providers = [meta, "claude:claude-haiku-5-5", "fireworks", "baseten"].join(",");
+    const providers = [...muse, "claude:claude-haiku-5-5"].join(",");
     steps.push([...evals, "bench", "--providers", providers, "--repeats", repeats]);
   }
-  const clean = { ...env };
-  delete clean.CANDOR_REPLAY_DIR;
-  return { steps, env: clean };
+  const slug = muse[0].split(":")[0] + "-" + muse[0].split("/").at(-1).split(":").at(-1);
+  const clean = { ...env, CANDOR_REPLAY_DIR: `services/evals/cassettes/${slug}` };
+  return { steps, env: clean, cassettes: clean.CANDOR_REPLAY_DIR };
 }
 
 if (isMain(import.meta.url)) {
@@ -43,5 +72,7 @@ if (isMain(import.meta.url)) {
     const result = spawnSync(command, args, { cwd: root, env: plan.env, stdio: "inherit" });
     if (result.status !== 0) process.exit(result.status ?? 1);
   }
-  console.log("Results are in apps/web/public/data. Commit them to publish the numbers.");
+  console.log(
+    `Results are in apps/web/public/data and the model calls in ${plan.cassettes}. Commit both to publish the numbers.`,
+  );
 }

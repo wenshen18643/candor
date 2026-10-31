@@ -36,3 +36,5 @@ Thumbs.db
 .vercel
 infra/.artifacts/
 packages/sdk/.e2e/
+
+services/pipeline/router.json

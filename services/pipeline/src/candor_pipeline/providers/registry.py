@@ -8,8 +8,21 @@ from candor_pipeline.providers.openai_compat import OpenAICompatProvider
 from candor_pipeline.providers.replay import ReplayProvider
 
 
+def default_provider() -> str:
+    for provider, key in (
+        ("baseten", "BASETEN_API_KEY"),
+        ("meta", "MODEL_API_KEY"),
+        ("fireworks", "FIREWORKS_API_KEY"),
+    ):
+        if os.getenv(key, "").strip():
+            return provider
+    return "claude"
+
+
 def build_provider(spec: str | None = None) -> LLMProvider:
-    provider, _, model = (spec or os.getenv("CANDOR_LLM_PROVIDER", "claude")).partition(":")
+    provider, _, model = (spec or os.getenv("CANDOR_LLM_PROVIDER") or default_provider()).partition(
+        ":"
+    )
     if provider == "claude":
         model = model or os.getenv("CANDOR_CLAUDE_MODEL", "claude-haiku-5-5")
         if os.getenv("ANTHROPIC_API_KEY", "").strip():
@@ -25,18 +38,22 @@ def build_provider(spec: str | None = None) -> LLMProvider:
             "https://api.fireworks.ai/inference/v1",
             "FIREWORKS_API_KEY",
             "CANDOR_FIREWORKS_MODEL",
-            "",
+            "accounts/fireworks/models/muse-spark-open",
         ),
         "baseten": (
             os.getenv("CANDOR_BASETEN_BASE_URL") or "https://inference.baseten.co/v1",
             "BASETEN_API_KEY",
             "CANDOR_BASETEN_MODEL",
-            "",
+            "meta-models/muse-spark-open-1026",
         ),
     }
     if provider not in endpoints:
         raise ProviderError("unknown_provider")
     base, key, model_env, default = endpoints[provider]
     return OpenAICompatProvider(
-        provider, model or os.getenv(model_env, default), base, os.getenv(key, "")
+        provider,
+        model or os.getenv(model_env, default),
+        base,
+        os.getenv(key, ""),
+        reasoning_effort=os.getenv("CANDOR_REASONING_EFFORT", "medium"),
     )

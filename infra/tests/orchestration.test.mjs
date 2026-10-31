@@ -61,7 +61,7 @@ test("dotenv precedence preserves explicit empty values and resolves custom data
   assert.equal(env.SECOND, "generated");
   assert.equal(env.QUOTED, "two words");
   assert.equal(env.CANDOR_DATA_DIR, resolve(directory, "custom"));
-  assert.equal(env.CANDOR_LLM_PROVIDER, "claude");
+  assert.equal(env.CANDOR_LLM_PROVIDER, undefined);
 });
 
 test("blank .env placeholders are filled by seeded values", async () => {
@@ -360,15 +360,16 @@ test("supervisor stops a running parent and its grandchild", async (context) => 
   for (const pid of pids) assert.throws(() => process.kill(pid, 0), { code: "ESRCH" });
 });
 
-test("meta plan runs live Meta evals and a benchmark without cassette reuse", () => {
+test("meta plan records live Muse evals in their own cassettes and benchmarks every Muse host", () => {
   assert.throws(() => metaPlan([], { MODEL_API_KEY: " " }), /MODEL_API_KEY/);
   assert.throws(() => metaPlan(["everything"], { MODEL_API_KEY: "k" }), /Usage/);
   assert.throws(() => metaPlan(["bench", "--repeats", "0"], { MODEL_API_KEY: "k" }), /Usage/);
   const plan = metaPlan(["--repeats", "2"], {
     MODEL_API_KEY: "k",
+    BASETEN_API_KEY: "b",
     CANDOR_REPLAY_DIR: "services/evals/cassettes",
   });
-  assert.equal(plan.env.CANDOR_REPLAY_DIR, undefined);
+  assert.equal(plan.env.CANDOR_REPLAY_DIR, "services/evals/cassettes/meta-muse-spark-1.3");
   assert.equal(plan.steps.length, 2);
   assert.deepEqual(plan.steps[0].slice(5), [
     "run",
@@ -378,15 +379,19 @@ test("meta plan runs live Meta evals and a benchmark without cassette reuse", ()
     "all",
     "--samples",
     "3",
+    "--record",
   ]);
   assert.deepEqual(plan.steps[1].slice(5), [
     "bench",
     "--providers",
-    "meta:muse-spark-1.3,claude:claude-haiku-5-5,fireworks,baseten",
+    "meta:muse-spark-1.3,baseten:meta-models/muse-spark-open-1026,claude:claude-haiku-5-5",
     "--repeats",
     "2",
   ]);
   const evalsOnly = metaPlan(["evals"], { MODEL_API_KEY: "k", CANDOR_META_MODEL: "muse-x" });
   assert.equal(evalsOnly.steps.length, 1);
   assert.equal(evalsOnly.steps[0][7], "meta:muse-x");
+  const baseten = metaPlan(["evals"], { BASETEN_API_KEY: "b" });
+  assert.equal(baseten.steps[0][7], "baseten:meta-models/muse-spark-open-1026");
+  assert.equal(baseten.cassettes, "services/evals/cassettes/baseten-muse-spark-open-1026");
 });

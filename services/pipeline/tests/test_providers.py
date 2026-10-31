@@ -48,6 +48,22 @@ async def test_openai_wire_contract(name: str, url: str) -> None:
     assert body["response_format"]["json_schema"]["schema"] == request().json_schema
     assert body["max_completion_tokens"] == request().max_tokens
     assert body["messages"][0]["role"] == "system"
+    assert body["messages"][0]["content"] == request().system
+
+
+@respx.mock
+async def test_schema_in_prompt_when_provider_does_not_enforce_it() -> None:
+    url = "https://inference.baseten.co/v1"
+    route = respx.post(url + "/chat/completions").mock(
+        return_value=httpx.Response(
+            200, json={"choices": [{"message": {"content": "{}"}, "finish_reason": "stop"}]}
+        )
+    )
+    provider = OpenAICompatProvider("baseten", "meta-models/muse-spark-open", url, "synthetic")
+    await provider.complete_json(request())
+    system = json.loads(route.calls[0].request.content)["messages"][0]["content"]
+    assert system.startswith(request().system)
+    assert json.dumps(request().json_schema, separators=(",", ":")) in system
 
 
 @respx.mock
@@ -150,6 +166,20 @@ def test_registry_and_router(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) ->
     assert route.for_stage("verify") is default
     assert isinstance(route.for_stage("extract"), CodexCLIProvider)
     assert route.for_stage("extract") is route.for_stage("extract")
+
+
+def test_default_provider_prefers_a_muse_host_with_credentials(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for name in ("CANDOR_LLM_PROVIDER", "MODEL_API_KEY", "FIREWORKS_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("BASETEN_API_KEY", "synthetic-credential")
+    monkeypatch.delenv("CANDOR_BASETEN_MODEL", raising=False)
+    provider = build_provider()
+    assert isinstance(provider, OpenAICompatProvider)
+    assert (provider.provider, provider.model) == ("baseten", "meta-models/muse-spark-open-1026")
+    monkeypatch.setenv("CANDOR_LLM_PROVIDER", "")
+    assert build_provider().provider == "baseten"
 
 
 def test_codex_events_and_usage() -> None:

@@ -98,7 +98,7 @@ the scrubber in Python.
   `{generated_at, provider, model, scenarios: [{scenario_id, title, metrics: {...}}], aggregate:
 {...}, chaos: {...}, injection: {...}, leakage: {...}}`.
 - `--record` uses the replay provider in record mode so later runs can replay deterministically in
-  CI (`CANDOR_REPLAY_DIR=services/evals/cassettes`).
+  CI (`CANDOR_REPLAY_DIR=services/evals/cassettes/<provider>-<model>`).
 - `candor-evals bench --providers claude:claude-haiku-5-5,meta:muse-spark-1.3,fireworks:...` runs a
   stage-level benchmark (extract, verify, gaps) on a fixed subset, recording quality, p50/p95
   latency and cost per provider and stage, computes the Pareto front over (quality, cost, latency),

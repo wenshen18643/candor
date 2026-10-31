@@ -145,9 +145,15 @@ async def test_anthropic_incomplete_answers(body: dict[str, Any], code: str) -> 
 
 
 def test_registry_picks_claude_transport(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("CANDOR_LLM_PROVIDER", raising=False)
-    monkeypatch.delenv("CANDOR_CLAUDE_MODEL", raising=False)
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    for name in (
+        "CANDOR_LLM_PROVIDER",
+        "CANDOR_CLAUDE_MODEL",
+        "ANTHROPIC_API_KEY",
+        "BASETEN_API_KEY",
+        "MODEL_API_KEY",
+        "FIREWORKS_API_KEY",
+    ):
+        monkeypatch.delenv(name, raising=False)
     local = build_provider()
     assert isinstance(local, ClaudeCodeProvider)
     assert local.model == "claude-haiku-5-5"

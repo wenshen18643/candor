@@ -64,7 +64,7 @@ def run(
     results_dir: Path = COMPONENT / "results",
     publish: bool = True,
 ) -> None:
-    chosen = validate_provider(provider or os.getenv("CANDOR_LLM_PROVIDER", "replay"))
+    chosen = validate_provider(provider or os.getenv("CANDOR_LLM_PROVIDER") or "replay")
     if record and chosen.split(":")[0] == "replay":
         raise typer.BadParameter("--record requires a live provider")
     try:

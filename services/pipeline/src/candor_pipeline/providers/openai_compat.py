@@ -1,4 +1,5 @@
 import asyncio
+import json
 import random
 import time
 from datetime import UTC, datetime
@@ -16,7 +17,18 @@ PRICES: dict[str, tuple[float, float]] = {
     "muse-wonder-1.0": (4.0, 20.0),
     "accounts/fireworks/models/muse-spark-open": (1.25, 4.25),
     "meta-models/muse-spark-open": (1.25, 4.25),
+    "meta-models/muse-spark-open-1026": (1.25, 4.25),
 }
+
+REASONING_HEADROOM = 16384
+
+
+def always_reasons(model: str) -> bool:
+    return model.split("/")[-1].startswith("muse-spark-open")
+
+
+def enforces_schema(model: str) -> bool:
+    return not model.startswith("meta-models/muse-spark-open")
 
 
 def retry_delay(value: str | None, attempt: int) -> float:
@@ -44,6 +56,7 @@ class OpenAICompatProvider:
         client: httpx.AsyncClient | None = None,
         retries: int = 4,
         prices: dict[str, tuple[float, float]] | None = None,
+        reasoning_effort: str = "medium",
     ) -> None:
         if not api_key or not model or model.endswith("-contributor"):
             raise ProviderError("invalid_provider_configuration")
@@ -54,16 +67,25 @@ class OpenAICompatProvider:
         self.client = client
         self.retries = retries
         self.prices = PRICES | (prices or {})
+        self.reasoning_effort = reasoning_effort
 
     def _body(self, request: LLMRequest) -> dict[str, Any]:
+        system = request.system
+        if not enforces_schema(self.model):
+            system += (
+                "\nReply with one JSON object and nothing else. It must validate against this "
+                "JSON Schema, including every required property and no others: "
+                + json.dumps(request.json_schema, separators=(",", ":"))
+            )
         body: dict[str, Any] = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": request.system},
+                {"role": "system", "content": system},
                 {"role": "user", "content": request.user},
             ],
             "temperature": request.temperature,
-            "max_completion_tokens": request.max_tokens,
+            "max_completion_tokens": request.max_tokens
+            + (REASONING_HEADROOM if always_reasons(self.model) else 0),
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {
@@ -75,6 +97,8 @@ class OpenAICompatProvider:
         }
         if self.provider == "meta":
             body["reasoning_effort"] = "low"
+        elif always_reasons(self.model):
+            body["reasoning_effort"] = self.reasoning_effort
         return body
 
     async def complete_json(self, request: LLMRequest) -> LLMResponse:

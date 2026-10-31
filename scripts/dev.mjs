@@ -28,7 +28,6 @@ export function loadEnvironment(base = process.env, directory = root) {
   const data = resolve(directory, env.CANDOR_DATA_DIR || "data");
   load(resolve(data, "demo", ".env.local"));
   env.CANDOR_DATA_DIR = data;
-  env.CANDOR_LLM_PROVIDER ??= "claude";
   return env;
 }
 

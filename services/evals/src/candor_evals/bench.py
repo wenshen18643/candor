@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,7 @@ from candor_evals.reports import atomic_write, utc_now, write_json
 from candor_evals.runner import execute
 
 STAGES = ("extract", "verify", "gaps")
+OPEN_WEIGHTS = ("muse-spark-open", "muse-glimmer", "llama")
 SUBSET = ("procurement-kickback", "patient-data-breach-concealment", "wage-theft-timesheet-edits")
 
 
@@ -84,10 +86,18 @@ def pareto_front(points: list[BenchmarkPoint]) -> list[BenchmarkPoint]:
     ]
 
 
-def choose_router(points: list[BenchmarkPoint], tolerance: float = 0.02) -> dict[str, str]:
+def open_weights(provider: str) -> bool:
+    return any(name in provider for name in OPEN_WEIGHTS)
+
+
+def choose_router(
+    points: list[BenchmarkPoint],
+    tolerance: float = 0.02,
+    eligible: Callable[[str], bool] = open_weights,
+) -> dict[str, str]:
     router = {}
     for stage in STAGES:
-        choices = [point for point in points if point.stage == stage]
+        choices = [point for point in points if point.stage == stage and eligible(point.provider)]
         if not choices:
             continue
         best = max(point.quality for point in choices)
@@ -250,8 +260,10 @@ async def run_benchmark(
                 "downstream quality as a proxy. Upstream errors can affect verify and gaps."
             ),
             "routing": (
-                "Cheapest provider within 0.02 of best quality per stage; "
-                "ties use p95 latency then provider name."
+                "Only open-weights models are routed, because an organisation can host them "
+                "itself and keep even redacted evidence in house; closed models are benchmarked "
+                "for reference. Among those, the cheapest within 0.02 of the best quality per "
+                "stage; ties use p95 latency then provider name."
             ),
             "pareto": (
                 "Non-dominated points maximize quality and minimize mean cost "

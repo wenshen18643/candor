@@ -90,21 +90,37 @@ def test_pareto_and_router_two_percentage_points() -> None:
         "codex:cheap",
         "fireworks:weak",
     }
-    assert choose_router(points) == {"extract": "codex:cheap", "default": "codex:cheap"}
+    assert choose_router(points, eligible=lambda _: True) == {
+        "extract": "codex:cheap",
+        "default": "codex:cheap",
+    }
+    assert choose_router(points) == {}
     assert choose_router([]) == {}
+
+
+def test_router_only_routes_open_weights_models() -> None:
+    points = [
+        point("claude:claude-haiku-5-5", 0.9, 0.01, 100),
+        point("baseten:meta-models/muse-spark-open-1026", 0.85, 0.05, 50),
+        point("fireworks:accounts/fireworks/models/muse-spark-open", 0.86, 0.06, 60),
+    ]
+    assert choose_router(points) == {
+        "extract": "baseten:meta-models/muse-spark-open-1026",
+        "default": "baseten:meta-models/muse-spark-open-1026",
+    }
 
 
 def test_pareto_ties_and_stage_separation() -> None:
     points = [point("a", 1, 1, 1), point("b", 1, 1, 1), point("c", 0.1, 5, 10, "gaps")]
     assert len(pareto_front(points)) == 3
-    assert choose_router(points)["extract"] == "a"
-    assert choose_router(points)["gaps"] == "c"
+    assert choose_router(points, eligible=lambda _: True)["extract"] == "a"
+    assert choose_router(points, eligible=lambda _: True)["gaps"] == "c"
 
 
 async def test_benchmark_stage_metrics_and_router(scenario_root: Path, tmp_path: Path) -> None:
     privacy = FakePrivacy()
     summary = await run_benchmark(
-        ["replay:fixture"],
+        ["replay:muse-spark-open"],
         scenario_root,
         privacy,
         FakePipeline(privacy),
