@@ -80,3 +80,28 @@ export function revealingFirst<T extends { field: string }>(fields: T[]) {
     (a, b) => Number(revealing.test(b.field)) - Number(revealing.test(a.field)),
   );
 }
+
+const modelNames: Record<string, string> = {
+  "muse-spark-open": "Muse Spark Open",
+  "muse-spark-open-1026": "Muse Spark Open",
+  "muse-spark-1.3": "Muse Spark 1.3",
+  "muse-wonder-1.0": "Muse Wonder 1.0",
+  "claude-haiku-5-5": "Claude Haiku 5.5",
+};
+
+export function modelName(model: string) {
+  const id = model.split("/").at(-1) ?? model;
+  return modelNames[id] ?? id;
+}
+
+const providerNames: Record<string, string> = {
+  baseten: "Baseten",
+  meta: "the Meta Model API",
+  fireworks: "Fireworks",
+  claude: "Anthropic",
+  codex: "the Codex CLI",
+};
+
+export function providerName(provider: string) {
+  return providerNames[provider] ?? provider;
+}

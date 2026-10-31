@@ -4,15 +4,21 @@
 
 Candor is a whistleblowing platform built on two promises that usually pull against each other:
 the person reporting reveals as little about themselves as possible, and the people reviewing get
-an account of what happened that they can actually trust. A multi-stage Meta Muse pipeline turns
-scattered, redacted evidence into a cited timeline in which every sentence traces back to a verbatim
-source passage, with uncertainty and contradictions shown rather than smoothed over.
+an account of what happened that they can actually trust. A twelve-stage pipeline on Muse Spark
+Open, Meta's open-weights model, turns scattered, redacted evidence into a cited timeline in which
+every sentence traces back to a verbatim source passage, with uncertainty and contradictions shown
+rather than smoothed over.
+
+Tips are how most fraud is found: 43% of the 1,921 cases in the ACFE's 2024 _Report to the Nations_
+were detected by a tip, more than by any other method, and over half of those tips came from
+employees. Candor is built for those employees.
 
 - **Live demo:** https://candor-whistle.vercel.app (showcase mode: every cryptographic step runs
   for real in your browser, and nothing is sent anywhere). The analysis in the reviewer console is
-  a recorded run of the real twelve-stage pipeline on the fictional Northwind case, made with
-  `gpt-6.1-sol` through the Codex CLI while Meta Muse access was pending; the model calls are
-  committed as cassettes in `services/pipeline/tests/cassettes/northwind` and replay exactly.
+  a recorded run of the real twelve-stage pipeline on the fictional Northwind case, made with Muse
+  Spark Open (`meta-models/muse-spark-open-1026` on Baseten) in 59 seconds for $0.16; the model
+  calls are committed as cassettes in `services/pipeline/tests/cassettes/northwind` and replay
+  exactly.
 - **Built for:** Meta Global AI Developer Hackathon, indie track
 
 ## Try it in five minutes
@@ -133,28 +139,35 @@ no `NEXT_PUBLIC_API_URL` the web app runs in showcase mode with recorded data.
 
 ### Choosing the model
 
-The pipeline routes each stage to a provider (`services/pipeline/router.json`). Set
-`CANDOR_LLM_PROVIDER` to `claude` (the default), `meta`, `fireworks`, `baseten`, `codex` or
-`replay`. `claude` runs Claude Haiku 5.5 (`CANDOR_CLAUDE_MODEL`) through the Anthropic API when
-`ANTHROPIC_API_KEY` is set, and through a signed-in Claude Code CLI otherwise, so a local run needs
-no key. With `MODEL_API_KEY` in `.env`, one command runs the evaluation suite against Meta Muse and
-then benchmarks Muse, Claude Haiku 5.5, Fireworks and Baseten per stage, regenerating the router and
-the `/evals` data:
+The pipeline uses Muse Spark Open on Baseten whenever `BASETEN_API_KEY` is set (the hackathon key
+only serves `meta-models/muse-spark-open-1026`), then Muse Spark on the Meta Model API
+(`MODEL_API_KEY`), then Muse Spark Open on Fireworks (`FIREWORKS_API_KEY`). Without any of those it
+falls back to Claude Haiku 5.5, through the Anthropic API when `ANTHROPIC_API_KEY` is set and a
+signed-in Claude Code CLI otherwise, so a local run needs no key.
+`CANDOR_LLM_PROVIDER` (`baseten`, `meta`, `fireworks`, `claude`, `codex` or `replay`) overrides the
+choice, and `services/pipeline/router.json`, when present, routes individual stages.
+
+One command runs the six-case evaluation on whichever Muse host has a key, records every model call
+in `services/evals/cassettes/<host>-<model>`, then benchmarks each Muse host against Claude Haiku
+5.5 per stage and regenerates the router and the `/evals` data:
 
 ```bash
 pnpm meta
 ```
 
 `pnpm meta evals` or `pnpm meta bench --repeats 1` runs one half. Providers without credentials are
-listed as skipped rather than guessed. Meta runs always call the live API; they never reuse the
-recorded cassettes.
+listed as skipped rather than guessed.
 
-The numbers on `/evals` come from a Claude Haiku 5.5 run whose 171 model calls are committed in
-`services/evals/cassettes`. This reproduces them exactly, offline and without a key:
+The numbers on `/evals` come from a Muse Spark Open run whose 114 model calls are committed in
+`services/evals/cassettes/baseten-muse-spark-open-1026` and cost $1.88. This reproduces them
+exactly, offline and without a key:
 
 ```bash
-CANDOR_REPLAY_DIR=services/evals/cassettes uv run --project services/evals candor-evals run --provider replay --chaos 0.3 --no-publish
+CANDOR_REPLAY_DIR=services/evals/cassettes/baseten-muse-spark-open-1026 uv run --project services/evals candor-evals run --provider replay --chaos 0.3 --no-publish
 ```
+
+`services/evals/cassettes/claude-haiku-5-5` keeps the earlier Claude Haiku 5.5 run (commit
+`af32e7b`) for comparison.
 
 ## Quality gates
 
@@ -172,5 +185,7 @@ comment and docstring checker, and pytest for every service.
 - The API sees network metadata. Use Tor Browser for the strongest protection.
 - An organisation that controls a quorum of reviewer keys can open evidence; that is the design, and
   every opening is logged.
-- The model provider's data retention policy applies to the redacted analysis view.
+- The model host's data retention policy applies to the redacted analysis view (Baseten in the demo).
+  Muse Spark Open's weights are public, so an organisation can remove that dependency by serving the
+  model itself, though at 816B parameters that takes a multi-GPU server.
 - Mock modes (Self, x402, chain anchoring) are labelled as such wherever they appear.

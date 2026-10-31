@@ -5,7 +5,7 @@ import { Check, Cpu, Sparkles, TriangleAlert, X } from "lucide-react";
 import { Spinner } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { stageDependencies, stageMeta } from "@/lib/evidence";
-import { formatDuration } from "@/lib/format";
+import { formatDuration, modelName } from "@/lib/format";
 import type { StageRun } from "@/lib/types";
 
 export type StageState = {
@@ -100,7 +100,7 @@ function StageNode({ stage, state }: { stage: string; state: StageState | undefi
             </span>
           ) : null}
           {state.repairs ? <span>{state.repairs} repair</span> : null}
-          {state.model ? <span className="truncate">{state.model}</span> : null}
+          {state.model ? <span className="truncate">{modelName(state.model)}</span> : null}
         </p>
       ) : null}
       {state?.detail && status !== "pending" ? (

@@ -1,0 +1,1 @@
+{"text":"{\"aliases\":[]}","data":null,"usage":{"input_tokens":2037,"output_tokens":816,"cost_usd":0.00601425},"latency_ms":4755,"provider":"baseten","model":"meta-models/muse-spark-open-1026"}

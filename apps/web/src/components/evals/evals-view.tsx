@@ -8,7 +8,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/field";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import sampleData from "@/data/evals-sample.json";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, modelName, providerName } from "@/lib/format";
 
 import { BenchSection } from "./bench-section";
 import type { BenchSummary, EvalsSummary } from "./model";
@@ -48,10 +48,10 @@ const isBench = (value: unknown) =>
 const runCommands = [
   "cd services/evals",
   "uv run candor-evals synth",
-  "uv run candor-evals run --provider claude --scenarios all --samples 3 --chaos 0.3",
+  "uv run candor-evals run --provider baseten:meta-models/muse-spark-open-1026 --scenarios all --samples 3 --chaos 0.3",
 ];
 const benchCommand =
-  "uv run candor-evals bench --providers claude:claude-haiku-5-5,meta:muse-spark-1.3";
+  "uv run candor-evals bench --providers baseten:meta-models/muse-spark-open-1026,claude:claude-haiku-5-5";
 
 export function EvalsView() {
   const [evals, setEvals] = useState<Source<EvalsSummary>>({ status: "loading" });
@@ -239,8 +239,9 @@ function RunMeta({
     items.push({
       label: "Model under test",
       value: (
-        <span className="font-mono text-xs">
-          {evals.provider}:{evals.model}
+        <span>
+          {modelName(evals.model)}{" "}
+          <span className="text-ink-3">via {providerName(evals.provider)}</span>
         </span>
       ),
     });

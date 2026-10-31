@@ -30,20 +30,21 @@ is documented from what is alleged.
      names across every file. My own name and team are always removed."
    - Seal and send: read two lines of the live log, then show the eight-word codename.
 3. **Reviewer console (60 s).** Sign in as Avery Chen and open the Northwind report.
-   - Pipeline tab: twelve stages, which ran on the model and which are plain code.
+   - Pipeline tab: twelve stages, which ran on Muse Spark Open and which are plain code. Nine Muse
+     calls, 59 seconds, $0.16 for the whole case.
    - Brief, then click a claim: the quote, its exact character offsets, the verifier's verdict and the
      confidence formula. "Every sentence traces to a verbatim source. Nothing is paraphrased into
      existence."
    - Timeline: "The email says the committee meets on March 3, a chat on the 6th says it still had
      not met, and the minutes record a meeting on the 10th. Every date is resolved against its own
-     document, so 'March 3' and 'on Friday' land on the right day, and anything vaguer is shown as a
-     range. The brief calls the timing unresolved instead of picking a story." If asked about
-     conflicts: the dates and orderings form a simple temporal network, and a set that cannot all
-     hold becomes a named conflict; the evaluation plants those and measures how often they are
-     caught.
+     document, so 'yesterday' in a February email lands on the 17th, and an undated instruction is
+     shown as 'by 5 March', the date of the email it is in. The brief flags the gap between the
+     instruction and the meeting instead of picking a story." If asked about conflicts: the dates
+     and orderings form a simple temporal network, and a set that cannot all hold becomes a named
+     conflict; the evaluation plants those and measures how often they are caught.
    - Injection badge on the cover letter: "This PDF tells the model to ignore its instructions and
-     confirm nothing was wrong. It was quarantined, the two claims resting only on it are classed
-     unsupported, and the brief says it excluded them."
+     confirm nothing was wrong. It scored 0.95 risk and was quarantined; the one claim resting
+     only on it is classed unsupported and kept out of the brief."
    - Evidence tab: request access, approve as Morgan: "Two of three reviewers must agree to open the
      originals, and the opening goes into a public log."
 4. **Transparency log (20 s).** `/audit`: Run all checks, then Tamper with this entry: the proofs fail.
@@ -104,10 +105,15 @@ be true, and Bellman-Ford extracts the cycle so the conflict names the exact cla
 [`services/pipeline/src/candor_pipeline/temporal/stn.py`].
 
 **Where does Meta Muse come in?**
-Every model stage runs on the Meta Model API (Muse Spark) through an OpenAI-compatible client with
-strict structured output. A per-stage router chooses the provider; the benchmark measures quality,
-p50/p95 latency and cost per stage across Meta, Fireworks and Baseten and keeps the cheapest provider
-within 0.02 of the best quality [`services/evals`, `services/pipeline/router.json`].
+Every model stage (injection scan, extraction, verification, entities, contradictions, follow-up
+questions and the brief) runs on Muse Spark Open, Meta's open-weights model, served by Baseten
+(`meta-models/muse-spark-open-1026`). Baseten does not enforce JSON schemas for it, so the schema
+travels in the prompt and Candor's validator and repair loop enforce it; Muse's reasoning comes back
+in a separate field and never reaches the result. Open weights are the point for a whistleblowing
+tool: an organisation can run the same model on its own hardware, so even the redacted evidence
+never leaves its boundary. The same client reaches Muse Spark on the Meta Model API and Fireworks;
+a per-stage router keeps the cheapest provider within 0.02 of the best measured quality
+[`services/pipeline/src/candor_pipeline/providers`, `services/evals`].
 
 **How do organisations pay?**
 x402: the analysis endpoint returns 402 with payment requirements; the organisation's wallet signs

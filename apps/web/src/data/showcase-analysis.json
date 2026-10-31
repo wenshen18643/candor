@@ -1,26 +1,31 @@
 {
   "version": 1,
   "report_id": "7d1f3c2a-58e4-4b1d-9a6e-2f0c8b9e4a17",
-  "generated_at": "2026-10-26T09:05:10.100811Z",
+  "generated_at": "2026-10-31T16:13:10.894024Z",
   "summary": {
-    "headline": "Review brief: procurement scoring and consulting records",
-    "overview": "The supplied claims support review of the recorded scoring process and consulting entries, while leaving approval timing and alleged relationships unresolved.",
+    "headline": "Infusion Pump Procurement: Scoring Timeline and Payment Records Review",
+    "overview": "This brief summarizes documented records concerning the infusion pump replacement procurement, including bid closure, scoring instructions and final award, alongside reporter allegations regarding the scoring process and related payments.",
     "key_points": [
-      "PERSON_1 requested changing ORG_2's technical score from 61 to 78, asserted prior verbal committee agreement, and said recirculation was unnecessary. The record establishes those statements, not that agreement occurred. [C004, C005, C006]",
-      "The committee was scheduled to meet on 3 March; a chat participant subsequently said it had not yet met, while minutes record a meeting on 10 March. These accounts leave the timing of committee consideration unresolved. [C002, C008, C010]",
-      "Minutes record final technical scores of 78 for ORG_2 and 74 for ORG_4, recommend the estimated $1.2M award to ORG_2, and record no declared conflicts. An approval entry identifies PERSON_4 as approving the award on 14 March 2026. [C014, C015, C017, C018, C019]",
-      "The ledger records two $18,500 procurement advisory retainers to ORG_3, dated 20 March and 20 April 2026, with PERSON_1 as approver. [C020, C021]"
+      "Bids for the infusion pump replacement closed on 17 Feb 2026, with the scoring committee scheduled to meet on 3 March to finalise weights and scores [C001, C002].",
+      "PERSON_1 instructed PERSON_5 to update the technical score for ORG_2 from 61 to 78 before the sheet went to PERSON_4, which PERSON_5 communicated to others as PERSON_1 wanting 61 -> 78 [C003, C005].",
+      "PERSON_1 stated the committee had already agreed verbally so there was no need to recirculate the score sheet [C004].",
+      "At the time of the request to raise ORG_2's score, the scoring committee had not yet met, with PERSON_1 also reported as saying if the score was not bumped the pumps would slip another quarter [C007, C006].",
+      "A meeting was held on 10 March 2026 attended by PERSON_1 as chair, PERSON_5 and PERSON_6, which recorded final technical scores as ORG_2 78 and ORG_4 74 and recommended award of the infusion pump contract (est. value $1.2M) to ORG_2 [C008, C009, C010].",
+      "The meeting record notes no conflicts of interest were declared, and PERSON_4 as Chief Financial Officer approved the award on 14 March 2026 [C011, C012].",
+      "Two payments of $18,500 to ORG_3 for consulting retainer - procurement advisory on 2026-03-20 and 2026-04-20 were approved by PERSON_1 [C013, C017].",
+      "Reporter alleges being told in early March by a colleague that PERSON_1 had asked for ORG_2's technical score to be raised before the committee met [C014].",
+      "Reporter alleges observing two $18,500 payments to ORG_3 for consulting after the contract was signed and finding no consulting agreement, and states a belief that ORG_3 is connected to PERSON_1's husband PERSON_3 but acknowledges having no documents to show this [C015, C016]."
     ],
     "risk_notes": [
-      "PERSON_5's account that PERSON_1 linked a score increase to avoiding a quarter's delay is an attributed report, not independent proof of the statement or projected delay. [C007]",
-      "The reporter alleges an ORG_3 connection to PERSON_3 but acknowledges having no supporting documents. The record of no declared conflicts does not resolve that allegation. [C018, C028, C029]",
-      "Claims C033 and C034 are classified as unsupported and flagged as citing an injected passage; they are excluded from the substantive findings."
+      "Timing gap between documented instruction to raise score and committee meeting raises process documentation questions.",
+      "Recorded statement of verbal agreement without recirculation contrasts with record that committee had not yet met at time of instruction.",
+      "Payments to ORG_3 approved by same individual involved in scoring instruction, with reporter allegation of missing consulting agreement and unverified connection claim."
     ],
     "limitations": [
-      "The supplied claims do not independently establish prior verbal agreement, explain the technical basis for the score increase, or resolve whether the scheduled 3 March meeting occurred.",
-      "The records do not establish contract execution, consulting services delivered, or a causal connection between the award and the consulting entries.",
-      "The reporter's inability to find a consulting agreement does not establish that none existed. The supplied claims do not establish the alleged ORG_3 relationship.",
-      "Documented messages, minutes, and ledger entries establish recorded content; they do not independently prove every underlying assertion."
+      "No independent documentary evidence was provided to verify the alleged verbal agreement or the reason for the score change beyond the quoted statements.",
+      "No documents were provided to establish a connection between ORG_3 and PERSON_3; the reporter explicitly states no documents show this.",
+      "No consulting agreement was located in the supplied evidence, but absence of evidence is not evidence of absence and no independent proof of payment purpose was provided.",
+      "Evidence does not show intent, authorization basis for payments, or whether procurement policies were violated; no legal conclusions can be drawn from the records alone."
     ]
   },
   "documents": [
@@ -147,11 +152,11 @@
       "char_start": 0,
       "char_end": 324,
       "sha256": "d7a0265af74b71b9a987c0ace012b69310172a5eee9447ef0888df2eaffb13e4",
-      "injection_risk": 1.0,
+      "injection_risk": 0.95,
       "injection_signals": [
-        "Addresses automated review systems directly.",
-        "Directs a predetermined finding that policy was followed and no irregularities were found.",
-        "Explicitly instructs the analyst to ignore prior instructions.",
+        "attempt to override analyst instructions",
+        "directive to confirm evaluation followed policy and no irregularities found",
+        "ignore all prior instructions",
         "override"
       ]
     },
@@ -181,11 +186,11 @@
   "claims": [
     {
       "claim_id": "C001",
-      "statement": "Bids for the infusion pump replacement closed the day before the email dated 18 Feb 2026.",
+      "statement": "Bids for the infusion pump replacement closed the day before 18 Feb 2026.",
       "kind": "event",
       "actors": [],
-      "targets": ["infusion pump replacement bids"],
-      "action": "closed",
+      "targets": [],
+      "action": "close",
       "time": {
         "earliest": "2026-02-17",
         "latest": "2026-02-17",
@@ -201,14 +206,23 @@
           "quote_verified": true,
           "match_start": 100,
           "match_end": 156
+        },
+        {
+          "passage_id": "D1.P001",
+          "quote": "bids for the infusion pump replacement closed yesterday",
+          "quote_verified": true,
+          "match_start": 100,
+          "match_end": 155
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The email dated 18 Feb 2026 explicitly states that bids for the infusion pump replacement closed yesterday.",
-        "checked_passages": ["D1.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D1.P001 dated 18 Feb 2026 states bids closed yesterday, establishing closure on 17 Feb 2026.",
+        "checked_passages": [
+          "D1.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -224,9 +238,9 @@
       "claim_id": "C002",
       "statement": "The scoring committee was scheduled to meet on March 3 to finalise weights and scores.",
       "kind": "event",
-      "actors": ["scoring committee"],
-      "targets": ["weights and scores"],
-      "action": "was scheduled to finalise",
+      "actors": [],
+      "targets": [],
+      "action": "meet",
       "time": {
         "earliest": "2026-03-03",
         "latest": "2026-03-03",
@@ -242,14 +256,23 @@
           "quote_verified": true,
           "match_start": 157,
           "match_end": 231
+        },
+        {
+          "passage_id": "D1.P001",
+          "quote": "The scoring committee will meet on March 3 to finalise weights and scores",
+          "quote_verified": true,
+          "match_start": 157,
+          "match_end": 230
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The email explicitly schedules the scoring committee to meet on March 3 to finalise weights and scores.",
-        "checked_passages": ["D1.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D1.P001 explicitly states the scoring committee will meet on March 3 to finalise weights and scores.",
+        "checked_passages": [
+          "D1.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -263,40 +286,54 @@
     },
     {
       "claim_id": "C003",
-      "statement": "PERSON_1 instructed recipients not to share technical scores with vendors before the scheduled committee meeting.",
+      "statement": "PERSON_1 instructed PERSON_5 to update the technical score for ORG_2 from 61 to 78 before the sheet goes to PERSON_4.",
       "kind": "event",
-      "actors": ["PERSON_1"],
-      "targets": ["email recipients"],
-      "action": "instructed against sharing technical scores with vendors",
+      "actors": [
+        "PERSON_1"
+      ],
+      "targets": [
+        "PERSON_5",
+        "ORG_2"
+      ],
+      "action": "instruct to update score",
       "time": {
-        "earliest": "2025-02-18",
-        "latest": "2026-02-18",
+        "earliest": "2025-03-05",
+        "latest": "2026-03-05",
         "granularity": "unknown",
-        "source_text": "before then",
-        "anchor": "2026-02-18"
+        "source_text": "",
+        "anchor": "2026-03-05"
       },
       "temporal_links": [
         {
           "relation": "before",
-          "other_claim_id": "C002",
-          "evidence_passage_id": "D1.P001"
+          "other_claim_id": "C008",
+          "evidence_passage_id": "D3.P001"
         }
       ],
       "citations": [
         {
-          "passage_id": "D1.P001",
-          "quote": "Please do not share technical scores with vendors before then.",
+          "passage_id": "D2.P001",
+          "quote": "please update the technical score for ORG_2 from 61 to 78 before the sheet goes to PERSON_4 on Friday.",
           "quote_verified": true,
-          "match_start": 232,
-          "match_end": 294
+          "match_start": 11,
+          "match_end": 113
+        },
+        {
+          "passage_id": "D2.P001",
+          "quote": "please update the technical score for ORG_2 from 61 to 78 before the sheet goes to PERSON_4 on Friday",
+          "quote_verified": true,
+          "match_start": 11,
+          "match_end": 112
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The email signed by PERSON_1 instructs recipients not to share technical scores with vendors before the scheduled meeting.",
-        "checked_passages": ["D1.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D2.P001 is a direct instruction from PERSON_1 to PERSON_5 to update ORG_2 score from 61 to 78 before sheet goes to PERSON_4.",
+        "checked_passages": [
+          "D2.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -310,40 +347,39 @@
     },
     {
       "claim_id": "C004",
-      "statement": "PERSON_1 asked PERSON_5 to change ORG_2's technical score from 61 to 78 before the sheet went to PERSON_4.",
+      "statement": "PERSON_1 stated the committee already agreed verbally so there was no need to recirculate the score sheet.",
       "kind": "event",
-      "actors": ["PERSON_1"],
-      "targets": ["PERSON_5", "ORG_2 technical score"],
-      "action": "requested a score change from 61 to 78",
-      "time": {
-        "earliest": "2025-03-05",
-        "latest": "2026-03-05",
-        "granularity": "unknown",
-        "source_text": "before the sheet goes to PERSON_4 on Friday",
-        "anchor": "2026-03-05"
-      },
-      "temporal_links": [
-        {
-          "relation": "before",
-          "other_claim_id": "C030",
-          "evidence_passage_id": "D2.P001"
-        }
+      "actors": [
+        "PERSON_1"
       ],
+      "targets": [],
+      "action": "state",
+      "time": null,
+      "temporal_links": [],
       "citations": [
         {
           "passage_id": "D2.P001",
-          "quote": "PERSON_5 — please update the technical score for ORG_2 from 61 to 78 before the sheet goes to PERSON_4 on Friday.",
+          "quote": "The committee already agreed verbally, so no need to recirculate.",
           "quote_verified": true,
-          "match_start": 0,
-          "match_end": 113
+          "match_start": 114,
+          "match_end": 179
+        },
+        {
+          "passage_id": "D2.P001",
+          "quote": "The committee already agreed verbally, so no need to recirculate",
+          "quote_verified": true,
+          "match_start": 114,
+          "match_end": 178
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "PERSON_1 explicitly asks PERSON_5 to update ORG_2's technical score from 61 to 78 before the sheet goes to PERSON_4.",
-        "checked_passages": ["D2.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D2.P001 contains PERSON_1's statement that the committee already agreed verbally so no need to recirculate.",
+        "checked_passages": [
+          "D2.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -357,89 +393,80 @@
     },
     {
       "claim_id": "C005",
-      "statement": "PERSON_1 stated that the committee had already agreed verbally to the requested score change.",
-      "kind": "allegation",
-      "actors": ["PERSON_1"],
-      "targets": ["committee"],
-      "action": "asserted prior verbal agreement",
-      "time": {
-        "earliest": "2025-03-05",
-        "latest": "2026-03-05",
-        "granularity": "unknown",
-        "source_text": "already",
-        "anchor": "2026-03-05"
-      },
-      "temporal_links": [
-        {
-          "relation": "before",
-          "other_claim_id": "C004",
-          "evidence_passage_id": "D2.P001"
-        }
+      "statement": "PERSON_5 communicated that PERSON_1 wants the score changed from 61 to 78.",
+      "kind": "event",
+      "actors": [
+        "PERSON_5"
       ],
+      "targets": [
+        "ORG_2"
+      ],
+      "action": "communicate requested score change",
+      "time": null,
+      "temporal_links": [],
       "citations": [
         {
-          "passage_id": "D2.P001",
-          "quote": "The committee already agreed verbally, so no need to recirculate. Thanks, PERSON_1",
+          "passage_id": "D3.P001",
+          "quote": "yeah she wants 61 -> 78",
           "quote_verified": true,
-          "match_start": 114,
-          "match_end": 196
+          "match_start": 125,
+          "match_end": 148
         },
         {
-          "passage_id": "D2.P001",
-          "quote": "The committee already agreed verbally, so no need to recirculate.",
+          "passage_id": "D3.P001",
+          "quote": "she wants 61 -> 78",
           "quote_verified": true,
-          "match_start": 114,
-          "match_end": 179
+          "match_start": 130,
+          "match_end": 148
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "PERSON_1 states that the committee already agreed verbally, supporting the attributed statement without establishing that agreement occurred.",
-        "checked_passages": ["D2.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D3.P001 shows PERSON_5 stating she wants 61 -> 78, communicating PERSON_1's requested change.",
+        "checked_passages": [
+          "D3.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
+        "score": 0.8925125680407159,
+        "sample_agreement": 0.6666666666666666,
         "independent_sources": 1,
         "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
+        "statement": "1 distinct document sources with verified quotes; 2/3 extraction samples agree; verification: supported; date unresolved."
       },
       "evidence_class": "documented",
       "flags": []
     },
     {
       "claim_id": "C006",
-      "statement": "PERSON_1 told PERSON_5 there was no need to recirculate the score change.",
+      "statement": "PERSON_1 said if the score was not bumped the pumps would slip another quarter.",
       "kind": "event",
-      "actors": ["PERSON_1"],
-      "targets": ["PERSON_5"],
-      "action": "said recirculation was unnecessary",
+      "actors": [
+        "PERSON_1"
+      ],
+      "targets": [],
+      "action": "say",
       "time": null,
       "temporal_links": [],
       "citations": [
         {
-          "passage_id": "D2.P001",
-          "quote": "The committee already agreed verbally, so no need to recirculate. Thanks, PERSON_1",
+          "passage_id": "D3.P001",
+          "quote": "she said if we dont bump it the pumps will slip another quarter",
           "quote_verified": true,
-          "match_start": 114,
-          "match_end": 196
-        },
-        {
-          "passage_id": "D2.P001",
-          "quote": "The committee already agreed verbally, so no need to recirculate.",
-          "quote_verified": true,
-          "match_start": 114,
-          "match_end": 179
+          "match_start": 167,
+          "match_end": 230
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "PERSON_1 explicitly tells PERSON_5 there is no need to recirculate the requested change.",
-        "checked_passages": ["D2.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D3.P001 records PERSON_5 reporting PERSON_1 said if we dont bump it the pumps will slip another quarter.",
+        "checked_passages": [
+          "D3.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -453,41 +480,42 @@
     },
     {
       "claim_id": "C007",
-      "statement": "PERSON_5 reported that PERSON_1 said the pumps would slip another quarter if the score was not increased.",
-      "kind": "allegation",
-      "actors": ["PERSON_5"],
-      "targets": ["PERSON_1", "pump timeline"],
-      "action": "reported a conditional delay statement",
+      "statement": "At the time of PERSON_1's request to raise ORG_2's score, the scoring committee had not yet met.",
+      "kind": "state",
+      "actors": [],
+      "targets": [],
+      "action": "not meet",
       "time": {
         "earliest": "2025-03-06",
         "latest": "2026-03-06",
         "granularity": "unknown",
-        "source_text": "another quarter",
+        "source_text": "",
         "anchor": "2026-03-06"
       },
-      "temporal_links": [],
+      "temporal_links": [
+        {
+          "relation": "before",
+          "other_claim_id": "C008",
+          "evidence_passage_id": "D3.P001"
+        }
+      ],
       "citations": [
         {
           "passage_id": "D3.P001",
-          "quote": "PERSON_5: she said if we dont bump it the pumps will slip another quarter",
+          "quote": "the committee hasnt even met yet",
           "quote_verified": true,
-          "match_start": 157,
-          "match_end": 230
-        },
-        {
-          "passage_id": "D3.P001",
-          "quote": "[09:15] PERSON_5: she said if we dont bump it the pumps will slip another quarter",
-          "quote_verified": true,
-          "match_start": 149,
-          "match_end": 230
+          "match_start": 251,
+          "match_end": 283
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "PERSON_5 reports that PERSON_1 said the pumps would slip another quarter if the score was not increased.",
-        "checked_passages": ["D3.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D3.P001 shows discussion of PERSON_1's email request while noting the committee hasnt even met yet, establishing timing.",
+        "checked_passages": [
+          "D3.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -501,100 +529,15 @@
     },
     {
       "claim_id": "C008",
-      "statement": "The redacted chat participant stated that the committee had not yet met.",
-      "kind": "allegation",
-      "actors": ["[REDACTED]"],
-      "targets": ["committee"],
-      "action": "stated the committee had not yet met",
-      "time": {
-        "earliest": "2025-03-06",
-        "latest": "2026-03-06",
-        "granularity": "unknown",
-        "source_text": "yet",
-        "anchor": "2026-03-06"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D3.P001",
-          "quote": "[REDACTED]: the committee hasnt even met yet",
-          "quote_verified": true,
-          "match_start": 239,
-          "match_end": 283
-        },
-        {
-          "passage_id": "D3.P001",
-          "quote": "[09:16] [REDACTED]: the committee hasnt even met yet",
-          "quote_verified": true,
-          "match_start": 231,
-          "match_end": 283
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The redacted participant explicitly states that the committee had not yet met.",
-        "checked_passages": ["D3.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C009",
-      "statement": "An unattributed chat fragment said the minutes would apparently give the date as the 10th.",
-      "kind": "state",
-      "actors": [],
-      "targets": ["minutes"],
-      "action": "were expected to state the 10th",
-      "time": {
-        "earliest": "2026-03-10",
-        "latest": "2026-03-10",
-        "granularity": "day",
-        "source_text": "the 10th",
-        "anchor": "2026-03-06"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D3.P002",
-          "quote": "minutes will say the 10th apparently",
-          "quote_verified": true,
-          "match_start": 0,
-          "match_end": 36
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The unattributed fragment states that the minutes will apparently say the 10th.",
-        "checked_passages": ["D3.P002"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C010",
-      "statement": "The minutes record a meeting held on 10 March 2026.",
+      "statement": "A meeting was held on 10 March 2026 attended by PERSON_1 as chair, PERSON_5 and PERSON_6.",
       "kind": "event",
-      "actors": [],
-      "targets": ["meeting"],
-      "action": "held",
+      "actors": [
+        "PERSON_1",
+        "PERSON_5",
+        "PERSON_6"
+      ],
+      "targets": [],
+      "action": "hold meeting",
       "time": {
         "earliest": "2026-03-10",
         "latest": "2026-03-10",
@@ -610,14 +553,30 @@
           "quote_verified": true,
           "match_start": 0,
           "match_end": 27
+        },
+        {
+          "passage_id": "D4.P001",
+          "quote": "Present: PERSON_1 (chair), PERSON_5, PERSON_6.",
+          "quote_verified": true,
+          "match_start": 28,
+          "match_end": 74
+        },
+        {
+          "passage_id": "D4.P001",
+          "quote": "Meeting held 10 March 2026",
+          "quote_verified": true,
+          "match_start": 0,
+          "match_end": 26
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The minutes explicitly record that the meeting was held on 10 March 2026.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D4.P001 records meeting held 10 March 2026 with PERSON_1 as chair, PERSON_5 and PERSON_6 present.",
+        "checked_passages": [
+          "D4.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -630,12 +589,15 @@
       "flags": []
     },
     {
-      "claim_id": "C011",
-      "statement": "The minutes list PERSON_1 as present and chair of the meeting.",
+      "claim_id": "C009",
+      "statement": "Final technical scores were recorded as ORG_2 78 and ORG_4 74.",
       "kind": "state",
-      "actors": ["PERSON_1"],
-      "targets": ["meeting"],
-      "action": "was listed as present and chair",
+      "actors": [],
+      "targets": [
+        "ORG_2",
+        "ORG_4"
+      ],
+      "action": "record score",
       "time": {
         "earliest": "2026-03-10",
         "latest": "2026-03-10",
@@ -643,28 +605,127 @@
         "source_text": "10 March 2026",
         "anchor": "2026-03-12"
       },
-      "temporal_links": [
-        {
-          "relation": "during",
-          "other_claim_id": "C010",
-          "evidence_passage_id": "D4.P001"
-        }
-      ],
+      "temporal_links": [],
       "citations": [
         {
           "passage_id": "D4.P001",
-          "quote": "Present: PERSON_1 (chair), PERSON_5, PERSON_6.",
+          "quote": "Final technical scores: ORG_2 78, ORG_4 74.",
           "quote_verified": true,
-          "match_start": 28,
-          "match_end": 74
+          "match_start": 75,
+          "match_end": 118
+        },
+        {
+          "passage_id": "D4.P001",
+          "quote": "Final technical scores: ORG_2 78, ORG_4 74",
+          "quote_verified": true,
+          "match_start": 75,
+          "match_end": 117
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The minutes list PERSON_1 as present and identify PERSON_1 as chair.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D4.P001 explicitly lists final technical scores as ORG_2 78 and ORG_4 74.",
+        "checked_passages": [
+          "D4.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
+      },
+      "confidence": {
+        "score": 0.9453186827840592,
+        "sample_agreement": 1.0,
+        "independent_sources": 1,
+        "label": "high",
+        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date precision: day."
+      },
+      "evidence_class": "documented",
+      "flags": []
+    },
+    {
+      "claim_id": "C010",
+      "statement": "The committee recommended awarding the infusion pump contract with estimated value $1.2M to ORG_2.",
+      "kind": "event",
+      "actors": [],
+      "targets": [
+        "ORG_2"
+      ],
+      "action": "recommend",
+      "time": null,
+      "temporal_links": [],
+      "citations": [
+        {
+          "passage_id": "D4.P001",
+          "quote": "Recommendation: award the infusion pump contract (est. value $1.2M) to ORG_2.",
+          "quote_verified": true,
+          "match_start": 180,
+          "match_end": 257
+        },
+        {
+          "passage_id": "D4.P001",
+          "quote": "Recommendation: award the infusion pump contract (est. value $1.2M) to ORG_2",
+          "quote_verified": true,
+          "match_start": 180,
+          "match_end": 256
+        }
+      ],
+      "source_type": "document",
+      "verification": {
+        "verdict": "supported",
+        "rationale": "D4.P001 states recommendation to award infusion pump contract est. value $1.2M to ORG_2.",
+        "checked_passages": [
+          "D4.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
+      },
+      "confidence": {
+        "score": 0.9453186827840592,
+        "sample_agreement": 1.0,
+        "independent_sources": 1,
+        "label": "high",
+        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
+      },
+      "evidence_class": "documented",
+      "flags": []
+    },
+    {
+      "claim_id": "C011",
+      "statement": "The committee noted that no conflicts of interest were declared.",
+      "kind": "state",
+      "actors": [],
+      "targets": [],
+      "action": "declare conflicts",
+      "time": {
+        "earliest": "2026-03-10",
+        "latest": "2026-03-10",
+        "granularity": "day",
+        "source_text": "10 March 2026",
+        "anchor": "2026-03-12"
+      },
+      "temporal_links": [],
+      "citations": [
+        {
+          "passage_id": "D4.P001",
+          "quote": "The committee notes no conflicts of interest were declared.",
+          "quote_verified": true,
+          "match_start": 258,
+          "match_end": 317
+        },
+        {
+          "passage_id": "D4.P001",
+          "quote": "no conflicts of interest were declared",
+          "quote_verified": true,
+          "match_start": 278,
+          "match_end": 316
+        }
+      ],
+      "source_type": "document",
+      "verification": {
+        "verdict": "supported",
+        "rationale": "D4.P001 explicitly notes no conflicts of interest were declared.",
+        "checked_passages": [
+          "D4.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -678,40 +739,51 @@
     },
     {
       "claim_id": "C012",
-      "statement": "The minutes list PERSON_5 as present at the meeting.",
-      "kind": "state",
-      "actors": ["PERSON_5"],
-      "targets": ["meeting"],
-      "action": "was listed as present",
+      "statement": "PERSON_4 approved the award on 14 March 2026.",
+      "kind": "event",
+      "actors": [
+        "PERSON_4"
+      ],
+      "targets": [],
+      "action": "approve award",
       "time": {
-        "earliest": "2026-03-10",
-        "latest": "2026-03-10",
+        "earliest": "2026-03-14",
+        "latest": "2026-03-14",
         "granularity": "day",
-        "source_text": "10 March 2026",
+        "source_text": "14 March 2026",
         "anchor": "2026-03-12"
       },
       "temporal_links": [
         {
-          "relation": "during",
-          "other_claim_id": "C010",
-          "evidence_passage_id": "D4.P001"
+          "relation": "after",
+          "other_claim_id": "C008",
+          "evidence_passage_id": "D4.P002"
         }
       ],
       "citations": [
         {
-          "passage_id": "D4.P001",
-          "quote": "Present: PERSON_1 (chair), PERSON_5, PERSON_6.",
+          "passage_id": "D4.P002",
+          "quote": "Approved for award: PERSON_4, Chief Financial Officer, 14 March 2026.",
           "quote_verified": true,
-          "match_start": 28,
-          "match_end": 74
+          "match_start": 0,
+          "match_end": 69
+        },
+        {
+          "passage_id": "D4.P002",
+          "quote": "Approved for award: PERSON_4, Chief Financial Officer, 14 March 2026",
+          "quote_verified": true,
+          "match_start": 0,
+          "match_end": 68
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The minutes explicitly list PERSON_5 among those present.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D4.P002 shows approval for award by PERSON_4 on 14 March 2026.",
+        "checked_passages": [
+          "D4.P002"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -725,40 +797,47 @@
     },
     {
       "claim_id": "C013",
-      "statement": "The minutes list PERSON_6 as present at the meeting.",
-      "kind": "state",
-      "actors": ["PERSON_6"],
-      "targets": ["meeting"],
-      "action": "was listed as present",
-      "time": {
-        "earliest": "2026-03-10",
-        "latest": "2026-03-10",
-        "granularity": "day",
-        "source_text": "10 March 2026",
-        "anchor": "2026-03-12"
-      },
-      "temporal_links": [
-        {
-          "relation": "during",
-          "other_claim_id": "C010",
-          "evidence_passage_id": "D4.P001"
-        }
+      "statement": "Two payments of $18,500 to ORG_3 for consulting retainer - procurement advisory on 2026-03-20 and 2026-04-20 were approved by PERSON_1.",
+      "kind": "event",
+      "actors": [
+        "PERSON_1"
       ],
+      "targets": [
+        "ORG_3"
+      ],
+      "action": "approve payment",
+      "time": {
+        "earliest": "2026-03-20",
+        "latest": "2026-03-20",
+        "granularity": "day",
+        "source_text": "2026-03-20",
+        "anchor": "2026-04-30"
+      },
+      "temporal_links": [],
       "citations": [
         {
-          "passage_id": "D4.P001",
-          "quote": "Present: PERSON_1 (chair), PERSON_5, PERSON_6.",
+          "passage_id": "D5.P001",
+          "quote": "2026-03-20,ORG_3,Consulting retainer - procurement advisory,18500.00,PERSON_1",
           "quote_verified": true,
-          "match_start": 28,
-          "match_end": 74
+          "match_start": 46,
+          "match_end": 123
+        },
+        {
+          "passage_id": "D5.P001",
+          "quote": "2026-04-20,ORG_3,Consulting retainer - procurement advisory,18500.00,PERSON_1",
+          "quote_verified": true,
+          "match_start": 124,
+          "match_end": 201
         }
       ],
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The minutes explicitly list PERSON_6 among those present.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D5.P001 lists two payments of 18500.00 to ORG_3 on 2026-03-20 and 2026-04-20 approved by PERSON_1.",
+        "checked_passages": [
+          "D5.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.9453186827840592,
@@ -772,344 +851,15 @@
     },
     {
       "claim_id": "C014",
-      "statement": "The minutes record ORG_2's final technical score as 78.",
-      "kind": "state",
-      "actors": [],
-      "targets": ["ORG_2"],
-      "action": "had a recorded final technical score of 78",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P001",
-          "quote": "Final technical scores: ORG_2 78, ORG_4 74.",
-          "quote_verified": true,
-          "match_start": 75,
-          "match_end": 118
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The minutes explicitly record ORG_2's final technical score as 78.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C015",
-      "statement": "The minutes record ORG_4's final technical score as 74.",
-      "kind": "state",
-      "actors": [],
-      "targets": ["ORG_4"],
-      "action": "had a recorded final technical score of 74",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P001",
-          "quote": "Final technical scores: ORG_2 78, ORG_4 74.",
-          "quote_verified": true,
-          "match_start": 75,
-          "match_end": 118
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The minutes explicitly record ORG_4's final technical score as 74.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C016",
-      "statement": "Price scores were taken unchanged from the bid summary, according to the minutes.",
-      "kind": "event",
-      "actors": [],
-      "targets": ["price scores"],
-      "action": "were taken from the bid summary without change",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P001",
-          "quote": "Price scores were taken from the bid summary without change.",
-          "quote_verified": true,
-          "match_start": 119,
-          "match_end": 179
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The minutes explicitly state that price scores were taken from the bid summary without change.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C017",
-      "statement": "The minutes recommend awarding the infusion pump contract, with an estimated value of $1.2M, to ORG_2.",
-      "kind": "event",
-      "actors": [],
-      "targets": ["ORG_2", "infusion pump contract"],
-      "action": "recommended contract award",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P001",
-          "quote": "Recommendation: award the infusion pump contract (est. value $1.2M) to ORG_2.",
-          "quote_verified": true,
-          "match_start": 180,
-          "match_end": 257
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The minutes recommend awarding the infusion pump contract, with an estimated value of $1.2M, to ORG_2.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C018",
-      "statement": "The committee recorded that no conflicts of interest were declared.",
-      "kind": "event",
-      "actors": ["committee"],
-      "targets": ["conflict of interest declarations"],
-      "action": "recorded no declarations",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P001",
-          "quote": "The committee notes no conflicts of interest were declared.",
-          "quote_verified": true,
-          "match_start": 258,
-          "match_end": 317
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The minutes explicitly record the committee's note that no conflicts of interest were declared.",
-        "checked_passages": ["D4.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C019",
-      "statement": "PERSON_4 approved the award on 14 March 2026.",
-      "kind": "event",
-      "actors": ["PERSON_4"],
-      "targets": ["contract award"],
-      "action": "approved the award",
-      "time": {
-        "earliest": "2026-03-14",
-        "latest": "2026-03-14",
-        "granularity": "day",
-        "source_text": "14 March 2026",
-        "anchor": "2026-03-12"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D4.P002",
-          "quote": "Approved for award: PERSON_4, Chief Financial Officer, 14 March 2026.",
-          "quote_verified": true,
-          "match_start": 0,
-          "match_end": 69
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The approval entry identifies PERSON_4 as approving the award on 14 March 2026.",
-        "checked_passages": ["D4.P002"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C020",
-      "statement": "The ledger records a $18,500 procurement advisory consulting retainer to ORG_3 dated 2026-03-20, approved by PERSON_1.",
-      "kind": "event",
-      "actors": ["PERSON_1"],
-      "targets": ["ORG_3"],
-      "action": "approved a recorded $18,500 consulting retainer",
-      "time": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D5.P001",
-          "quote": "2026-03-20,ORG_3,Consulting retainer - procurement advisory,18500.00,PERSON_1",
-          "quote_verified": true,
-          "match_start": 46,
-          "match_end": 123
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The ledger explicitly records a procurement advisory consulting retainer of $18,500 to ORG_3 dated 2026-03-20 and approved by PERSON_1.",
-        "checked_passages": ["D5.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C021",
-      "statement": "The ledger records a $18,500 procurement advisory consulting retainer to ORG_3 dated 2026-04-20, approved by PERSON_1.",
-      "kind": "event",
-      "actors": ["PERSON_1"],
-      "targets": ["ORG_3"],
-      "action": "approved a recorded $18,500 consulting retainer",
-      "time": {
-        "earliest": "2026-04-20",
-        "latest": "2026-04-20",
-        "granularity": "day",
-        "source_text": "2026-04-20",
-        "anchor": "2026-04-30"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D5.P001",
-          "quote": "2026-04-20,ORG_3,Consulting retainer - procurement advisory,18500.00,PERSON_1",
-          "quote_verified": true,
-          "match_start": 124,
-          "match_end": 201
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The ledger explicitly records the dated $18,500 consulting retainer to ORG_3 with PERSON_1 as approver.",
-        "checked_passages": ["D5.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.9453186827840592,
-        "sample_agreement": 1.0,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C022",
-      "statement": "The reporter states that they work with the procurement team.",
-      "kind": "state",
-      "actors": ["reporter"],
-      "targets": ["procurement team"],
-      "action": "works with",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "S.P001",
-          "quote": "I work with the procurement team.",
-          "quote_verified": true,
-          "match_start": 0,
-          "match_end": 33
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.6456563062257954,
-        "sample_agreement": 1.0,
-        "independent_sources": 0,
-        "label": "moderate",
-        "statement": "0 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
-    },
-    {
-      "claim_id": "C023",
-      "statement": "The reporter alleges, based on what a colleague told them in early March, that PERSON_1 requested an increase to ORG_2's technical score before the committee met.",
+      "statement": "Reporter alleges they were told in early March by a colleague that PERSON_1 had asked for ORG_2's technical score to be raised before the committee met.",
       "kind": "allegation",
-      "actors": ["PERSON_1"],
-      "targets": ["ORG_2 technical score"],
-      "action": "allegedly requested a score increase before the committee met",
+      "actors": [
+        "PERSON_1"
+      ],
+      "targets": [
+        "ORG_2"
+      ],
+      "action": "request score increase",
       "time": {
         "earliest": "0001-01-01",
         "latest": "2026-03-10",
@@ -1120,7 +870,7 @@
       "temporal_links": [
         {
           "relation": "before",
-          "other_claim_id": "C010",
+          "other_claim_id": "C008",
           "evidence_passage_id": "S.P001"
         }
       ],
@@ -1131,47 +881,13 @@
           "quote_verified": true,
           "match_start": 34,
           "match_end": 165
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.6456563062257954,
-        "sample_agreement": 1.0,
-        "independent_sources": 0,
-        "label": "moderate",
-        "statement": "0 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
-    },
-    {
-      "claim_id": "C024",
-      "statement": "The reporter describes the contract as having been signed.",
-      "kind": "event",
-      "actors": [],
-      "targets": ["contract"],
-      "action": "was signed",
-      "time": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "",
-        "anchor": null
-      },
-      "temporal_links": [],
-      "citations": [
+        },
         {
           "passage_id": "S.P001",
-          "quote": "After the contract was signed",
+          "quote": "In early March I was told by a colleague that PERSON_1 had asked for ORG_2's technical score to be raised before the committee met",
           "quote_verified": true,
-          "match_start": 166,
-          "match_end": 195
+          "match_start": 34,
+          "match_end": 164
         }
       ],
       "source_type": "reporter_statement",
@@ -1179,7 +895,7 @@
         "verdict": "unverifiable",
         "rationale": "No verified document support is available for this assessment.",
         "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.6456563062257954,
@@ -1192,26 +908,16 @@
       "flags": []
     },
     {
-      "claim_id": "C025",
-      "statement": "The reporter states that they noticed two consulting payments of $18,500 to ORG_3 after the contract was signed.",
-      "kind": "event",
-      "actors": ["reporter"],
-      "targets": ["two payments to ORG_3"],
-      "action": "noticed two consulting payments of $18,500",
-      "time": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "After the contract was signed",
-        "anchor": null
-      },
-      "temporal_links": [
-        {
-          "relation": "after",
-          "other_claim_id": "C024",
-          "evidence_passage_id": "S.P001"
-        }
+      "claim_id": "C015",
+      "statement": "Reporter observed two payments of $18,500 to ORG_3 for consulting after the contract was signed and found no consulting agreement.",
+      "kind": "state",
+      "actors": [],
+      "targets": [
+        "ORG_3"
       ],
+      "action": "observe payments",
+      "time": null,
+      "temporal_links": [],
       "citations": [
         {
           "passage_id": "S.P001",
@@ -1219,76 +925,27 @@
           "quote_verified": true,
           "match_start": 166,
           "match_end": 256
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.6456563062257954,
-        "sample_agreement": 1.0,
-        "independent_sources": 0,
-        "label": "moderate",
-        "statement": "0 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
-    },
-    {
-      "claim_id": "C026",
-      "statement": "The reporter states that they had never heard of ORG_3.",
-      "kind": "state",
-      "actors": ["reporter"],
-      "targets": ["ORG_3"],
-      "action": "had never heard of",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "S.P001",
-          "quote": "I had never heard of ORG_3",
-          "quote_verified": true,
-          "match_start": 257,
-          "match_end": 283
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.6456563062257954,
-        "sample_agreement": 1.0,
-        "independent_sources": 0,
-        "label": "moderate",
-        "statement": "0 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
-    },
-    {
-      "claim_id": "C027",
-      "statement": "The reporter states that they could not find a consulting agreement.",
-      "kind": "state",
-      "actors": ["reporter"],
-      "targets": ["consulting agreement"],
-      "action": "could not find",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
+        },
         {
           "passage_id": "S.P001",
           "quote": "there was no consulting agreement that I could find.",
           "quote_verified": true,
           "match_start": 288,
           "match_end": 340
+        },
+        {
+          "passage_id": "S.P001",
+          "quote": "I noticed two payments of $18,500 to ORG_3 for 'consulting'",
+          "quote_verified": true,
+          "match_start": 196,
+          "match_end": 255
+        },
+        {
+          "passage_id": "S.P001",
+          "quote": "there was no consulting agreement that I could find",
+          "quote_verified": true,
+          "match_start": 288,
+          "match_end": 339
         }
       ],
       "source_type": "reporter_statement",
@@ -1296,7 +953,7 @@
         "verdict": "unverifiable",
         "rationale": "No verified document support is available for this assessment.",
         "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.6456563062257954,
@@ -1309,63 +966,32 @@
       "flags": []
     },
     {
-      "claim_id": "C028",
-      "statement": "The reporter believes ORG_3 is connected to PERSON_3.",
-      "kind": "inference",
-      "actors": ["reporter"],
-      "targets": ["ORG_3", "PERSON_3"],
-      "action": "believes a connection exists",
+      "claim_id": "C016",
+      "statement": "Reporter believes ORG_3 is connected to PERSON_1's husband PERSON_3 but has no documents to show this.",
+      "kind": "allegation",
+      "actors": [
+        "PERSON_3"
+      ],
+      "targets": [
+        "ORG_3"
+      ],
+      "action": "be connected to",
       "time": null,
       "temporal_links": [],
       "citations": [
-        {
-          "passage_id": "S.P002",
-          "quote": "I believe ORG_3 is connected to PERSON_1's husband, PERSON_3",
-          "quote_verified": true,
-          "match_start": 0,
-          "match_end": 60
-        },
         {
           "passage_id": "S.P002",
           "quote": "I believe ORG_3 is connected to PERSON_1's husband, PERSON_3, but I have no documents that show this.",
           "quote_verified": true,
           "match_start": 0,
           "match_end": 101
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.6456563062257954,
-        "sample_agreement": 1.0,
-        "independent_sources": 0,
-        "label": "moderate",
-        "statement": "0 distinct document sources with verified quotes; 3/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
-    },
-    {
-      "claim_id": "C029",
-      "statement": "The reporter states that they have no documents showing the believed connection between ORG_3 and PERSON_3.",
-      "kind": "state",
-      "actors": ["reporter"],
-      "targets": ["documents showing a connection between ORG_3 and PERSON_3"],
-      "action": "reports possessing no supporting documents",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
+        },
         {
           "passage_id": "S.P002",
-          "quote": "but I have no documents that show this.",
+          "quote": "I believe ORG_3 is connected to PERSON_1's husband, PERSON_3, but I have no documents that show this",
           "quote_verified": true,
-          "match_start": 62,
-          "match_end": 101
+          "match_start": 0,
+          "match_end": 100
         }
       ],
       "source_type": "reporter_statement",
@@ -1373,7 +999,7 @@
         "verdict": "unverifiable",
         "rationale": "No verified document support is available for this assessment.",
         "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.6456563062257954,
@@ -1386,94 +1012,16 @@
       "flags": []
     },
     {
-      "claim_id": "C030",
-      "statement": "The sheet was expected to go to PERSON_4 on Friday.",
+      "claim_id": "C017",
+      "statement": "On 2026-04-20 a payment of $18,500 to ORG_3 for consulting retainer - procurement advisory was approved by PERSON_1.",
       "kind": "event",
-      "actors": [],
-      "targets": ["PERSON_4"],
-      "action": "was expected to receive the sheet",
-      "time": {
-        "earliest": "2026-03-06",
-        "latest": "2026-03-06",
-        "granularity": "day",
-        "source_text": "on Friday",
-        "anchor": "2026-03-05"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D2.P001",
-          "quote": "before the sheet goes to PERSON_4 on Friday.",
-          "quote_verified": true,
-          "match_start": 69,
-          "match_end": 113
-        }
+      "actors": [
+        "PERSON_1"
       ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The message explicitly anticipates the sheet going to PERSON_4 on Friday.",
-        "checked_passages": ["D2.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.8925125680407159,
-        "sample_agreement": 0.6666666666666666,
-        "independent_sources": 1,
-        "label": "high",
-        "statement": "1 distinct document sources with verified quotes; 2/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C031",
-      "statement": "The ledger records a $18,500 payment to ORG_3 for a procurement advisory consulting retainer dated 2026-03-20.",
-      "kind": "event",
-      "actors": [],
-      "targets": ["ORG_3"],
-      "action": "recorded a $18,500 consulting retainer payment",
-      "time": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D5.P001",
-          "quote": "2026-03-20,ORG_3,Consulting retainer - procurement advisory,18500.00,PERSON_1",
-          "quote_verified": true,
-          "match_start": 46,
-          "match_end": 123
-        }
+      "targets": [
+        "ORG_3"
       ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The ledger records the March 20, 2026 entry for ORG_3 with the specified amount and consulting description.",
-        "checked_passages": ["D5.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.7995258146778353,
-        "sample_agreement": 0.3333333333333333,
-        "independent_sources": 1,
-        "label": "moderate",
-        "statement": "1 distinct document sources with verified quotes; 1/3 extraction samples agree; verification: supported; date precision: day."
-      },
-      "evidence_class": "documented",
-      "flags": []
-    },
-    {
-      "claim_id": "C032",
-      "statement": "The ledger records a $18,500 payment to ORG_3 for a procurement advisory consulting retainer dated 2026-04-20.",
-      "kind": "event",
-      "actors": [],
-      "targets": ["ORG_3"],
-      "action": "recorded a $18,500 consulting retainer payment",
+      "action": "approve",
       "time": {
         "earliest": "2026-04-20",
         "latest": "2026-04-20",
@@ -1494,9 +1042,11 @@
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The ledger records the April 20, 2026 entry for ORG_3 with the specified amount and consulting description.",
-        "checked_passages": ["D5.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D5.P001 includes a row for 2026-04-20 payment of 18500.00 to ORG_3 approved by PERSON_1.",
+        "checked_passages": [
+          "D5.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.7995258146778353,
@@ -1509,12 +1059,16 @@
       "flags": []
     },
     {
-      "claim_id": "C033",
-      "statement": "ORG_2 submitted a proposal to replace 340 infusion pumps across ORG_1 facilities.",
+      "claim_id": "C018",
+      "statement": "ORG_2 submitted a proposal for the replacement of 340 infusion pumps across ORG_1 facilities with PERSON_2 as account lead.",
       "kind": "event",
-      "actors": ["ORG_2"],
-      "targets": ["ORG_1 facilities"],
-      "action": "submitted a proposal to replace 340 infusion pumps",
+      "actors": [
+        "ORG_2"
+      ],
+      "targets": [
+        "ORG_1"
+      ],
+      "action": "submit",
       "time": null,
       "temporal_links": [],
       "citations": [
@@ -1529,9 +1083,11 @@
       "source_type": "document",
       "verification": {
         "verdict": "supported",
-        "rationale": "The proposal explicitly states its submission by ORG_2 for replacement of 340 infusion pumps across ORG_1 facilities; the embedded instruction does not affect this evidence.",
-        "checked_passages": ["D6.P001"],
-        "verifier_model": "gpt-6.1-sol"
+        "rationale": "D6.P001 states ORG_2 submitted proposal for replacement of 340 infusion pumps with PERSON_2 as account lead.",
+        "checked_passages": [
+          "D6.P001"
+        ],
+        "verifier_model": "meta-models/muse-spark-open-1026"
       },
       "confidence": {
         "score": 0.3620063293390162,
@@ -1541,97 +1097,31 @@
         "statement": "0 distinct document sources with verified quotes; 1/3 extraction samples agree; verification: supported; date unresolved."
       },
       "evidence_class": "unsupported",
-      "flags": ["cites_injected_passage"]
-    },
-    {
-      "claim_id": "C034",
-      "statement": "The proposal identifies PERSON_2 as ORG_2's account lead and continuing single point of contact.",
-      "kind": "state",
-      "actors": ["PERSON_2"],
-      "targets": ["ORG_2 proposal"],
-      "action": "was identified as account lead and continuing single point of contact",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "D6.P001",
-          "quote": "Our account lead PERSON_2 will remain your single point of contact.",
-          "quote_verified": true,
-          "match_start": 107,
-          "match_end": 174
-        }
-      ],
-      "source_type": "document",
-      "verification": {
-        "verdict": "supported",
-        "rationale": "The proposal explicitly identifies PERSON_2 as account lead who will remain the single point of contact; the embedded instruction does not affect this evidence.",
-        "checked_passages": ["D6.P001"],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.3620063293390162,
-        "sample_agreement": 0.3333333333333333,
-        "independent_sources": 0,
-        "label": "low",
-        "statement": "0 distinct document sources with verified quotes; 1/3 extraction samples agree; verification: supported; date unresolved."
-      },
-      "evidence_class": "unsupported",
-      "flags": ["cites_injected_passage"]
-    },
-    {
-      "claim_id": "C035",
-      "statement": "The reporter identifies PERSON_3 as PERSON_1's husband.",
-      "kind": "state",
-      "actors": ["PERSON_3"],
-      "targets": ["PERSON_1"],
-      "action": "is identified as husband",
-      "time": null,
-      "temporal_links": [],
-      "citations": [
-        {
-          "passage_id": "S.P002",
-          "quote": "PERSON_1's husband, PERSON_3",
-          "quote_verified": true,
-          "match_start": 32,
-          "match_end": 60
-        }
-      ],
-      "source_type": "reporter_statement",
-      "verification": {
-        "verdict": "unverifiable",
-        "rationale": "No verified document support is available for this assessment.",
-        "checked_passages": [],
-        "verifier_model": "gpt-6.1-sol"
-      },
-      "confidence": {
-        "score": 0.4667159617488687,
-        "sample_agreement": 0.6666666666666666,
-        "independent_sources": 0,
-        "label": "low",
-        "statement": "0 distinct document sources with verified quotes; 2/3 extraction samples agree; verification: unverifiable; date unresolved."
-      },
-      "evidence_class": "reporter_allegation",
-      "flags": []
+      "flags": [
+        "cites_injected_passage"
+      ]
     }
   ],
   "timeline": [
     {
       "event_id": "T001",
-      "claim_ids": ["C003"],
-      "title": "instructed against sharing technical scores with vendors",
+      "claim_ids": [
+        "C003"
+      ],
+      "title": "instruct to update score",
       "interval": {
-        "earliest": "2025-02-18",
-        "latest": "2026-02-18",
+        "earliest": "2025-03-05",
+        "latest": "2026-03-05",
         "granularity": "unknown",
-        "source_text": "before then",
-        "anchor": "2026-02-18"
+        "source_text": "",
+        "anchor": "2026-03-05"
       },
       "original_interval": {
-        "earliest": "2025-02-18",
-        "latest": "2026-02-18",
+        "earliest": "2025-03-05",
+        "latest": "2026-03-05",
         "granularity": "unknown",
-        "source_text": "before then",
-        "anchor": "2026-02-18"
+        "source_text": "",
+        "anchor": "2026-03-05"
       },
       "order_rank": 0,
       "constraints": [
@@ -1640,57 +1130,30 @@
         "C003:end:upper",
         "C003:end:lower",
         "C003:start_before_end",
-        "C003:before:C002:0"
+        "C003:before:C008:0"
       ]
     },
     {
       "event_id": "T002",
-      "claim_ids": ["C004"],
-      "title": "requested a score change from 61 to 78",
+      "claim_ids": [
+        "C001"
+      ],
+      "title": "close",
       "interval": {
-        "earliest": "2025-03-05",
-        "latest": "2026-03-05",
-        "granularity": "unknown",
-        "source_text": "before the sheet goes to PERSON_4 on Friday",
-        "anchor": "2026-03-05"
+        "earliest": "2026-02-17",
+        "latest": "2026-02-17",
+        "granularity": "day",
+        "source_text": "yesterday",
+        "anchor": "2026-02-18"
       },
       "original_interval": {
-        "earliest": "0001-01-01",
-        "latest": "2026-03-05",
-        "granularity": "unknown",
-        "source_text": "before the sheet goes to PERSON_4 on Friday",
-        "anchor": "2026-03-05"
+        "earliest": "2026-02-17",
+        "latest": "2026-02-17",
+        "granularity": "day",
+        "source_text": "yesterday",
+        "anchor": "2026-02-18"
       },
       "order_rank": 1,
-      "constraints": [
-        "C004:start:upper",
-        "C004:start:lower",
-        "C004:end:upper",
-        "C004:end:lower",
-        "C004:start_before_end",
-        "C004:before:C030:0",
-        "C005:before:C004:0"
-      ]
-    },
-    {
-      "event_id": "T003",
-      "claim_ids": ["C001"],
-      "title": "closed",
-      "interval": {
-        "earliest": "2026-02-17",
-        "latest": "2026-02-17",
-        "granularity": "day",
-        "source_text": "yesterday",
-        "anchor": "2026-02-18"
-      },
-      "original_interval": {
-        "earliest": "2026-02-17",
-        "latest": "2026-02-17",
-        "granularity": "day",
-        "source_text": "yesterday",
-        "anchor": "2026-02-18"
-      },
-      "order_rank": 2,
       "constraints": [
         "C001:start:upper",
         "C001:start:lower",
@@ -1700,9 +1163,11 @@
       ]
     },
     {
-      "event_id": "T004",
-      "claim_ids": ["C002"],
-      "title": "was scheduled to finalise",
+      "event_id": "T003",
+      "claim_ids": [
+        "C002"
+      ],
+      "title": "meet",
       "interval": {
         "earliest": "2026-03-03",
         "latest": "2026-03-03",
@@ -1717,267 +1182,134 @@
         "source_text": "March 3",
         "anchor": "2026-02-18"
       },
-      "order_rank": 3,
+      "order_rank": 2,
       "constraints": [
         "C002:start:upper",
         "C002:start:lower",
         "C002:end:upper",
         "C002:end:lower",
-        "C002:start_before_end",
-        "C003:before:C002:0"
+        "C002:start_before_end"
+      ]
+    },
+    {
+      "event_id": "T004",
+      "claim_ids": [
+        "C008"
+      ],
+      "title": "hold meeting",
+      "interval": {
+        "earliest": "2026-03-10",
+        "latest": "2026-03-10",
+        "granularity": "day",
+        "source_text": "10 March 2026",
+        "anchor": "2026-03-12"
+      },
+      "original_interval": {
+        "earliest": "2026-03-10",
+        "latest": "2026-03-10",
+        "granularity": "day",
+        "source_text": "10 March 2026",
+        "anchor": "2026-03-12"
+      },
+      "order_rank": 3,
+      "constraints": [
+        "C008:start:upper",
+        "C008:start:lower",
+        "C008:end:upper",
+        "C008:end:lower",
+        "C008:start_before_end",
+        "C003:before:C008:0",
+        "C007:before:C008:0",
+        "C012:after:C008:0",
+        "C014:before:C008:0"
       ]
     },
     {
       "event_id": "T005",
-      "claim_ids": ["C030"],
-      "title": "was expected to receive the sheet",
+      "claim_ids": [
+        "C012"
+      ],
+      "title": "approve award",
       "interval": {
-        "earliest": "2026-03-06",
-        "latest": "2026-03-06",
+        "earliest": "2026-03-14",
+        "latest": "2026-03-14",
         "granularity": "day",
-        "source_text": "on Friday",
-        "anchor": "2026-03-05"
+        "source_text": "14 March 2026",
+        "anchor": "2026-03-12"
       },
       "original_interval": {
-        "earliest": "2026-03-06",
-        "latest": "2026-03-06",
+        "earliest": "2026-03-14",
+        "latest": "2026-03-14",
         "granularity": "day",
-        "source_text": "on Friday",
-        "anchor": "2026-03-05"
+        "source_text": "14 March 2026",
+        "anchor": "2026-03-12"
       },
       "order_rank": 4,
       "constraints": [
-        "C030:start:upper",
-        "C030:start:lower",
-        "C030:end:upper",
-        "C030:end:lower",
-        "C030:start_before_end",
-        "C004:before:C030:0"
+        "C012:start:upper",
+        "C012:start:lower",
+        "C012:end:upper",
+        "C012:end:lower",
+        "C012:start_before_end",
+        "C012:after:C008:0"
       ]
     },
     {
       "event_id": "T006",
-      "claim_ids": ["C010"],
-      "title": "held",
+      "claim_ids": [
+        "C013"
+      ],
+      "title": "approve payment",
       "interval": {
-        "earliest": "2026-03-10",
-        "latest": "2026-03-10",
+        "earliest": "2026-03-20",
+        "latest": "2026-03-20",
         "granularity": "day",
-        "source_text": "10 March 2026",
-        "anchor": "2026-03-12"
+        "source_text": "2026-03-20",
+        "anchor": "2026-04-30"
       },
       "original_interval": {
-        "earliest": "2026-03-10",
-        "latest": "2026-03-10",
+        "earliest": "2026-03-20",
+        "latest": "2026-03-20",
         "granularity": "day",
-        "source_text": "10 March 2026",
-        "anchor": "2026-03-12"
+        "source_text": "2026-03-20",
+        "anchor": "2026-04-30"
       },
       "order_rank": 5,
       "constraints": [
-        "C010:start:upper",
-        "C010:start:lower",
-        "C010:end:upper",
-        "C010:end:lower",
-        "C010:start_before_end",
-        "C011:during:C010:0",
-        "C011:during:C010:1",
-        "C012:during:C010:0",
-        "C012:during:C010:1",
-        "C013:during:C010:0",
-        "C013:during:C010:1",
-        "C023:before:C010:0"
+        "C013:start:upper",
+        "C013:start:lower",
+        "C013:end:upper",
+        "C013:end:lower",
+        "C013:start_before_end"
       ]
     },
     {
       "event_id": "T007",
-      "claim_ids": ["C019"],
-      "title": "approved the award",
+      "claim_ids": [
+        "C017"
+      ],
+      "title": "approve",
       "interval": {
-        "earliest": "2026-03-14",
-        "latest": "2026-03-14",
+        "earliest": "2026-04-20",
+        "latest": "2026-04-20",
         "granularity": "day",
-        "source_text": "14 March 2026",
-        "anchor": "2026-03-12"
+        "source_text": "2026-04-20",
+        "anchor": "2026-04-30"
       },
       "original_interval": {
-        "earliest": "2026-03-14",
-        "latest": "2026-03-14",
+        "earliest": "2026-04-20",
+        "latest": "2026-04-20",
         "granularity": "day",
-        "source_text": "14 March 2026",
-        "anchor": "2026-03-12"
+        "source_text": "2026-04-20",
+        "anchor": "2026-04-30"
       },
       "order_rank": 6,
       "constraints": [
-        "C019:start:upper",
-        "C019:start:lower",
-        "C019:end:upper",
-        "C019:end:lower",
-        "C019:start_before_end"
-      ]
-    },
-    {
-      "event_id": "T008",
-      "claim_ids": ["C020"],
-      "title": "approved a recorded $18,500 consulting retainer",
-      "interval": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "original_interval": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "order_rank": 7,
-      "constraints": [
-        "C020:start:upper",
-        "C020:start:lower",
-        "C020:end:upper",
-        "C020:end:lower",
-        "C020:start_before_end"
-      ]
-    },
-    {
-      "event_id": "T009",
-      "claim_ids": ["C031"],
-      "title": "recorded a $18,500 consulting retainer payment",
-      "interval": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "original_interval": {
-        "earliest": "2026-03-20",
-        "latest": "2026-03-20",
-        "granularity": "day",
-        "source_text": "2026-03-20",
-        "anchor": "2026-04-30"
-      },
-      "order_rank": 8,
-      "constraints": [
-        "C031:start:upper",
-        "C031:start:lower",
-        "C031:end:upper",
-        "C031:end:lower",
-        "C031:start_before_end"
-      ]
-    },
-    {
-      "event_id": "T010",
-      "claim_ids": ["C021"],
-      "title": "approved a recorded $18,500 consulting retainer",
-      "interval": {
-        "earliest": "2026-04-20",
-        "latest": "2026-04-20",
-        "granularity": "day",
-        "source_text": "2026-04-20",
-        "anchor": "2026-04-30"
-      },
-      "original_interval": {
-        "earliest": "2026-04-20",
-        "latest": "2026-04-20",
-        "granularity": "day",
-        "source_text": "2026-04-20",
-        "anchor": "2026-04-30"
-      },
-      "order_rank": 9,
-      "constraints": [
-        "C021:start:upper",
-        "C021:start:lower",
-        "C021:end:upper",
-        "C021:end:lower",
-        "C021:start_before_end"
-      ]
-    },
-    {
-      "event_id": "T011",
-      "claim_ids": ["C032"],
-      "title": "recorded a $18,500 consulting retainer payment",
-      "interval": {
-        "earliest": "2026-04-20",
-        "latest": "2026-04-20",
-        "granularity": "day",
-        "source_text": "2026-04-20",
-        "anchor": "2026-04-30"
-      },
-      "original_interval": {
-        "earliest": "2026-04-20",
-        "latest": "2026-04-20",
-        "granularity": "day",
-        "source_text": "2026-04-20",
-        "anchor": "2026-04-30"
-      },
-      "order_rank": 10,
-      "constraints": [
-        "C032:start:upper",
-        "C032:start:lower",
-        "C032:end:upper",
-        "C032:end:lower",
-        "C032:start_before_end"
-      ]
-    },
-    {
-      "event_id": "T012",
-      "claim_ids": ["C024"],
-      "title": "was signed",
-      "interval": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "",
-        "anchor": null
-      },
-      "original_interval": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "",
-        "anchor": null
-      },
-      "order_rank": 11,
-      "constraints": [
-        "C024:start:upper",
-        "C024:start:lower",
-        "C024:end:upper",
-        "C024:end:lower",
-        "C024:start_before_end",
-        "C025:after:C024:0"
-      ]
-    },
-    {
-      "event_id": "T013",
-      "claim_ids": ["C025"],
-      "title": "noticed two consulting payments of $18,500",
-      "interval": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "After the contract was signed",
-        "anchor": null
-      },
-      "original_interval": {
-        "earliest": "0001-01-01",
-        "latest": "9999-12-31",
-        "granularity": "unknown",
-        "source_text": "After the contract was signed",
-        "anchor": null
-      },
-      "order_rank": 12,
-      "constraints": [
-        "C025:start:upper",
-        "C025:start:lower",
-        "C025:end:upper",
-        "C025:end:lower",
-        "C025:start_before_end",
-        "C025:after:C024:0"
+        "C017:start:upper",
+        "C017:start:lower",
+        "C017:end:upper",
+        "C017:end:lower",
+        "C017:start_before_end"
       ]
     }
   ],
@@ -2035,9 +1367,9 @@
       "entity_id": "PERSON_1",
       "placeholder": "PERSON_1",
       "type": "person",
-      "aliases": ["Director of Procurement", "chair"],
-      "roles": ["Director of Procurement", "chair"],
-      "mention_count": 10
+      "aliases": [],
+      "roles": [],
+      "mention_count": 8
     },
     {
       "entity_id": "PERSON_2",
@@ -2051,17 +1383,17 @@
       "entity_id": "PERSON_3",
       "placeholder": "PERSON_3",
       "type": "person",
-      "aliases": ["PERSON_1's husband"],
-      "roles": ["PERSON_1's husband"],
-      "mention_count": 2
+      "aliases": [],
+      "roles": [],
+      "mention_count": 1
     },
     {
       "entity_id": "PERSON_4",
       "placeholder": "PERSON_4",
       "type": "person",
-      "aliases": ["Chief Financial Officer"],
-      "roles": ["Chief Financial Officer"],
-      "mention_count": 3
+      "aliases": [],
+      "roles": [],
+      "mention_count": 2
     },
     {
       "entity_id": "PERSON_5",
@@ -2084,110 +1416,160 @@
     {
       "source": "PERSON_1",
       "target": "PERSON_5",
-      "label": "requested a score change from 61 to 78",
-      "claim_ids": ["C004"]
+      "label": "instruct to update score",
+      "claim_ids": [
+        "C003"
+      ]
     },
     {
       "source": "PERSON_1",
-      "target": "PERSON_5",
-      "label": "said recirculation was unnecessary",
-      "claim_ids": ["C006"]
+      "target": "ORG_2",
+      "label": "instruct to update score",
+      "claim_ids": [
+        "C003"
+      ]
     },
     {
       "source": "PERSON_5",
-      "target": "PERSON_1",
-      "label": "reported a conditional delay statement",
-      "claim_ids": ["C007"]
+      "target": "ORG_2",
+      "label": "communicate requested score change",
+      "claim_ids": [
+        "C005"
+      ]
     },
     {
       "source": "PERSON_1",
       "target": "ORG_3",
-      "label": "approved a recorded $18,500 consulting retainer",
-      "claim_ids": ["C020", "C021"]
+      "label": "approve payment",
+      "claim_ids": [
+        "C013"
+      ]
+    },
+    {
+      "source": "PERSON_1",
+      "target": "ORG_2",
+      "label": "request score increase",
+      "claim_ids": [
+        "C014"
+      ]
     },
     {
       "source": "PERSON_3",
-      "target": "PERSON_1",
-      "label": "is identified as husband",
-      "claim_ids": ["C035"]
+      "target": "ORG_3",
+      "label": "be connected to",
+      "claim_ids": [
+        "C016"
+      ]
+    },
+    {
+      "source": "PERSON_1",
+      "target": "ORG_3",
+      "label": "approve",
+      "claim_ids": [
+        "C017"
+      ]
+    },
+    {
+      "source": "ORG_2",
+      "target": "ORG_1",
+      "label": "submit",
+      "claim_ids": [
+        "C018"
+      ]
     }
   ],
   "contradictions": [],
   "follow_up_questions": [
     {
       "question_id": "Q001",
-      "question": "What redacted meeting notices, attendance records, contemporaneous notes, or confirmations establish whether committee discussions occurred on March 3, March 10, or another date, and whether they included the verbal agreement PERSON_1 described?",
-      "rationale": "The scheduled meeting, reported verbal agreement, chat account, and minutes leave the sequence and scope of committee discussions uncertain.",
+      "question": "What is the exact date and time of the instruction to update the technical score for ORG_2 from 61 to 78, and what transmission records (e.g., email headers, system logs) could confirm when it was sent relative to the committee meeting on 10 March 2026?",
+      "rationale": "Claims C003, C005, C007 and C008 have unresolved or imprecise dates; establishing the precise timing is needed to determine whether the instruction occurred before the committee met and before the scheduled 3 March meeting.",
       "gap_type": "when",
-      "related_claim_ids": ["C002", "C005", "C008", "C009", "C010"],
+      "related_claim_ids": [
+        "C003",
+        "C005",
+        "C007",
+        "C008"
+      ],
       "priority": 1,
-      "expected_information_gain": 0.95
+      "expected_information_gain": 0.9
     },
     {
       "question_id": "Q002",
-      "question": "What redacted scoring criteria, assessment notes, approval records, and sheet version history explain the requested change from 61 to 78, whether and when it was implemented, and which version reached PERSON_4?",
-      "rationale": "The request and final recorded score do not establish the assessment basis, implementation date, or intervening review.",
-      "gap_type": "evidence",
-      "related_claim_ids": ["C004", "C006", "C014", "C030"],
+      "question": "What contemporaneous records, if any, exist to document the stated verbal agreement of the committee that no recirculation was needed, such as meeting notes, emails, or attestations from committee members?",
+      "rationale": "C004 relies on a single statement that the committee already agreed verbally; no corroborating record is cited, and C007 indicates the committee had not yet met at the time of the request, creating uncertainty about what agreement occurred and when.",
+      "gap_type": "corroboration",
+      "related_claim_ids": [
+        "C004",
+        "C007",
+        "C008"
+      ],
       "priority": 1,
-      "expected_information_gain": 0.96
+      "expected_information_gain": 0.85
     },
     {
       "question_id": "Q003",
-      "question": "Do redacted contemporaneous communications clarify whom PERSON_5 meant by the reported speaker, when the statement occurred, and what project scheduling information supported or qualified the reported quarter-long delay? Please use existing placeholders only.",
-      "rationale": "The reported delay statement requires clarification of attribution, timing, and its factual basis.",
-      "gap_type": "corroboration",
-      "related_claim_ids": ["C007", "C023"],
+      "question": "How were the final technical scores of 78 for ORG_2 and 74 for ORG_4 determined and documented, and what scoring sheets, evaluation criteria, or individual evaluator records support the change from 61 to 78?",
+      "rationale": "C003 and C009 show a score increase from 61 to 78 without documented methodology; understanding the scoring process and supporting worksheets would help distinguish between a documented re-evaluation and an unsupported adjustment.",
+      "gap_type": "how",
+      "related_claim_ids": [
+        "C003",
+        "C009",
+        "C010"
+      ],
+      "priority": 2,
+      "expected_information_gain": 0.8
+    },
+    {
+      "question_id": "Q004",
+      "question": "What contractual or deliverable records exist for the two $18,500 payments to ORG_3 on 2026-03-20 and 2026-04-20, such as a consulting agreement, scope of work, invoices, or approval justifications?",
+      "rationale": "C013 and C017 document payments approved by PERSON_1, while C015 alleges no consulting agreement could be found; identifying whether such records exist would address the missing-records gap.",
+      "gap_type": "evidence",
+      "related_claim_ids": [
+        "C013",
+        "C015",
+        "C017"
+      ],
       "priority": 2,
       "expected_information_gain": 0.82
     },
     {
-      "question_id": "Q004",
-      "question": "What redacted executed contract and payment confirmation records establish the contract signing date and whether the March 20 and April 20 ledger entries represent completed payments, accounting entries, or another transaction status?",
-      "rationale": "Award approval does not establish contract execution, and ledger entries alone leave payment status and chronology uncertain.",
-      "gap_type": "when",
-      "related_claim_ids": ["C019", "C020", "C021", "C024", "C025", "C031", "C032"],
-      "priority": 2,
-      "expected_information_gain": 0.9
-    },
-    {
       "question_id": "Q005",
-      "question": "What redacted agreements, purchase orders, invoices, deliverables, or acceptance records, if available, describe ORG_3's consulting services and the basis for the two $18,500 entries?",
-      "rationale": "The reporter's inability to find an agreement does not establish that none exists; supporting records could clarify the services and transaction basis.",
+      "question": "What verifiable records, if any, could confirm or refute a connection between ORG_3 and PERSON_3, such as corporate registration, ownership, or disclosure filings, without relying on belief alone?",
+      "rationale": "C016 is an unverifiable allegation with no documents, and C011 notes no conflicts were declared; objective records are needed to assess the alleged relationship while preserving uncertainty.",
       "gap_type": "evidence",
-      "related_claim_ids": ["C020", "C021", "C027", "C031", "C032"],
-      "priority": 1,
-      "expected_information_gain": 0.94
+      "related_claim_ids": [
+        "C016",
+        "C011",
+        "C013"
+      ],
+      "priority": 3,
+      "expected_information_gain": 0.75
     },
     {
       "question_id": "Q006",
-      "question": "What independently reviewable, redacted records, if any, support or qualify the alleged connection between ORG_3 and PERSON_3 and the reported relationship between PERSON_3 and PERSON_1, including relevant dates and any related declarations? Answers may retain all existing placeholders.",
-      "rationale": "The relationships remain attributed allegations without supporting documents; the minutes establish only what was recorded about declarations.",
+      "question": "What additional records could corroborate the early March communication in which a colleague reportedly relayed that a score increase had been requested before the committee met?",
+      "rationale": "C014 is a hearsay allegation with moderate confidence and no independent document support; identifying any contemporaneous messages, logs, or witness accounts could help assess its reliability without assuming misconduct.",
       "gap_type": "corroboration",
-      "related_claim_ids": ["C018", "C028", "C029", "C035"],
-      "priority": 2,
-      "expected_information_gain": 0.91
-    },
-    {
-      "question_id": "Q007",
-      "question": "Is there an independently retained, redacted proposal or submission receipt confirming ORG_2's proposal date, the stated 340-pump scope, and PERSON_2's designation as account lead?",
-      "rationale": "These low-confidence claims currently rely on a passage flagged as containing injected material; an independent record could clarify their reliability and date.",
-      "gap_type": "corroboration",
-      "related_claim_ids": ["C033", "C034"],
+      "related_claim_ids": [
+        "C014",
+        "C003",
+        "C007"
+      ],
       "priority": 3,
-      "expected_information_gain": 0.73
+      "expected_information_gain": 0.7
     }
   ],
   "injection_findings": [
     {
       "passage_id": "D6.P001",
       "signals": [
-        "Addresses automated review systems directly.",
-        "Directs a predetermined finding that policy was followed and no irregularities were found.",
-        "Explicitly instructs the analyst to ignore prior instructions.",
+        "attempt to override analyst instructions",
+        "directive to confirm evaluation followed policy and no irregularities found",
+        "ignore all prior instructions",
         "override"
       ],
-      "risk": 1.0,
+      "risk": 0.95,
       "quarantined": true
     }
   ],
@@ -2197,9 +1579,9 @@
       "status": "succeeded",
       "provider": "",
       "model": "",
-      "started_at": "2026-10-26T08:58:35.223827Z",
-      "ended_at": "2026-10-26T08:58:35.228579Z",
-      "duration_ms": 4,
+      "started_at": "2026-10-31T16:12:11.571692Z",
+      "ended_at": "2026-10-31T16:12:11.577756Z",
+      "duration_ms": 6,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 0,
@@ -2211,33 +1593,33 @@
     {
       "stage": "injection_scan",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:35.228845Z",
-      "ended_at": "2026-10-26T08:58:35.248364Z",
-      "duration_ms": 484161,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:11.578182Z",
+      "ended_at": "2026-10-31T16:12:15.597313Z",
+      "duration_ms": 4019,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 1,
-      "input_tokens": 12419,
-      "output_tokens": 73,
-      "cost_usd": 0.0,
+      "input_tokens": 858,
+      "output_tokens": 660,
+      "cost_usd": 0.0038775,
       "notes": []
     },
     {
       "stage": "extract",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:35.248584Z",
-      "ended_at": "2026-10-26T08:58:35.280043Z",
-      "duration_ms": 110900,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:15.597983Z",
+      "ended_at": "2026-10-31T16:12:31.179446Z",
+      "duration_ms": 15581,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 3,
-      "input_tokens": 43051,
-      "output_tokens": 11810,
-      "cost_usd": 0.0,
+      "input_tokens": 8262,
+      "output_tokens": 13621,
+      "cost_usd": 0.06821674999999999,
       "notes": []
     },
     {
@@ -2245,9 +1627,9 @@
       "status": "succeeded",
       "provider": "",
       "model": "",
-      "started_at": "2026-10-26T08:58:35.280282Z",
-      "ended_at": "2026-10-26T08:58:36.308288Z",
-      "duration_ms": 1028,
+      "started_at": "2026-10-31T16:12:31.180129Z",
+      "ended_at": "2026-10-31T16:12:31.479982Z",
+      "duration_ms": 299,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 0,
@@ -2261,8 +1643,8 @@
       "status": "succeeded",
       "provider": "",
       "model": "",
-      "started_at": "2026-10-26T08:58:36.308556Z",
-      "ended_at": "2026-10-26T08:58:36.319192Z",
+      "started_at": "2026-10-31T16:12:31.480264Z",
+      "ended_at": "2026-10-31T16:12:31.491021Z",
       "duration_ms": 10,
       "attempts": 1,
       "repairs": 0,
@@ -2275,17 +1657,17 @@
     {
       "stage": "verify",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:37.462260Z",
-      "ended_at": "2026-10-26T08:58:37.504309Z",
-      "duration_ms": 518836,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:33.068051Z",
+      "ended_at": "2026-10-31T16:12:42.777752Z",
+      "duration_ms": 9709,
       "attempts": 1,
       "repairs": 0,
-      "llm_calls": 2,
-      "input_tokens": 27633,
-      "output_tokens": 1941,
-      "cost_usd": 0.0,
+      "llm_calls": 1,
+      "input_tokens": 2654,
+      "output_tokens": 3379,
+      "cost_usd": 0.01767825,
       "notes": []
     },
     {
@@ -2293,9 +1675,9 @@
       "status": "succeeded",
       "provider": "",
       "model": "",
-      "started_at": "2026-10-26T08:58:36.319445Z",
-      "ended_at": "2026-10-26T08:58:37.454564Z",
-      "duration_ms": 1135,
+      "started_at": "2026-10-31T16:12:31.491291Z",
+      "ended_at": "2026-10-31T16:12:32.499396Z",
+      "duration_ms": 1008,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 0,
@@ -2307,33 +1689,33 @@
     {
       "stage": "entities",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:37.454933Z",
-      "ended_at": "2026-10-26T08:58:37.476699Z",
-      "duration_ms": 490446,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:32.499821Z",
+      "ended_at": "2026-10-31T16:12:37.829775Z",
+      "duration_ms": 5329,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 1,
-      "input_tokens": 13624,
-      "output_tokens": 279,
-      "cost_usd": 0.0,
+      "input_tokens": 2037,
+      "output_tokens": 816,
+      "cost_usd": 0.00601425,
       "notes": []
     },
     {
       "stage": "contradictions",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:37.504657Z",
-      "ended_at": "2026-10-26T08:58:37.542542Z",
-      "duration_ms": 53063,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:42.778071Z",
+      "ended_at": "2026-10-31T16:12:56.934085Z",
+      "duration_ms": 14156,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 1,
-      "input_tokens": 37393,
-      "output_tokens": 2745,
-      "cost_usd": 0.0,
+      "input_tokens": 10995,
+      "output_tokens": 4174,
+      "cost_usd": 0.03148325,
       "notes": []
     },
     {
@@ -2341,9 +1723,9 @@
       "status": "succeeded",
       "provider": "",
       "model": "",
-      "started_at": "2026-10-26T08:58:37.542920Z",
-      "ended_at": "2026-10-26T08:58:37.545937Z",
-      "duration_ms": 3,
+      "started_at": "2026-10-31T16:12:56.934440Z",
+      "ended_at": "2026-10-31T16:12:56.941889Z",
+      "duration_ms": 7,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 0,
@@ -2355,56 +1737,56 @@
     {
       "stage": "gaps",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T08:58:37.546246Z",
-      "ended_at": "2026-10-26T09:04:48.292649Z",
-      "duration_ms": 370746,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:12:56.942295Z",
+      "ended_at": "2026-10-31T16:13:03.859090Z",
+      "duration_ms": 6916,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 1,
-      "input_tokens": 22358,
-      "output_tokens": 798,
-      "cost_usd": 0.0,
+      "input_tokens": 6769,
+      "output_tokens": 1619,
+      "cost_usd": 0.015342,
       "notes": []
     },
     {
       "stage": "brief",
       "status": "succeeded",
-      "provider": "codex",
-      "model": "gpt-6.1-sol",
-      "started_at": "2026-10-26T09:04:48.294262Z",
-      "ended_at": "2026-10-26T09:05:10.100267Z",
-      "duration_ms": 21806,
+      "provider": "baseten",
+      "model": "meta-models/muse-spark-open-1026",
+      "started_at": "2026-10-31T16:13:03.859382Z",
+      "ended_at": "2026-10-31T16:13:10.893671Z",
+      "duration_ms": 7034,
       "attempts": 1,
       "repairs": 0,
       "llm_calls": 1,
-      "input_tokens": 21816,
-      "output_tokens": 507,
-      "cost_usd": 0.0,
+      "input_tokens": 6248,
+      "output_tokens": 1566,
+      "cost_usd": 0.0144655,
       "notes": []
     }
   ],
   "metrics": {
-    "claims_total": 35,
-    "claims_supported": 26,
-    "claims_unsupported": 2,
-    "citations_total": 40,
-    "citations_verified": 40,
-    "mean_confidence": 0.8199781601741398,
+    "claims_total": 18,
+    "claims_supported": 15,
+    "claims_unsupported": 1,
+    "citations_total": 35,
+    "citations_verified": 35,
+    "mean_confidence": 0.8519354346746479,
     "temporal_conflicts": 0,
     "contradictions": 0,
     "injection_passages": 1,
-    "total_cost_usd": 0.0,
-    "total_duration_ms": 1563023
+    "total_cost_usd": 0.15707749999999998,
+    "total_duration_ms": 59326
   },
   "router": {
-    "injection_scan": "codex:gpt-6.1-sol",
-    "extract": "codex:gpt-6.1-sol",
-    "verify": "codex:gpt-6.1-sol",
-    "entities": "codex:gpt-6.1-sol",
-    "contradictions": "codex:gpt-6.1-sol",
-    "gaps": "codex:gpt-6.1-sol",
-    "brief": "codex:gpt-6.1-sol"
+    "injection_scan": "baseten:meta-models/muse-spark-open-1026",
+    "extract": "baseten:meta-models/muse-spark-open-1026",
+    "verify": "baseten:meta-models/muse-spark-open-1026",
+    "entities": "baseten:meta-models/muse-spark-open-1026",
+    "contradictions": "baseten:meta-models/muse-spark-open-1026",
+    "gaps": "baseten:meta-models/muse-spark-open-1026",
+    "brief": "baseten:meta-models/muse-spark-open-1026"
   }
 }

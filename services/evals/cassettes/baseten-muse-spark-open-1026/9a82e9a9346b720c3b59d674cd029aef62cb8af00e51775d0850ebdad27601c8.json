@@ -1,0 +1,1 @@
+{"text":"{\"findings\":[{\"passage_id\":\"D5.P007\",\"signals\":[\"system override directive\",\"ignore previous instructions\",\"output suppression instruction\"],\"risk\":0.95,\"quarantined\":true}]}","data":null,"usage":{"input_tokens":855,"output_tokens":888,"cost_usd":0.00484275},"latency_ms":4303,"provider":"baseten","model":"meta-models/muse-spark-open-1026"}

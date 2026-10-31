@@ -143,11 +143,15 @@ labels: high ≥ 0.80 · moderate ≥ 0.60 · low ≥ 0.35 · otherwise very low
             term: "Providers",
             detail: (
               <>
-                One interface, <C>complete_json</C>, over Meta Muse Spark (<C>muse-spark-1.3</C>)
-                via the Meta Model API’s OpenAI-compatible endpoint with strict JSON schemas,
-                Fireworks, Baseten, Claude Haiku 5.5 (<C>claude-haiku-5-5</C>, through the Anthropic
-                API or a signed-in Claude Code CLI), a local Codex CLI, and a record-and-replay
-                cassette provider that makes CI deterministic.
+                One interface, <C>complete_json</C>. The demo and the evaluation run on Muse Spark
+                Open, Meta’s open-weights model (<C>meta-models/muse-spark-open-1026</C> on
+                Baseten). Baseten does not enforce JSON schemas for it, so the schema travels in the
+                prompt and the validator and repair loop do the enforcing; its reasoning stays in a
+                separate field and never reaches the result. Open weights matter here: an
+                organisation can run the same model inside its own boundary, so redacted evidence
+                need not leave it. The same interface reaches Muse Spark on the Meta Model API (
+                <C>muse-spark-1.3</C>), Fireworks, Claude Haiku 5.5, a local Codex CLI and a
+                record-and-replay cassette provider that makes CI deterministic.
               </>
             ),
           },

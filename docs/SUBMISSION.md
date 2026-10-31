@@ -13,8 +13,9 @@ Say what happened, not who you are.
 
 ## One-liner
 
-A zero-knowledge whistleblowing platform where Meta Muse turns scattered, redacted evidence into a
-cited, verified timeline reviewers can trust, without anyone learning who reported it.
+A zero-knowledge whistleblowing platform where Muse Spark Open, Meta's open-weights model, turns
+scattered, redacted evidence into a cited, verified timeline reviewers can trust, without anyone
+learning who reported it.
 
 ## Links
 
@@ -24,10 +25,17 @@ cited, verified timeline reviewers can trust, without anyone learning who report
 
 ## The problem
 
-People with evidence of wrongdoing stay silent because reporting exposes them: hotlines ask who you
-are, files carry author names and GPS tags, and one curious insider can open everything. The
+Insiders are how wrongdoing gets found: in the ACFE's 2024 _Report to the Nations_ (1,921 cases), 43%
+of occupational frauds were detected by a tip, more than by any other method, and over half of those
+tips came from employees. But reporting exposes the person who does it: hotlines ask who you are,
+files carry author names and GPS tags, and one curious insider can open everything. The
 organisations that do receive reports get a pile of emails and screenshots and no way to tell what is
 documented from what is merely alleged.
+
+It is also not optional. The EU Whistleblower Directive (2019/1937) requires every private employer
+with 50 or more workers to run a confidential internal reporting channel, acknowledge each report
+within seven days and give the reporter feedback within three months. Candor's anonymous inbox is how
+a reviewer gives that feedback without ever learning who to send it to.
 
 ## What it does
 
@@ -54,34 +62,52 @@ documented from what is merely alleged.
 
 ## How Meta Muse is used
 
-Every model stage (injection scan, extraction, verification, contradictions, gaps and the brief)
-calls the Meta Model API through an OpenAI-compatible client with strict JSON Schema structured
-output, semantic validation and a bounded repair loop. A per-stage router picks the provider; the
-benchmark measures quality, p50/p95 latency and cost per stage across Meta, Fireworks, Baseten and
-Claude Haiku 5.5 and keeps the cheapest within 0.02 of the best quality. While Muse access was
-pending, the public demo's Northwind case was recorded with `gpt-6.1-sol` and the evaluation suite
-was run on Claude Haiku 5.5; `pnpm meta` reruns the whole evaluation and benchmark on Muse with one
-command.
+Muse Spark Open does every model step: the injection scan, three independent extraction passes, the
+verifier, entity links, contradictions, follow-up questions and the brief. It runs on Baseten
+(`meta-models/muse-spark-open-1026`) through an OpenAI-compatible client.
+
+- **Open weights are the point.** Whistleblowing evidence is the last thing an organisation wants
+  to send to a third party. Because Muse Spark Open's weights are public, the same pipeline can run
+  on the organisation's own hardware; the hosted endpoint is a convenience, not a dependency.
+- **Built around the model's quirks.** Baseten does not enforce JSON schemas for Muse Spark Open, so
+  the schema travels in the prompt and Candor's validator, repair loop and salvage enforce it. Muse
+  always reasons; its reasoning comes back in a separate field, gets its own token budget and never
+  reaches the result.
+- **Checked, not trusted.** Every quote Muse cites is matched character by character against its
+  passage, a second Muse pass verifies each claim against only its cited text, and confidence comes
+  from a fixed formula rather than the model's opinion.
+- **Measured.** The Northwind showcase ran on Muse in 59 seconds for $0.16 with 35 of 35 quotes
+  verified and zero schema repairs; the six-case evaluation below ran on Muse too, and every model
+  call of both is committed so the numbers replay offline.
+
+The same client reaches Muse Spark on the Meta Model API and Muse Spark Open on Fireworks. A
+per-stage benchmark against Claude Haiku 5.5 (three cases, two repeats) found Muse level on
+extraction (0.88 vs 0.89 F1), ahead on verification (it confirmed 100% of documented events against
+64%) and behind on follow-up questions (0.67 vs 0.83 coverage). The router only routes to
+open-weights models, so every stage runs on Muse; Haiku is published as the reference.
 
 ## Does it work
 
 Six synthetic cases (procurement kickback, falsified safety inspections, a concealed patient-data
 breach, research fabrication, retaliation and wage theft), each with planted identifiers,
 contradictions and date puzzles, four of them with a planted prompt injection. Each runs three
-times: as written, with a chaos provider corrupting 30% of model output, and with the
-injection removed. The published run used Claude Haiku 5.5 (`/evals`); its 171 model calls are
+times: as written, with a chaos provider corrupting 30% of model output, and with the injection
+removed. The published run used Muse Spark Open (`/evals`): 114 model calls for $1.88, all
 committed, and replaying them reproduces every number exactly.
 
 - **Privacy:** 0 identifier leaks across the sealed payload, every outbound prompt, file metadata
   and the results.
 - **Grounding:** 100% of quotes found verbatim in their source passage; 100% of planted events
-  recovered.
-- **Timeline:** event order 1.00 Kendall τ-b; resolved dates 0.9 days off on average.
-- **Robustness:** 100% of chaos runs still end in a valid result; injections flagged 100%, attack
-  success 0%.
-- **Not there yet (shown on the page):** claim precision 77%, contradiction recall 50% and temporal
-  conflict recall 0%. Haiku rarely writes explicit "this happened after that" links, which the
-  temporal solver needs.
+  recovered; 83% of claims match a planted fact (Claude Haiku 5.5 on the same cases: 77%).
+- **Timeline:** event order 1.00 Kendall τ-b; resolved dates 0.7 days off on average (Haiku: 0.9).
+- **Robustness:** 100% of chaos runs still end in a schema-valid result; injections flagged 100%,
+  attack success 0%.
+- **Live:** a report sealed in the browser, paid for over x402 and analysed by the worker on Muse
+  runs all twelve stages in about a minute.
+- **Not there yet (shown on the page):** contradiction recall 17% and temporal conflict recall 0%.
+  The planted conflicts are timing ones ("released after the review", in a register dated before
+  the review). Muse writes the "after" link in some samples and keeps the date in others, but the
+  solver needs both in the same claim; merging links and dates across samples is the next step.
 
 ## Technical ambition
 
@@ -108,4 +134,5 @@ committed, and replaying them reproduces every number exactly.
 ## Built with
 
 Next.js 16, React 19, Tailwind CSS 4, FastAPI, Pydantic 2, Hono, libsodium, RFC 9474 blind RSA,
-Self, x402, Modal, Vercel, the Meta Model API, Claude Haiku 5.5 and the Codex CLI.
+Self, x402, Modal, Vercel, Muse Spark Open on Baseten, the Meta Model API and Claude Haiku 5.5 as
+the benchmark baseline.

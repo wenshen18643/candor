@@ -1,3 +1,5 @@
+import { modelName as displayModel } from "@/lib/format";
+
 export type Num = number | null;
 
 export type ScenarioScore = {
@@ -346,7 +348,7 @@ export function shortProvider(provider: string) {
 
 export function modelName(provider: string) {
   const [, model] = provider.split(":");
-  return model ?? "";
+  return model ? displayModel(model) : "";
 }
 
 export function formatCost(value: number) {

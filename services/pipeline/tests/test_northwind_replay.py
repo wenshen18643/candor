@@ -34,4 +34,4 @@ async def test_showcase_analysis_is_what_the_recorded_run_produces() -> None:
         "summary",
     ):
         assert result[key] == showcase[key], key
-    assert result["metrics"]["citations_verified"] == result["metrics"]["citations_total"] == 40
+    assert result["metrics"]["citations_verified"] == result["metrics"]["citations_total"] == 35

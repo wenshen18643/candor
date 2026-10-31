@@ -4,7 +4,7 @@ import { CircleAlert, ShieldAlert } from "lucide-react";
 
 import { EvidenceClassBadge } from "@/components/evidence/badges";
 import { evidenceClassMeta } from "@/lib/evidence";
-import { formatDuration, pluralize } from "@/lib/format";
+import { formatDuration, modelName, pluralize } from "@/lib/format";
 import type { AnalysisResult, EvidenceClass, PseudonymEntry } from "@/lib/types";
 
 import { PseudoText, RefChip, RichText } from "./rich-text";
@@ -69,7 +69,7 @@ function EvidenceProfile({ analysis }: { analysis: AnalysisResult }) {
 
 function RunFacts({ analysis }: { analysis: AnalysisResult }) {
   const models = Array.from(
-    new Set(analysis.stages.filter((stage) => stage.model).map((stage) => stage.model)),
+    new Set(analysis.stages.filter((stage) => stage.model).map((stage) => modelName(stage.model))),
   );
   const calls = analysis.stages.reduce((sum, stage) => sum + stage.llm_calls, 0);
   const repairs = analysis.stages.reduce((sum, stage) => sum + stage.repairs, 0);

@@ -21,7 +21,8 @@ export function SiteFooter() {
             Candor
           </p>
           <p className="text-sm text-ink-2">
-            Built for the Meta Global AI Developer Hackathon. Everyone in the demo is fictional.
+            Built for the Meta Global AI Developer Hackathon. The analysis runs on Muse Spark Open,
+            Meta’s open-weights model. Everyone in the demo is fictional.
           </p>
         </div>
         <nav aria-label="Footer">

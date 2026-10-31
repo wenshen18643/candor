@@ -13,7 +13,7 @@ const deeper = [
 ];
 
 export function ClaimCheck() {
-  const trace = buildTrace("C004");
+  const trace = buildTrace("C003");
   const citation = trace?.citations[0];
   if (!trace || !citation) return null;
   const checks = [
@@ -32,7 +32,8 @@ export function ClaimCheck() {
             Every line points to its proof
           </h2>
           <p className="mt-4 max-w-[40ch] text-md text-ink-2">
-            The AI never writes from memory. This is one real line from the demo report.
+            Meta’s Muse model reads the evidence, and code checks every line it writes. This is one
+            real line from the demo report.
           </p>
           <nav aria-label="Learn more" className="mt-8 flex flex-col items-start gap-2">
             {deeper.map((link) => (
