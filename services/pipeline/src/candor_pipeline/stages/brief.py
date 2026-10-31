@@ -5,7 +5,7 @@ from candor_pipeline.stages.context import PipelineContext, StageOutput
 
 
 def valid_key_point(point: str, supported: set[str], known: set[str]) -> bool:
-    ending = re.search(r"\[((?:C\d{3,})(?:\s*,\s*C\d{3,})*)\]\s*$", point)
+    ending = re.search(r"\[((?:C\d{3,})(?:\s*,\s*C\d{3,})*)\]\.?\s*$", point)
     if not ending:
         return False
     references = set(re.findall(r"\bC\d{3,}\b", point))

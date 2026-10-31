@@ -254,6 +254,7 @@ def test_identity_questions_rejected(question: str) -> None:
 def test_safe_question_and_brief_citations() -> None:
     assert not requests_identity("Are there redacted records of the review?")
     assert valid_key_point("A record describes a transfer. [C001]", {"C001"}, {"C001"})
+    assert valid_key_point("A record describes a transfer [C001].", {"C001"}, {"C001"})
     assert not valid_key_point("No citation.", {"C001"}, {"C001"})
     assert not valid_key_point("Invalid. [C999]", {"C001"}, {"C001"})
     assert not valid_key_point("Unsupported. [C001]", set(), {"C001"})
