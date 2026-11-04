@@ -1,0 +1,6 @@
+:HL["/candor/_next/static/css/269dc357b657a824.css","style"]
+4:[["children",{"s":"__PAGE__","h":160}]]
+3:[["children",{"s":{"n":"id","t":"d","k":"c81f5a3e-0d7b-4b92-a6e4-2f9d1c8b7a50","s":[]},"h":96,"c":"$Q4"}]]
+2:[["children",{"s":"reports","h":96,"c":"$Q3"}]]
+1:[["children",{"s":"console","h":96,"c":"$Q2"}]]
+0:{"b":"5XLPkV9DJUre6lHGv1Gvl","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

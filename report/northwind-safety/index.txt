@@ -1,0 +1,27 @@
+1:"$Sreact.fragment"
+2:"static/chunks/app/layout-253b905f98879585.js"
+3:I[66054,["7177","$2"],""]
+4:I[59890,[],""]
+5:I[75744,[],""]
+b:I[55419,[],"OutletBoundary"]
+c:"$Sreact.suspense"
+e:"ViewportBoundary"
+f:I[55419,[],"$e"]
+11:"MetadataBoundary"
+12:I[55419,[],"$11"]
+14:I[73002,[],"default",1]
+:HL["/candor/_next/static/css/269dc357b657a824.css","style"]
+7:X
+9:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":["$La",null,["$","$Lb",null,{"children":["$","$c",null,{"name":"Next.MetadataOutlet","children":"$@d"}]}]]}],"p":false,"v":null}}]]
+8:[["children",{"s":{"n":"campaign","t":"d","k":"northwind-safety","s":[]},"h":512,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$7"},"c":"$Q9"}]]
+6:[["children",{"s":"report","h":512,"d":{"r":["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$7"},"c":"$Q8"}]]
+0:{"P":null,"c":["","report","northwind-safety",""],"q":"","i":false,"t":{"t":{"s":"","h":528,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/candor/_next/static/css/269dc357b657a824.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"className":"__variable_4ce932 __variable_3fd326","children":["$","body",null,{"className":"bg-bg text-ink","children":[["$","$L3",null,{"id":"theme","strategy":"beforeInteractive","children":"(()=>{try{const s=localStorage.getItem(\"candor-theme\");const d=s?s===\"dark\":matchMedia(\"(prefers-color-scheme: dark)\").matches;document.documentElement.dataset.theme=d?\"dark\":\"light\"}catch(e){document.documentElement.dataset.theme=\"light\"}})()"}],["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]}]]}],"p":false,"v":null},"c":"$Q6"},"h":{"r":["$","$1","h",{"children":[null,["$","$Lf",null,{"children":"$L10"}],["$","$L12",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$c",null,{"name":"Next.Metadata","children":"$L13"}]}],null]}],null]}],"p":false,"v":null}},"m":"$undefined","G":["$14",[]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"5XLPkV9DJUre6lHGv1Gvl"}
+15:"static/chunks/1674-1be2bcf3280fdd58.js"
+16:"static/chunks/2941-28ba49c66d069432.js"
+17:"static/chunks/app/report/%5Bcampaign%5D/page-e821b5db8b3ef99a.js"
+18:I[12122,["1674","$15","2941","$16","9440","$17"],"ReporterFlow"]
+7:C
+a:["$","$L18",null,{"campaignId":"northwind-safety"}]
+10:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0b0b0b","media":"(prefers-color-scheme: dark)"}]]
+d:null
+13:[["$","title","0",{"children":"Make a report · Candor"}],["$","meta","1",{"name":"description","content":"Report wrongdoing without revealing who you are."}],["$","meta","2",{"name":"referrer","content":"no-referrer"}],["$","meta","3",{"name":"robots","content":"noindex, nofollow"}]]

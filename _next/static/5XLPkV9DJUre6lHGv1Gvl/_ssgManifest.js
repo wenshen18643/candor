@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fconsole\u002Freports\u002F[id]","\u002Freport\u002F[campaign]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

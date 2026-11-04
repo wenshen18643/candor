@@ -1,0 +1,31 @@
+1:"$Sreact.fragment"
+2:"static/chunks/app/layout-253b905f98879585.js"
+3:I[66054,["7177","$2"],""]
+4:I[59890,[],""]
+5:I[75744,[],""]
+7:"static/chunks/1674-1be2bcf3280fdd58.js"
+8:"static/chunks/4029-42ea9580b5866799.js"
+9:"static/chunks/2821-7225061d002ea72c.js"
+a:"static/chunks/5230-60943fefa3f2d258.js"
+b:"static/chunks/app/console/layout-2fecc127308c0032.js"
+c:I[32880,["1674","$7","4029","$8","2821","$9","5230","$a","3099","$b"],"ConsoleShell"]
+e:I[69507,[],"ClientPageRoot"]
+f:"static/chunks/5492-29216a3af762ddd2.js"
+10:"static/chunks/app/console/page-63ad2387f9c51f35.js"
+11:I[22502,["1674","$7","5492","$f","2821","$9","5230","$a","2520","$10"],"default"]
+14:I[55419,[],"OutletBoundary"]
+15:"$Sreact.suspense"
+17:"ViewportBoundary"
+18:I[55419,[],"$17"]
+1a:"MetadataBoundary"
+1b:I[55419,[],"$1a"]
+1d:I[73002,[],"default",1]
+:HL["/candor/_next/static/css/269dc357b657a824.css","style"]
+d:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":[["$","$Le",null,{"Component":"$11","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@12","$@13"]}}],null,["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]]}],"p":false,"v":null}}]]
+6:[["children",{"s":"console","h":512,"d":{"r":["$","$1","c",{"children":[null,["$","$Lc",null,{"children":["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]}]]}],"p":false,"v":null},"c":"$Qd"}]]
+0:{"P":null,"c":["","console",""],"q":"","i":false,"t":{"t":{"s":"","h":528,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/candor/_next/static/css/269dc357b657a824.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"className":"__variable_4ce932 __variable_3fd326","children":["$","body",null,{"className":"bg-bg text-ink","children":[["$","$L3",null,{"id":"theme","strategy":"beforeInteractive","children":"(()=>{try{const s=localStorage.getItem(\"candor-theme\");const d=s?s===\"dark\":matchMedia(\"(prefers-color-scheme: dark)\").matches;document.documentElement.dataset.theme=d?\"dark\":\"light\"}catch(e){document.documentElement.dataset.theme=\"light\"}})()"}],["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]}]]}],"p":false,"v":null},"c":"$Q6"},"h":{"r":["$","$1","h",{"children":[null,["$","$L18",null,{"children":"$L19"}],["$","$L1b",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$15",null,{"name":"Next.Metadata","children":"$L1c"}]}],null]}],null]}],"p":false,"v":null}},"m":"$undefined","G":["$1d",[]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"5XLPkV9DJUre6lHGv1Gvl"}
+12:{}
+13:"$d:0:1:d:r:props:children:0:props:serverProvidedParams:params"
+19:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0b0b0b","media":"(prefers-color-scheme: dark)"}]]
+16:null
+1c:[["$","title","0",{"children":"Reviewer console · Candor"}],["$","meta","1",{"name":"description","content":"Disclose wrongdoing without disclosing yourself. Zero-knowledge identity, on-device redaction, threshold encryption and a grounded evidence pipeline."}],["$","meta","2",{"name":"referrer","content":"no-referrer"}],["$","meta","3",{"name":"robots","content":"noindex, nofollow"}]]

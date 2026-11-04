@@ -1,0 +1,5 @@
+:HL["/candor/_next/static/css/269dc357b657a824.css","style"]
+3:[["children",{"s":"__PAGE__","h":160}]]
+2:[["children",{"s":{"n":"campaign","t":"d","k":"northwind-ethics","s":[]},"h":96,"c":"$Q3"}]]
+1:[["children",{"s":"report","h":96,"c":"$Q2"}]]
+0:{"b":"5XLPkV9DJUre6lHGv1Gvl","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
