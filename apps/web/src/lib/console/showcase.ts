@@ -188,6 +188,8 @@ const reportDefaults = [
   },
 ];
 
+export const showcaseReportIds = reportDefaults.map((report) => report.reportId);
+
 type ShowcaseState = {
   statuses: Record<string, ReportStatus>;
   analyses: Record<string, AnalysisResult | null>;

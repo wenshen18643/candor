@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+export function generateStaticParams() {
+  return [{ campaign: "northwind-ethics" }, { campaign: "northwind-safety" }];
+}
+
 export default async function ReportPage({ params }: { params: Promise<{ campaign: string }> }) {
   const { campaign } = await params;
   return <ReporterFlow campaignId={campaign} />;

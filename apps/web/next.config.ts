@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
+const staticExport = process.env.CANDOR_STATIC_EXPORT === "1";
+
 const config: NextConfig = {
+  ...(staticExport
+    ? {
+        output: "export",
+        trailingSlash: true,
+        basePath: process.env.NEXT_PUBLIC_BASE_PATH ?? "",
+        images: { unoptimized: true },
+      }
+    : {}),
   reactStrictMode: true,
   transpilePackages: ["@candor/crypto", "@candor/privacy", "@candor/sdk"],
   poweredByHeader: false,
@@ -26,5 +36,7 @@ const config: NextConfig = {
     ];
   },
 };
+
+if (staticExport) delete config.headers;
 
 export default config;

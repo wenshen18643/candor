@@ -6,6 +6,7 @@ import { type DragEvent, type KeyboardEvent, useId, useRef, useState } from "rea
 import { Button } from "@/components/ui/button";
 import { Field, Input, Textarea } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
+import { basePath } from "@/lib/config";
 import { analyseText, hasText, processFiles } from "@/lib/reporter/engine";
 import { useReporter } from "@/lib/reporter/store";
 
@@ -130,7 +131,7 @@ export function StepEvidence() {
     setBusy(true);
     setError(null);
     try {
-      const base = "/samples/procurement-kickback";
+      const base = `${basePath}/samples/procurement-kickback`;
       const manifest = (await (await fetch(`${base}/manifest.json`)).json()) as SampleManifest;
       const files = await Promise.all(
         manifest.files.map(async (item) => {

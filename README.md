@@ -13,12 +13,13 @@ Tips are how most fraud is found: 43% of the 1,921 cases in the ACFE's 2024 _Rep
 were detected by a tip, more than by any other method, and over half of those tips came from
 employees. Candor is built for those employees.
 
-- **Live demo:** https://candor-whistle.vercel.app (showcase mode: every cryptographic step runs
+- **Live demo:** https://wenshen18643.github.io/candor/ (showcase mode: every cryptographic step runs
   for real in your browser, and nothing is sent anywhere). The analysis in the reviewer console is
   a recorded run of the real twelve-stage pipeline on the fictional Northwind case, made with Muse
   Spark Open (`meta-models/muse-spark-open-1026` on Baseten) in 59 seconds for $0.16; the model
   calls are committed as cassettes in `services/pipeline/tests/cassettes/northwind` and replay
   exactly.
+- **Demo video (2:45):** https://wenshen18643.github.io/candor/demo.mp4
 - **Built for:** Meta Global AI Developer Hackathon, indie track
 
 ## Try it in five minutes

@@ -8,6 +8,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Skeleton } from "@/components/ui/field";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import sampleData from "@/data/evals-sample.json";
+import { basePath } from "@/lib/config";
 import { formatDateTime, modelName, providerName } from "@/lib/format";
 
 import { BenchSection } from "./bench-section";
@@ -25,7 +26,7 @@ const sample = sampleData as unknown as { evals: EvalsSummary; bench: BenchSumma
 
 async function load<T>(path: string, valid: (value: unknown) => boolean): Promise<Source<T>> {
   try {
-    const response = await fetch(path, { cache: "no-store" });
+    const response = await fetch(`${basePath}${path}`, { cache: "no-store" });
     if (response.status === 404) return { status: "missing" };
     if (!response.ok) return { status: "error", message: `${path} answered ${response.status}.` };
     const data: unknown = await response.json();

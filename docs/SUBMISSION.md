@@ -19,7 +19,8 @@ learning who reported it.
 
 ## Links
 
-- Live demo: https://candor-whistle.vercel.app
+- Live demo: https://wenshen18643.github.io/candor/
+- Demo video (2:45): https://wenshen18643.github.io/candor/demo.mp4
 - Source: https://github.com/wenshen18643/candor
 - Track: Indie
 
